@@ -21,14 +21,5 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('admin12345'), // Use bcrypt for password hashing
             'role' => 'admin',
         ]);
-
-        User::factory()->create([
-            'name' => 'AdminProduk',
-            'email' => 'admin2@banjarsari.com',
-            'password' => bcrypt('admin12345'), // Use bcrypt for password hashing
-            'role' => 'user',
-        ]);
-
-        $this->call(CategorySeeder::class);
     }
 }

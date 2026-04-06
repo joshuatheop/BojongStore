@@ -2,80 +2,24 @@
      @scroll.window="scrolled = window.scrollY > 10"
      :class="{ 'navbar-scrolled': scrolled }"
      class="navbar">
-     
   <div class="navbar-container">
     
     <!-- Logo -->
-    <a href="#" class="logo">
+    <a href="/" class="logo">
                 <img :src="scrolled ? '{{ asset('images/logo.png') }}' : '{{ asset('images/logo.png') }}'" 
-          alt="GivEats" 
+          alt="BojongStore" 
           class="h-8 transition-all duration-300"
           style="width: 40px; height: auto; transition: all 0.3s ease;">
     </a>
 
-    <!-- Menu Tengah -->
-    <!-- Tambahkan x-data ke container utama -->
-<div class="nav-links flex gap-4 items-center">
-
-  <a href="/" class="nav-link">Beranda</a>
-
-  <!-- Dropdown Profil Desa -->
-  <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-    <button class="nav-link flex items-center gap-1">
-      Profil Desa
-      <svg class="w-4 h-4 mt-[2px]" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.043l3.71-3.81a.75.75 0 111.08 1.04l-4.24 4.36a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-      </svg>
-    </button>
-
-    <div x-show="open" x-transition
-         class="absolute mt-2 bg-white shadow-lg rounded-md w-40 border border-gray-200 z-50">
-      <a href="{{ route('sejarah') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sejarah</a>
-      <a href="{{ route('kondisiumum') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Kondisi Umum</a>
-      <a href="{{ route('kondisisosial') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Kondisi Sosial</a>
-      <a href="{{ route('keadaanekonomi') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Keadaan Ekonomi</a>
-      <a href="{{ route('kelembagaandesa') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Kelembagaan Desa</a>
-      <a href="{{ route('isustrategis') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Isu Strategis</a>
+    <!-- Menu Tengah (Removed) -->
+    <div class="nav-links flex gap-4 items-center">
     </div>
-  </div>
-
-  <a href="{{ route('user.program') }}" class="nav-link {{ Request::is('komunitas*') ? 'active' : '' }}">Program</a>
-
-  <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-    <button class="nav-link flex items-center gap-1">
-      Belanja
-      <svg class="w-4 h-4 mt-[2px]" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.043l3.71-3.81a.75.75 0 111.08 1.04l-4.24 4.36a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-      </svg>
-    </button>
-
-    <div x-show="open" x-transition
-         class="absolute mt-2 bg-white shadow-lg rounded-md w-40 border border-gray-200 z-50">
-      <a href="{{ route('produkunggulan') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Produk Unggulan</a>
-      <a href="{{ route('katalog.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Katalog</a>
-    </div>
-  </div>
-
-  <a href="{{ route('user.berita') }}" class="nav-link {{ Request::is('komunitas*') ? 'active' : '' }}">Berita</a>
-
-</div>
-
-
 
     <!-- Tombol Login/Register -->
-    <div class="auth-buttons">
-              @guest
-            {{-- Tampilkan ini hanya jika pengunjung belum login --}}
-            <a href="{{ route('login') }}" class="login-btn">Masuk</a>
-            <a href="{{ route('register') }}" class="register-btn">Daftar</a>
-        @endguest
-
-        @auth
-            {{-- Tampilkan ini hanya jika pengunjung sudah login --}}
-            <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('user.dashboard') }}" class="register-btn">
-                Dashboard Admin
-            </a>
-        @endauth
+    <div class="auth-buttons flex gap-3">
+      <a href="{{ route('register') }}" class="register-btn" style="background-color: white; color: #00923F; border: 1px solid #00923F; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Daftar</a>
+      <a href="{{ route('login') }}" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Masuk</a>
     </div>
   </div>
 </nav>

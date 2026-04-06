@@ -15,11 +15,8 @@
                     <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('admin.berita')" :active="request()->routeIs('admin.berita')">
-                        {{ __('Berita') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('admin.datalandingpage')" :active="request()->routeIs('admin.datalandingpage')">
-                        {{ __('Data Landing') }}
+                    <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
+                        {{ __('Katalog') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -75,6 +72,9 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                 {{ __('Dashboard admin') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
+                {{ __('Katalog') }}
             </x-responsive-nav-link>
         </div>
 

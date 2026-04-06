@@ -48,6 +48,12 @@ class ProductController extends Controller
     {
         $product = Product::where('slug', $slug)->firstOrFail();
 
-        return view('detail-produk', ['product' => $product]);
+        $relatedProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        return view('detail-produk', compact('product', 'relatedProducts'));
     }
 }

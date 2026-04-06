@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\user; // Pastikan namespace-nya user
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
@@ -19,7 +19,7 @@ class ProductController extends Controller
     {
         $products = Product::with('category')->latest()->paginate(10);
         // Arahkan ke view di dalam folder user/products
-        return view('user.products.index', compact('products'));
+        return view('admin.products.index', compact('products'));
     }
 
     /**
@@ -29,7 +29,7 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         // Arahkan ke view di dalam folder user/products
-        return view('user.products.create', compact('categories'));
+        return view('admin.products.create', compact('categories'));
     }
 
     /**
@@ -59,7 +59,7 @@ class ProductController extends Controller
         Product::create($validatedData);
 
         // Arahkan kembali ke route user.products.index
-        return redirect()->route('user.products.index')->with('success', 'Produk berhasil ditambahkan.');
+        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
     /**
@@ -69,7 +69,7 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         // Arahkan ke view di dalam folder user/products
-        return view('user.products.edit', compact('product', 'categories'));
+        return view('admin.products.edit', compact('product', 'categories'));
     }
 
     /**
@@ -101,7 +101,7 @@ class ProductController extends Controller
         $product->update($validatedData);
 
         // Arahkan kembali ke route user.products.index
-        return redirect()->route('user.products.index')->with('success', 'Produk berhasil diperbarui.');
+        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     /**
@@ -115,6 +115,6 @@ class ProductController extends Controller
         $product->delete();
 
         // Arahkan kembali ke route user.products.index
-        return redirect()->route('user.products.index')->with('success', 'Produk berhasil dihapus.');
+        return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus.');
     }
 }

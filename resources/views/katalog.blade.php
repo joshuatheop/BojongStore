@@ -6,7 +6,7 @@
 <div class="max-w-6xl mx-auto px-4" style="padding-top: 120px;">
 <div class="max-w-6xl mx-auto px-4" style="padding-top: 10px;">
     {{-- Filter & Search --}}
-    <form method="GET" action="{{ route('katalog.index') }}" class="flex flex-col md:flex-row gap-4 mb-12">
+    <form method="GET" action="{{ route('katalog') }}" class="flex flex-col md:flex-row gap-4 mb-12">
         {{-- Dropdown Kategori --}}
         <div class="w-full md:w-1/4">
             <select name="category" class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
@@ -34,7 +34,7 @@
         {{-- Menghapus data statis dan langsung loop data $products dari controller --}}
         @foreach($products as $product)
         {{-- Mengubah div menjadi tag <a> agar seluruh kartu produk bisa diklik --}}
-        <a href="{{ route('katalog.show', $product->slug) }}" class="bg-white border rounded-xl shadow-lg p-4 flex flex-col items-center hover:shadow-xl transition-shadow duration-300 no-underline">
+        <a href="{{ route('produk.detail', $product->slug) }}" class="bg-white border rounded-xl shadow-lg p-4 flex flex-col items-center hover:shadow-xl transition-shadow duration-300 no-underline">
             <div class="w-full h-48 mb-4 flex items-center justify-center">
                 {{-- Menggunakan gambar placeholder karena belum ada kolom gambar di database --}}
                 <img  src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $product->name }}" class="max-h-full max-w-full object-contain">
