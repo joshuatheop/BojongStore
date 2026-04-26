@@ -18,8 +18,17 @@
 
     <!-- Tombol Login/Register -->
     <div class="auth-buttons flex gap-3">
-      <a href="{{ route('register') }}" class="register-btn" style="background-color: white; color: #00923F; border: 1px solid #00923F; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Daftar</a>
-      <a href="{{ route('login') }}" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Masuk</a>
+      @guest
+        <a href="{{ route('register') }}" class="register-btn" style="background-color: white; color: #00923F; border: 1px solid #00923F; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Daftar</a>
+        <a href="{{ route('login') }}" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Masuk</a>
+      @endguest
+      @auth
+        @if(auth()->user()->role === 'admin')
+          <a href="{{ route('admin.dashboard') }}" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Dashboard Admin</a>
+        @else
+          <a href="{{ route('user.dashboard') }}" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Dashboard Saya</a>
+        @endif
+      @endauth
     </div>
   </div>
 </nav>
