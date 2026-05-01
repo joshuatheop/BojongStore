@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $telepon = trim($_POST['telepon'] ?? '');
     $negara  = trim($_POST['negara'] ?? '');
     $newPass = trim($_POST['new_password'] ?? '');
+    $fotoFile = null;
 
     // Validation
     if (empty($nama)) {
@@ -40,20 +41,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $errorMsg = 'Email ini sudah digunakan oleh user lain.';
         } else {
             try {
-                if ($newPass !== '') {
-                    $hashed = password_hash($newPass, PASSWORD_DEFAULT);
-                    $stmt = $pdo->prepare('UPDATE users SET nama=?, email=?, telepon=?, negara=?, password=? WHERE id=?');
-                    $stmt->execute([$nama, $email, $telepon, $negara, $hashed, $_SESSION['user_id']]);
-                } else {
-                    $stmt = $pdo->prepare('UPDATE users SET nama=?, email=?, telepon=?, negara=? WHERE id=?');
-                    $stmt->execute([$nama, $email, $telepon, $negara, $_SESSION['user_id']]);
+                // Handle file upload
+                $fotoFile = $user['foto']; // Keep existing if no new upload
+                if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+                    $file = $_FILES['avatar'];
+                    $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+                    $filename = basename($file['name']);
+                    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                    
+                    if (in_array($ext, $allowed)) {
+                        $maxSize = 5 * 1024 * 1024; // 5MB
+                        if ($file['size'] <= $maxSize) {
+                            // Create unique filename
+                            $newFilename = 'avatar_' . $_SESSION['user_id'] . '_' . time() . '.' . $ext;
+                            $uploadPath = 'assets/uploads/' . $newFilename;
+                            
+                            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                                // Delete old file if exists
+                                if (!empty($user['foto']) && file_exists($user['foto']) && strpos($user['foto'], 'avatar_') !== false) {
+                                    unlink($user['foto']);
+                                }
+                                $fotoFile = $uploadPath;
+                            } else {
+                                $errorMsg = 'Gagal mengupload file. Silakan coba lagi.';
+                            }
+                        } else {
+                            $errorMsg = 'Ukuran file terlalu besar (max 5MB).';
+                        }
+                    } else {
+                        $errorMsg = 'Format file tidak didukung. Gunakan JPG, PNG, atau GIF.';
+                    }
                 }
-                $_SESSION['user_name'] = $nama; // Update session
-                $successMsg = 'Profil berhasil diperbarui.';
-                // Refresh user data
-                $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
-                $stmt->execute([$_SESSION['user_id']]);
-                $user = $stmt->fetch();
+                
+                if (!$errorMsg) {
+                    if ($newPass !== '') {
+                        $hashed = password_hash($newPass, PASSWORD_DEFAULT);
+                        $stmt = $pdo->prepare('UPDATE users SET nama=?, email=?, telepon=?, negara=?, foto=?, password=? WHERE id=?');
+                        $stmt->execute([$nama, $email, $telepon, $negara, $fotoFile, $hashed, $_SESSION['user_id']]);
+                    } else {
+                        $stmt = $pdo->prepare('UPDATE users SET nama=?, email=?, telepon=?, negara=?, foto=? WHERE id=?');
+                        $stmt->execute([$nama, $email, $telepon, $negara, $fotoFile, $_SESSION['user_id']]);
+                    }
+                    $_SESSION['user_name'] = $nama; // Update session
+                    $successMsg = 'Profil berhasil diperbarui.';
+                    // Refresh user data
+                    $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
+                    $stmt->execute([$_SESSION['user_id']]);
+                    $user = $stmt->fetch();
+                }
             } catch (PDOException $e) {
                 $errorMsg = 'Terjadi kesalahan saat memperbarui profil.';
             }
@@ -434,7 +469,7 @@ $negara  = $user['negara']  ?? 'Indonesia';
       </div>
     <?php endif; ?>
 
-    <form method="POST" action="profile.php" id="profileForm">
+    <form method="POST" action="profile.php" id="profileForm" enctype="multipart/form-data">
       <input type="hidden" name="action" value="update_profile">
 
       <!-- Avatar Row -->
@@ -457,7 +492,7 @@ $negara  = $user['negara']  ?? 'Indonesia';
               <circle cx="12" cy="13" r="4"/>
             </svg>
           </label>
-          <input type="file" id="avatarInput" name="avatar" accept="image/*">
+          <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display:none;">
         </div>
 
         <button type="submit" class="btn-edit-profile" id="btnEditProfile">

@@ -2,24 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  // ── User Menu Dropdown Toggle ──
-  const btnUserMenu = document.getElementById('btnUserMenu');
-  const userDropdown = document.getElementById('userDropdown');
-  
-  if (btnUserMenu && userDropdown) {
-    btnUserMenu.addEventListener('click', function (e) {
-      e.stopPropagation();
-      userDropdown.classList.toggle('active');
-    });
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest('.user-menu-wrapper')) {
-        userDropdown.classList.remove('active');
-      }
-    });
-  }
-
   // ── Search input live filter (placeholder functionality) ──
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
