@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
             if ($u && password_verify($password, $u['password'])) {
                 $_SESSION['user_id'] = $u['id'];
                 $_SESSION['user_name'] = $u['nama'];
+                session_write_close();
                 header('Location: index.php');
                 exit;
             } else {

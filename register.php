@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
                 $stmt->execute([$nama, $email, $telepon, $hashed]);
                 $_SESSION['user_id']   = $pdo->lastInsertId();
                 $_SESSION['user_name'] = $nama;
+                session_write_close();
                 header('Location: index.php');
                 exit;
             } catch (PDOException $e) {
