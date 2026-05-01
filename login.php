@@ -1,12 +1,6 @@
 <?php
 include 'includes/db.php';
 
-// Redirect if already logged in
-if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit;
-}
-
 $loginError = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
     $email    = trim($_POST['email'] ?? '');
