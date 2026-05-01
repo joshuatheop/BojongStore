@@ -116,6 +116,13 @@ $negara  = $user['negara']  ?? 'Indonesia';
     /* ============================================
        PROFILE PAGE STYLES
        ============================================ */
+    
+    /* STRICT: Prevent any image from expanding beyond container */
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    
     body {
       background: #f0f2ed;
       min-height: 100vh;
@@ -156,6 +163,7 @@ $negara  = $user['negara']  ?? 'Indonesia';
       position: relative;
       width: 90px;
       height: 90px;
+      flex-shrink: 0;
     }
 
     .profile-avatar-circle {
@@ -167,6 +175,7 @@ $negara  = $user['negara']  ?? 'Indonesia';
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      flex-shrink: 0;
     }
 
     .profile-avatar-circle svg {
@@ -174,10 +183,14 @@ $negara  = $user['negara']  ?? 'Indonesia';
     }
 
     .profile-avatar-circle img {
-      width: 100%;
-      height: 100%;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 90px !important;
+      max-height: 90px !important;
       object-fit: cover;
       border-radius: 50%;
+      pointer-events: none;
+      display: block;
     }
 
     .avatar-camera-btn {
@@ -409,13 +422,13 @@ $negara  = $user['negara']  ?? 'Indonesia';
       </a>
 
       <!-- Profile Avatar Button -->
-      <a href="profile.php" class="navbar-avatar-btn" title="Profil Saya">
-        <?php 
-        $fotoPath = !empty($user['foto']) ? 'assets/uploads/' . htmlspecialchars($user['foto']) : 'assets/images/default-avatar.svg';
-        $userExists = isset($user) && !empty($user['foto']);
-        ?>
-        <?php if ($userExists && !empty($user['foto'])): ?>
-          <img src="<?= $fotoPath ?>" alt="<?= htmlspecialchars($_SESSION['user_name']) ?>" class="avatar-image">
+       <a href="profile.php" class="navbar-avatar-btn" title="Profil Saya">
+         <?php 
+         $fotoPath = !empty($user['foto']) ? htmlspecialchars($user['foto']) : 'assets/images/default-avatar.svg';
+         $userExists = isset($user) && !empty($user['foto']);
+         ?>
+         <?php if ($userExists && !empty($user['foto'])): ?>
+           <img src="<?= $fotoPath ?>" alt="<?= htmlspecialchars($_SESSION['user_name']) ?>" class="avatar-image">
         <?php else: ?>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
@@ -602,10 +615,31 @@ $negara  = $user['negara']  ?? 'Indonesia';
       if (!file) return;
       const reader = new FileReader();
       reader.onload = (ev) => {
-        avatarCircle.innerHTML = `<img src="${ev.target.result}" alt="Avatar Preview" id="avatarPreview" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+        avatarCircle.innerHTML = `<img src="${ev.target.result}" alt="Avatar Preview" id="avatarPreview" style="width:100%;height:100%;max-width:90px;max-height:90px;object-fit:cover;border-radius:50%;display:block;pointer-events:none;">`;
+        // Prevent image interactions
+        const img = document.getElementById('avatarPreview');
+        if (img) {
+          img.addEventListener('contextmenu', (e) => e.preventDefault());
+          img.addEventListener('dragstart', (e) => e.preventDefault());
+          img.addEventListener('click', (e) => e.preventDefault());
+          img.addEventListener('dblclick', (e) => e.preventDefault());
+          img.style.userSelect = 'none';
+          img.style.WebkitUserSelect = 'none';
+        }
       };
       reader.readAsDataURL(file);
     });
+  }
+  
+  // Prevent interactions on existing avatar
+  const existingImg = document.querySelector('.profile-avatar-circle img');
+  if (existingImg) {
+    existingImg.addEventListener('contextmenu', (e) => e.preventDefault());
+    existingImg.addEventListener('dragstart', (e) => e.preventDefault());
+    existingImg.addEventListener('click', (e) => e.preventDefault());
+    existingImg.addEventListener('dblclick', (e) => e.preventDefault());
+    existingImg.style.userSelect = 'none';
+    existingImg.style.WebkitUserSelect = 'none';
   }
 
   // ── Search redirect ──

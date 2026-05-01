@@ -61,12 +61,12 @@ if (isset($_SESSION['user_id']) && function_exists('get_defined_vars')) {
 
         <!-- Profile Avatar Button -->
         <a href="profile.php" class="navbar-avatar-btn" title="Profil Saya">
-          <?php 
-          $fotoPath = !empty($user['foto']) ? 'assets/uploads/' . htmlspecialchars($user['foto']) : 'assets/images/default-avatar.svg';
-          $userExists = isset($user) && !empty($user['foto']);
-          ?>
-          <?php if ($userExists && !empty($user['foto'])): ?>
-            <img src="<?= $fotoPath ?>" alt="<?= htmlspecialchars($_SESSION['user_name']) ?>" class="avatar-image">
+           <?php 
+           $fotoPath = !empty($user['foto']) ? htmlspecialchars($user['foto']) : 'assets/images/default-avatar.svg';
+           $userExists = isset($user) && !empty($user['foto']);
+           ?>
+           <?php if ($userExists && !empty($user['foto'])): ?>
+             <img src="<?= $fotoPath ?>" alt="<?= htmlspecialchars($_SESSION['user_name']) ?>" class="avatar-image">
           <?php else: ?>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
