@@ -122,38 +122,7 @@ $negara  = $user['negara']  ?? 'Indonesia';
     }
 
     /* Navbar override for profile state */
-    .navbar-actions-profile {
-      margin-left: auto;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .nav-icon-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      border: 1.5px solid var(--border);
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text-dark);
-      text-decoration: none;
-    }
-
-    .nav-icon-btn:hover {
-      border-color: var(--green-primary);
-      color: var(--green-primary);
-    }
-
-    .nav-icon-btn.active {
-      background: var(--green-primary);
-      border-color: var(--green-primary);
-      color: white;
-    }
+    /* (Removed - now using consistent navbar-user-section from main CSS) */
 
     /* ---- Profile Main Layout ---- */
     .profile-page {
@@ -429,26 +398,38 @@ $negara  = $user['negara']  ?? 'Indonesia';
     <input type="text" id="searchInput" placeholder="Cari produk..." autocomplete="off">
   </div>
 
-  <div class="navbar-actions-profile">
-    <!-- Bookmark icon -->
-    <a href="#" class="nav-icon-btn" id="btnBookmark" title="Wishlist">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-        <path d="M5 3h14a1 1 0 011 1v17.27a.5.5 0 01-.776.416L12 17.882l-7.224 3.804A.5.5 0 014 21.27V4a1 1 0 011-1z"/>
-      </svg>
-    </a>
-    <!-- Profile icon — active -->
-    <a href="profile.php" class="nav-icon-btn active" id="btnProfile" title="Profil Saya">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="8" r="4"/>
-        <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/>
-      </svg>
-    </a>
-    <!-- Logout -->
-    <a href="logout.php" class="nav-icon-btn" id="btnLogout" title="Keluar" style="color:#c0392b;border-color:#fbc4c4;" onclick="return confirm('Yakin ingin keluar?')">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
-      </svg>
-    </a>
+  <div class="navbar-actions">
+    <!-- User sudah login - Avatar Style -->
+    <div class="navbar-user-section">
+      <!-- Wishlist/Bookmark Button -->
+      <a href="#" class="navbar-icon-btn" title="Wishlist">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+        </svg>
+      </a>
+
+      <!-- Profile Avatar Button -->
+      <a href="profile.php" class="navbar-avatar-btn" title="Profil Saya">
+        <?php 
+        $fotoPath = !empty($user['foto']) ? 'assets/uploads/' . htmlspecialchars($user['foto']) : 'assets/images/default-avatar.svg';
+        $userExists = isset($user) && !empty($user['foto']);
+        ?>
+        <?php if ($userExists && !empty($user['foto'])): ?>
+          <img src="<?= $fotoPath ?>" alt="<?= htmlspecialchars($_SESSION['user_name']) ?>" class="avatar-image">
+        <?php else: ?>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
+          </svg>
+        <?php endif; ?>
+      </a>
+
+      <!-- Logout Button -->
+      <a href="logout.php" class="navbar-logout-btn" title="Logout">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+        </svg>
+      </a>
+    </div>
   </div>
 </nav>
 
