@@ -19,6 +19,10 @@ if ($pdo) {
 $successMsg = '';
 $errorMsg   = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_profile') {
+    // Verify CSRF token
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $errorMsg = 'Validasi keamanan gagal. Silakan coba lagi.';
+    } else {
     $nama    = trim($_POST['nama'] ?? '');
     $email   = trim($_POST['email'] ?? '');
     $telepon = trim($_POST['telepon'] ?? '');
@@ -95,6 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         }
     }
 }
+}
+
+// Generate CSRF token for form
+$csrfToken = generateCSRFToken();
 
 $nama    = $user['nama']    ?? 'Pengguna';
 $email   = $user['email']   ?? '';
@@ -465,6 +473,7 @@ $negara  = $user['negara']  ?? 'Indonesia';
 
     <form method="POST" action="profile.php" id="profileForm" enctype="multipart/form-data">
       <input type="hidden" name="action" value="update_profile">
+      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
 
       <!-- Avatar Row -->
       <div class="profile-avatar-row">

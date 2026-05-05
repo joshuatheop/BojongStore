@@ -2,35 +2,52 @@
 include 'includes/db.php';
 
 $loginError = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
-    $email    = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    // Validation
-    if (empty($email) || empty($password)) {
-        $loginError = 'Email dan password harus diisi.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $loginError = 'Format email tidak valid.';
+    // Verify CSRF token
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $loginError = 'Validasi keamanan gagal. Silakan coba lagi.';
+    } elseif (!checkRateLimit('login', 5, 300)) {
+        $loginError = 'Terlalu banyak percobaan. Silakan coba lagi dalam beberapa menit.';
     } else {
-        try {
-            $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');
-            $stmt->execute([$email]);
-            $u = $stmt->fetch();
+        $email    = sanitizeInput($_POST['email'] ?? '', 'email');
+        $password = $_POST['password'] ?? '';
 
-            if ($u && password_verify($password, $u['password'])) {
-                $_SESSION['user_id'] = $u['id'];
-                $_SESSION['user_name'] = $u['nama'];
-                session_write_close();
-                header('Location: index.php');
-                exit;
-            } else {
-                $loginError = 'Email atau password salah.';
+        // Validation
+        if (empty($email) || empty($password)) {
+            $loginError = 'Email dan password harus diisi.';
+        } elseif (!validateEmail($email)) {
+            $loginError = 'Format email tidak valid.';
+        } else {
+            try {
+                $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');
+                $stmt->execute([$email]);
+                $u = $stmt->fetch();
+
+                if ($u && password_verify($password, $u['password'])) {
+                    $_SESSION['user_id'] = $u['id'];
+                    $_SESSION['user_name'] = $u['nama'];
+                    $_SESSION['user_role'] = $u['role'];
+                    regenerateSessionID();
+                    
+                    // Redirect admin to dashboard, others to index
+                    if ($u['role'] === 'admin') {
+                        header('Location: admin/dashboard.php');
+                    } else {
+                        header('Location: index.php');
+                    }
+                    exit;
+                } else {
+                    $loginError = 'Email atau password salah.';
+                }
+            } catch (PDOException $e) {
+                $loginError = 'Terjadi kesalahan. Silakan coba lagi.';
             }
-        } catch (PDOException $e) {
-            $loginError = 'Terjadi kesalahan. Silakan coba lagi.';
         }
     }
 }
+
+$csrfToken = generateCSRFToken();
 ?>
 <?php include 'includes/header.php'; ?>
 
@@ -234,12 +251,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       <h1>Selamat Datang!</h1>
       
       <?php if ($loginError): ?>
-        <div style="background:#fdecea;color:#c0392b;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;">
-          <?= htmlspecialchars($loginError) ?>
-        </div>
+        <?= getErrorHTML($loginError) ?>
       <?php endif; ?>
       
       <form method="POST" action="login.php">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <div class="form-group">
           <label for="loginEmail">Email</label>
           <input type="email" id="loginEmail" name="email" placeholder="Masukkan email anda" required>

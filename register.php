@@ -3,46 +3,62 @@ include 'includes/db.php';
 
 $regError = '';
 $regSuccess = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
-    $nama     = trim($_POST['nama'] ?? '');
-    $email    = trim($_POST['email'] ?? '');
-    $telepon  = trim($_POST['telepon'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $konfirmPassword = $_POST['konfirm_password'] ?? '';
 
-    // Validation
-    if (empty($nama) || empty($email) || empty($telepon) || empty($password) || empty($konfirmPassword)) {
-        $regError = 'Semua field harus diisi.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $regError = 'Format email tidak valid.';
-    } elseif (strlen($password) < 6) {
-        $regError = 'Password minimal 6 karakter.';
-    } elseif ($password !== $konfirmPassword) {
-        $regError = 'Password dan konfirmasi password tidak sesuai.';
-    } elseif (strlen($telepon) < 10) {
-        $regError = 'Nomor telepon harus minimal 10 karakter.';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
+    // Verify CSRF token
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $regError = 'Validasi keamanan gagal. Silakan coba lagi.';
+    } elseif (!checkRateLimit('register', 5, 300)) {
+        $regError = 'Terlalu banyak percobaan. Silakan coba lagi dalam beberapa menit.';
     } else {
-        // Check if email exists
-        $check = $pdo->prepare('SELECT id FROM users WHERE email = ?');
-        $check->execute([$email]);
-        if ($check->fetch()) {
-            $regError = 'Email sudah terdaftar. Silakan gunakan email lain.';
+        $nama     = sanitizeInput($_POST['nama'] ?? '', 'html');
+        $email    = sanitizeInput($_POST['email'] ?? '', 'email');
+        $telepon  = sanitizeInput($_POST['telepon'] ?? '', 'text');
+        $password = $_POST['password'] ?? '';
+        $konfirmPassword = $_POST['konfirm_password'] ?? '';
+
+        // Validation
+        if (empty($nama) || empty($email) || empty($telepon) || empty($password) || empty($konfirmPassword)) {
+            $regError = 'Semua field harus diisi.';
+        } elseif (!validateEmail($email)) {
+            $regError = 'Format email tidak valid.';
+        } elseif ($phoneError = validatePhoneNumber($telepon)) {
+            $regError = $phoneError;
+        } elseif ($passwordError = validatePassword($password)) {
+            $regError = $passwordError;
+        } elseif ($password !== $konfirmPassword) {
+            $regError = 'Password dan konfirmasi password tidak sesuai.';
         } else {
+            // Check if email exists
             try {
-                $hashed = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare('INSERT INTO users (nama, email, telepon, password) VALUES (?, ?, ?, ?)');
-                $stmt->execute([$nama, $email, $telepon, $hashed]);
-                $_SESSION['user_id']   = $pdo->lastInsertId();
-                $_SESSION['user_name'] = $nama;
-                session_write_close();
-                header('Location: index.php');
-                exit;
+                $check = $pdo->prepare('SELECT id FROM users WHERE email = ?');
+                $check->execute([$email]);
+                if ($check->fetch()) {
+                    $regError = 'Email sudah terdaftar. Silakan gunakan email lain.';
+                } else {
+                    try {
+                        $hashed = password_hash($password, PASSWORD_DEFAULT);
+                        $stmt = $pdo->prepare('INSERT INTO users (nama, email, telepon, password, created_at) VALUES (?, ?, ?, ?, NOW())');
+                        $stmt->execute([$nama, $email, $telepon, $hashed]);
+                        
+                        $_SESSION['user_id']   = $pdo->lastInsertId();
+                        $_SESSION['user_name'] = $nama;
+                        regenerateSessionID();
+                        
+                        header('Location: index.php');
+                        exit;
+                    } catch (PDOException $e) {
+                        $regError = 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.';
+                    }
+                }
             } catch (PDOException $e) {
-                $regError = 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.';
+                $regError = 'Terjadi kesalahan database. Silakan coba lagi.';
             }
         }
     }
 }
+
+$csrfToken = generateCSRFToken();
 ?>
 <?php include 'includes/header.php'; ?>
 
@@ -249,12 +265,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
       <h1>Buat dan Daftar Akun Kamu</h1>
       
       <?php if ($regError): ?>
-        <div style="background:#fdecea;color:#c0392b;border:1px solid #f5c6cb;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;">
-          <?= htmlspecialchars($regError) ?>
-        </div>
+        <?= getErrorHTML($regError) ?>
       <?php endif; ?>
       
       <form method="POST" action="register.php">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <div class="form-group">
           <label for="regNama">Nama Lengkap</label>
           <input type="text" id="regNama" name="nama" placeholder="Masukkan nama anda" required>

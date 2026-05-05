@@ -1,6 +1,16 @@
 <?php
 // BojongStore - Database Connection
-session_start();
+// Initialize session with security settings
+if (session_status() === PHP_SESSION_NONE) {
+    session_start([
+        'cookie_httponly' => true,
+        'cookie_secure' => false, // Set to true if using HTTPS
+        'cookie_samesite' => 'Strict',
+    ]);
+}
+
+// Include security helpers
+require_once __DIR__ . '/security.php';
 
 $host = 'localhost';
 $db   = 'bojongstore';
