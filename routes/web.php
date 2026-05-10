@@ -1,24 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
+
 use App\Http\Controllers\UlasanController;
-use App\Http\Controllers\FavoritController;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
-    // Auto-login a dummy user for demo purposes if not logged in
-    if (!Auth::check()) {
-        $user = User::first();
-        if ($user) {
-            Auth::login($user);
-        }
-    }
-    return redirect()->route('products.show', 1);
+    $products = \App\Models\Product::all();
+    return view('welcome', compact('products'));
 });
 
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-Route::post('/products/{product}/ulasan', [UlasanController::class, 'store'])->name('ulasan.store')->middleware('auth');
-Route::get('/products/{product}/ulasan', [UlasanController::class, 'index'])->name('ulasan.index');
-Route::post('/products/{product}/favorit', [FavoritController::class, 'toggle'])->name('favorit.toggle')->middleware('auth');
+Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('product.show');
+
+Route::post('/reviews', [UlasanController::class, 'store'])->name('reviews.store');
+Route::get('/api/reviews/{product_id}', [UlasanController::class, 'getReviews']);
+Route::get('/favorit', function () {
+    $products = \App\Models\Product::all();
+    return view('favorit', compact('products'));
+});
+
+Route::delete('/reviews/{id}', [UlasanController::class, 'destroy']);

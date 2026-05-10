@@ -2,43 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\Ulasan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Review;
 
 class UlasanController extends Controller
 {
-    public function index(Product $product)
-    {
-        $ulasans = $product->ulasans()->with('user')->orderBy('created_at', 'desc')->paginate(3);
-        
-        return response()->json([
-            'ulasans' => $ulasans->items(),
-            'hasMore' => $ulasans->hasMorePages()
-        ]);
-    }
-
-    public function store(Request $request, Product $product)
+    public function store(Request $request)
     {
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'review_text' => 'required|string',
+            'comment' => 'required|string',
+            'product_id' => 'required|string',
         ]);
 
-        $ulasan = new Ulasan([
+        Review::create([
+            'user_id' => auth()->id(),
+            'user_name' => auth()->check() ? auth()->user()->name : 'Anonim',
             'rating' => $request->rating,
-            'review_text' => $request->review_text,
-            'user_id' => Auth::id(),
-            'status' => 'approved'
+            'comment' => $request->comment,
+            'product_id' => $request->product_id,
         ]);
 
-        $product->ulasans()->save($ulasan);
-        $ulasan->load('user');
+        return response()->json(['message' => 'Ulasan berhasil dikirim!']);
+    }
 
-        return response()->json([
-            'message' => 'Review added successfully',
-            'ulasan' => $ulasan
-        ], 201);
+    public function getReviews($product_id)
+    {
+        $reviews = Review::where('product_id', $product_id)->latest()->get();
+        return response()->json($reviews);
+    }
+
+    public function destroy($id)
+    {
+        Review::destroy($id);
+        return response()->json(['message' => 'Ulasan berhasil dihapus!']);
     }
 }
