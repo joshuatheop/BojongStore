@@ -12,17 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->string('category')->nullable()->after('whatsapp');
-            $table->json('tags')->nullable()->after('category');
-            $table->string('seller')->nullable()->after('tags');
+            $table->string('weight')->nullable();
+            $table->string('type')->nullable();
+            $table->string('packaging')->nullable();
+            $table->string('shelf_life')->nullable();
+            $table->string('production')->nullable();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn(['category', 'tags', 'seller']);
+            $table->dropColumn(['weight', 'type', 'packaging', 'shelf_life', 'production']);
         });
     }
-
 };
