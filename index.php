@@ -20,7 +20,7 @@ include 'includes/header.php';
         mulai dari makanan, hingga kebutuhan sehari-hari semua
         dalam satu platform digital!
       </p>
-      <a href="produk.php" class="btn btn-primary" id="btnMulaiBelanja" style="padding:12px 26px;font-size:14px;border-radius:10px;">
+      <a href="pages/produk.php" class="btn btn-primary" id="btnMulaiBelanja" style="padding:12px 26px;font-size:14px;border-radius:10px;">
         Mulai Belanja
       </a>
 
@@ -81,7 +81,7 @@ include 'includes/header.php';
         <h2 class="section-title">Kategori Pilihan</h2>
         <p class="section-sub">Temukan kebutuhan dari berbagai jenis pilihan</p>
       </div>
-      <a href="produk.php" class="see-all">
+      <a href="pages/produk.php" class="see-all">
         Lihat Semua
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -92,28 +92,28 @@ include 'includes/header.php';
     <div class="category-grid">
 
       <!-- Sayuran -->
-      <a href="produk.php?kategori=sayuran" class="category-card" id="catSayuran">
+      <a href="pages/produk.php?kategori=sayuran" class="category-card" id="catSayuran">
         <div class="cat-icon green">🥬</div>
         <div class="cat-name">Sayuran</div>
         <div class="cat-count">Hijau & Organik</div>
       </a>
 
       <!-- Buah -->
-      <a href="produk.php?kategori=buah" class="category-card" id="catBuah">
+      <a href="pages/produk.php?kategori=buah" class="category-card" id="catBuah">
         <div class="cat-icon orange">🍊</div>
         <div class="cat-name">Buah</div>
         <div class="cat-count">Lokal & Segar</div>
       </a>
 
       <!-- Makanan -->
-      <a href="produk.php?kategori=makanan" class="category-card" id="catMakanan">
+      <a href="pages/produk.php?kategori=makanan" class="category-card" id="catMakanan">
         <div class="cat-icon brown">🍲</div>
         <div class="cat-name">Makanan</div>
         <div class="cat-count">Produk olahan</div>
       </a>
 
       <!-- Minuman -->
-      <a href="produk.php?kategori=minuman" class="category-card" id="catMinuman">
+      <a href="pages/produk.php?kategori=minuman" class="category-card" id="catMinuman">
         <div class="cat-icon blue">🥤</div>
         <div class="cat-name">Minuman</div>
         <div class="cat-count">Antar</div>
@@ -231,3 +231,5 @@ include 'includes/header.php';
 
 
 <?php include 'includes/footer.php'; ?>
+
+

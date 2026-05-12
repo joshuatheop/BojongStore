@@ -1,5 +1,5 @@
 <?php
-include 'includes/db.php';
+include '../includes/db.php';
 
 // Redirect to login if not authenticated
 if (!isset($_SESSION['user_id'])) {
@@ -108,11 +108,10 @@ $nama    = $user['nama']    ?? 'Pengguna';
 $email   = $user['email']   ?? '';
 $telepon = $user['telepon'] ?? '';
 $negara  = $user['negara']  ?? 'Indonesia';
-?>
-<?php
-  $pageTitle = 'Profil Saya - BojongStore';
-  $pageDescription = 'Kelola informasi profil akun BojongStore Anda.';
-  $extraStyles = '
+
+$pageTitle       = 'Profil Saya - BojongStore';
+$pageDescription = 'Kelola informasi profil akun BojongStore Anda.';
+$extraStyles = '
     body { background: #f0f2ed; min-height: 100vh; }
 
     /* ---- Profile Main Layout ---- */
@@ -330,7 +329,7 @@ $negara  = $user['negara']  ?? 'Indonesia';
     }
   ';
 ?>
-<?php include 'includes/header.php'; ?>
+<?php include '../includes/header.php'; ?>
 
 <!-- ===== PROFILE PAGE ===== -->
 <main class="profile-page" id="profilePage">
@@ -448,7 +447,7 @@ $negara  = $user['negara']  ?? 'Indonesia';
       <div class="footer-brand">
         <div class="brand-name">
           <div class="brand-icon" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
-            <img src="assets/images/logo_tree.png" alt="BojongStore Logo" style="width:22px;height:22px;object-fit:contain;">
+            <img src="../assets/images/logo_tree.png" alt="BojongStore Logo" style="width:22px;height:22px;object-fit:contain;">
           </div>
           BojongStore
         </div>
@@ -572,3 +571,4 @@ $negara  = $user['negara']  ?? 'Indonesia';
 </script>
 </body>
 </html>
+

@@ -1,6 +1,6 @@
 <?php
-include 'includes/db.php';
-include 'includes/header.php';
+include '../includes/db.php';
+include '../includes/header.php';
 
 // Get product ID from URL
 $product_id = $_GET['id'] ?? 1;
@@ -529,7 +529,7 @@ $current_user_name = $_SESSION['user_name'] ?? '';
     <!-- Product Image -->
     <div class="detail-image">
       <button class="save-item-btn" title="Simpan Item">
-        <img src="assets/images/Container.png" alt="Simpan">
+        <img src="../assets/images/Container.png" alt="Simpan">
       </button>
       <div class="detail-image-badge">📌</div>
       <img src="<?= htmlspecialchars($produk['image']) ?>" alt="<?= htmlspecialchars($produk['nama']) ?>">
@@ -562,11 +562,11 @@ $current_user_name = $_SESSION['user_name'] ?? '';
 
       <div class="detail-actions">
         <button class="btn-beli">
-          <img src="assets/images/Vector.png" alt="Shopee" style="width: 20px; height: 20px;">
+          <img src="../assets/images/Vector.png" alt="Shopee" style="width: 20px; height: 20px;">
           Beli Di Shopee
         </button>
         <a href="#" class="btn-chat">
-          <img src="assets/images/ic_baseline-whatsapp.png" alt="WhatsApp" style="width: 20px; height: 20px;">
+          <img src="../assets/images/ic_baseline-whatsapp.png" alt="WhatsApp" style="width: 20px; height: 20px;">
           Chat Penjual
         </a>
       </div>
@@ -680,4 +680,6 @@ $current_user_name = $_SESSION['user_name'] ?? '';
   </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
+
+

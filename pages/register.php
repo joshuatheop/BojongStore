@@ -1,47 +1,58 @@
 <?php
-include 'includes/db.php';
+include '../includes/db.php';
 
-$loginError = '';
+$regError = '';
+$regSuccess = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $pdo) {
     // Verify CSRF token
     if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
-        $loginError = 'Validasi keamanan gagal. Silakan coba lagi.';
-    } elseif (!checkRateLimit('login', 5, 300)) {
-        $loginError = 'Terlalu banyak percobaan. Silakan coba lagi dalam beberapa menit.';
+        $regError = 'Validasi keamanan gagal. Silakan coba lagi.';
+    } elseif (!checkRateLimit('register', 5, 300)) {
+        $regError = 'Terlalu banyak percobaan. Silakan coba lagi dalam beberapa menit.';
     } else {
+        $nama     = sanitizeInput($_POST['nama'] ?? '', 'html');
         $email    = sanitizeInput($_POST['email'] ?? '', 'email');
+        $telepon  = sanitizeInput($_POST['telepon'] ?? '', 'text');
         $password = $_POST['password'] ?? '';
+        $konfirmPassword = $_POST['konfirm_password'] ?? '';
 
         // Validation
-        if (empty($email) || empty($password)) {
-            $loginError = 'Email dan password harus diisi.';
+        if (empty($nama) || empty($email) || empty($telepon) || empty($password) || empty($konfirmPassword)) {
+            $regError = 'Semua field harus diisi.';
         } elseif (!validateEmail($email)) {
-            $loginError = 'Format email tidak valid.';
+            $regError = 'Format email tidak valid.';
+        } elseif ($phoneError = validatePhoneNumber($telepon)) {
+            $regError = $phoneError;
+        } elseif ($passwordError = validatePassword($password)) {
+            $regError = $passwordError;
+        } elseif ($password !== $konfirmPassword) {
+            $regError = 'Password dan konfirmasi password tidak sesuai.';
         } else {
+            // Check if email exists
             try {
-                $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');
-                $stmt->execute([$email]);
-                $u = $stmt->fetch();
-
-                if ($u && password_verify($password, $u['password'])) {
-                    $_SESSION['user_id'] = $u['id'];
-                    $_SESSION['user_name'] = $u['nama'];
-                    $_SESSION['user_role'] = $u['role'];
-                    regenerateSessionID();
-                    
-                    // Redirect admin to dashboard, others to index
-                    if ($u['role'] === 'admin') {
-                        header('Location: admin/dashboard.php');
-                    } else {
-                        header('Location: index.php');
-                    }
-                    exit;
+                $check = $pdo->prepare('SELECT id FROM users WHERE email = ?');
+                $check->execute([$email]);
+                if ($check->fetch()) {
+                    $regError = 'Email sudah terdaftar. Silakan gunakan email lain.';
                 } else {
-                    $loginError = 'Email atau password salah.';
+                    try {
+                        $hashed = password_hash($password, PASSWORD_DEFAULT);
+                        $stmt = $pdo->prepare('INSERT INTO users (nama, email, telepon, password, created_at) VALUES (?, ?, ?, ?, NOW())');
+                        $stmt->execute([$nama, $email, $telepon, $hashed]);
+                        
+                        $_SESSION['user_id']   = $pdo->lastInsertId();
+                        $_SESSION['user_name'] = $nama;
+                        regenerateSessionID();
+                        
+                        header('Location: ../index.php');
+                        exit;
+                    } catch (PDOException $e) {
+                        $regError = 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.';
+                    }
                 }
             } catch (PDOException $e) {
-                $loginError = 'Terjadi kesalahan. Silakan coba lagi.';
+                $regError = 'Terjadi kesalahan database. Silakan coba lagi.';
             }
         }
     }
@@ -54,14 +65,16 @@ $csrfToken = generateCSRFToken();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Masuk - BojongStore</title>
-  <meta name="description" content="Masuk ke akun BojongStore Anda.">
+  <title>Daftar - BojongStore</title>
+  <meta name="description" content="Buat akun BojongStore baru Anda.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
+
+
 
 
 <style>
@@ -94,6 +107,8 @@ $csrfToken = generateCSRFToken();
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 .auth-form-wrapper {
@@ -256,30 +271,45 @@ $csrfToken = generateCSRFToken();
 
 <div class="auth-container">
   <div class="auth-image-section">
-    <img src="assets/images/auth_bg.png" alt="BojongStore">
+    <img src="../assets/images/auth_bg.png" alt="BojongStore">
   </div>
   
   <div class="auth-form-section">
     <div class="auth-form-wrapper">
-      <h1>Selamat Datang!</h1>
+      <h1>Buat dan Daftar Akun Kamu</h1>
       
-      <?php if ($loginError): ?>
-        <?= getErrorHTML($loginError) ?>
+      <?php if ($regError): ?>
+        <?= getErrorHTML($regError) ?>
       <?php endif; ?>
       
-      <form method="POST" action="login.php">
+      <form method="POST" action="register.php">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <div class="form-group">
-          <label for="loginEmail">Email</label>
-          <input type="email" id="loginEmail" name="email" placeholder="Masukkan email anda" required>
+          <label for="regNama">Nama Lengkap</label>
+          <input type="text" id="regNama" name="nama" placeholder="Masukkan nama anda" required>
         </div>
         
         <div class="form-group">
-          <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" name="password" placeholder="Buat password anda" required>
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" name="email" placeholder="Masukkan alamat email" required>
         </div>
         
-        <button type="submit" class="btn-submit">Masuk</button>
+        <div class="form-group">
+          <label for="regPhone">No. Telepon</label>
+          <input type="tel" id="regPhone" name="telepon" placeholder="Masukkan nomor telepon" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" name="password" placeholder="Buat password anda" required minlength="6">
+        </div>
+        
+        <div class="form-group">
+          <label for="regKonfirmPassword">Konfirmasi Password</label>
+          <input type="password" id="regKonfirmPassword" name="konfirm_password" placeholder="Konfirmasi password anda" required minlength="6">
+        </div>
+        
+        <button type="submit" class="btn-submit">Buat Akun</button>
       </form>
       
       <div class="auth-divider">Atau lanjutkan dengan</div>
@@ -290,10 +320,11 @@ $csrfToken = generateCSRFToken();
       </div>
       
       <div class="auth-footer-link">
-        Belum punya akun? <a href="register.php">Buat akun</a>
+        Sudah punya akun? <a href="login.php">Masuk</a>
       </div>
     </div>
   </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
+

@@ -1,23 +1,23 @@
 <?php
-include 'includes/db.php';
-include 'includes/header.php';
+include '../includes/db.php';
+include '../includes/header.php';
 $kategori = $_GET['kategori'] ?? '';
 $query    = $_GET['q'] ?? '';
 
 // Dummy produk data
 $produk = [
-  ['id'=>1,'nama'=>'Kangkung Organik','harga'=>5000,'kategori'=>'sayuran','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Bu Ani'],
-  ['id'=>2,'nama'=>'Bayam Hijau Segar','harga'=>4000,'kategori'=>'sayuran','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Pak Sari'],
-  ['id'=>3,'nama'=>'Jeruk Mandarin','harga'=>15000,'kategori'=>'buah','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Pak Rudi'],
-  ['id'=>4,'nama'=>'Pisang Kepok','harga'=>8000,'kategori'=>'buah','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Bu Lastri'],
-  ['id'=>5,'nama'=>'Tempe Goreng','harga'=>7000,'kategori'=>'makanan','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Bu Santi'],
-  ['id'=>6,'nama'=>'Keripik Singkong','harga'=>10000,'kategori'=>'makanan','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Mba Rina'],
-  ['id'=>7,'nama'=>'Jus Alpukat','harga'=>12000,'kategori'=>'minuman','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Mba Desy'],
-  ['id'=>8,'nama'=>'Es Teh Manis','harga'=>5000,'kategori'=>'minuman','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Pak Budi'],
-  ['id'=>9,'nama'=>'Brokoli Segar','harga'=>6000,'kategori'=>'sayuran','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Pak Sari'],
-  ['id'=>10,'nama'=>'Tomat Merah','harga'=>5500,'kategori'=>'sayuran','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Bu Ani'],
-  ['id'=>11,'nama'=>'Apel Fuji','harga'=>18000,'kategori'=>'buah','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Pak Rudi'],
-  ['id'=>12,'nama'=>'Mangga Harum','harga'=>12000,'kategori'=>'buah','image'=>'assets/images/Grocery Iteam 1.png','toko'=>'Mba Rina'],
+  ['id'=>1,'nama'=>'Kangkung Organik','harga'=>5000,'kategori'=>'sayuran','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Bu Ani'],
+  ['id'=>2,'nama'=>'Bayam Hijau Segar','harga'=>4000,'kategori'=>'sayuran','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Pak Sari'],
+  ['id'=>3,'nama'=>'Jeruk Mandarin','harga'=>15000,'kategori'=>'buah','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Pak Rudi'],
+  ['id'=>4,'nama'=>'Pisang Kepok','harga'=>8000,'kategori'=>'buah','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Bu Lastri'],
+  ['id'=>5,'nama'=>'Tempe Goreng','harga'=>7000,'kategori'=>'makanan','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Bu Santi'],
+  ['id'=>6,'nama'=>'Keripik Singkong','harga'=>10000,'kategori'=>'makanan','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Mba Rina'],
+  ['id'=>7,'nama'=>'Jus Alpukat','harga'=>12000,'kategori'=>'minuman','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Mba Desy'],
+  ['id'=>8,'nama'=>'Es Teh Manis','harga'=>5000,'kategori'=>'minuman','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Pak Budi'],
+  ['id'=>9,'nama'=>'Brokoli Segar','harga'=>6000,'kategori'=>'sayuran','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Pak Sari'],
+  ['id'=>10,'nama'=>'Tomat Merah','harga'=>5500,'kategori'=>'sayuran','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Bu Ani'],
+  ['id'=>11,'nama'=>'Apel Fuji','harga'=>18000,'kategori'=>'buah','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Pak Rudi'],
+  ['id'=>12,'nama'=>'Mangga Harum','harga'=>12000,'kategori'=>'buah','image'=>'../assets/images/Grocery Iteam 1.png','toko'=>'Mba Rina'],
 ];
 
 // Filter
@@ -256,7 +256,7 @@ $filtered = array_filter($produk, function($p) use ($kategori, $query) {
     <a href="#semua-produk" class="btn">LIHAT SEMUA PRODUK</a>
   </div>
   <div class="produk-hero-image">
-    <img src="assets/images/Grocery Iteam 1.png" alt="Produk Segar">
+    <img src="../assets/images/Grocery Iteam 1.png" alt="Produk Segar">
   </div>
 </div>
 
@@ -313,4 +313,6 @@ $filtered = array_filter($produk, function($p) use ($kategori, $query) {
   </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include '../includes/footer.php'; ?>
+
+
