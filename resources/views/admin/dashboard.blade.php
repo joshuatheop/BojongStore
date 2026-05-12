@@ -1,103 +1,143 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard Admin') }}
-        </h2>
-    </x-slot>
+<x-admin-panel>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
-            <!-- Statistik Card -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 flex items-center">
-                    <div class="bg-blue-100 p-4 rounded-full mr-4">
-                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-500 uppercase font-bold">Total Produk</div>
-                        <div class="text-3xl font-bold text-gray-800">{{ $total_products }}</div>
-                    </div>
-                </div>
+    {{-- Breadcrumb --}}
+    <div class="mb-1">
+        <nav class="text-xs text-gray-400 flex items-center gap-1.5">
+            <span>Dashboard</span>
+            <i class='bx bx-chevron-right'></i>
+            <span class="text-gray-600 font-medium">Ringkasan Utama</span>
+        </nav>
+    </div>
 
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 flex items-center">
-                    <div class="bg-green-100 p-4 rounded-full mr-4">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-500 uppercase font-bold">Kategori Produk</div>
-                        <div class="text-3xl font-bold text-gray-800">{{ $total_categories }}</div>
-                    </div>
+    {{-- Page Title --}}
+    <div class="mb-6">
+        <h1 class="text-xl font-bold text-gray-800">Ringkasan Performa</h1>
+        <p class="text-sm text-gray-500 mt-0.5">Pantau pertumbuhan ekosistem UMKM BojongStore secara real-time.</p>
+    </div>
+
+    {{-- Stat Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+        {{-- Card 1: Total Produk --}}
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 bg-[#e8f5ec] rounded-lg flex items-center justify-center">
+                    <i class='bx bx-package text-xl text-[#1a5c2a]'></i>
                 </div>
+                <span class="text-xs font-semibold text-[#1a5c2a] bg-[#e8f5ec] px-2.5 py-1 rounded-full">+12% Bulan Ini</span>
             </div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Produk</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $total_products }}</p>
+        </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Grafik Pendaftaran User -->
-                <div class="lg:col-span-2 bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Statistik Pengguna Baru (7 Hari Terakhir)</h3>
-                    <canvas id="userChart"height="100"></canvas>
+        {{-- Card 2: UMKM --}}
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 bg-[#e8f5ec] rounded-lg flex items-center justify-center">
+                    <i class='bx bx-store text-xl text-[#1a5c2a]'></i>
                 </div>
-
-                <!-- Top 5 Produk -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Top 5 Produk (Kunjungan)</h3>
-                    @if($top_products->isEmpty())
-                        <p class="text-gray-500 text-sm">Belum ada data produk.</p>
-                    @else
-                        <ul class="divide-y divide-gray-200">
-                            @foreach($top_products as $product)
-                            <li class="py-3 flex justify-between items-center">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-gray-200 rounded overflow-hidden mr-3">
-                                        <img src="{{ Storage::url($product->image) }}" class="object-cover w-full h-full" alt="{{ $product->name }}">
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-900">{{ $product->name }}</p>
-                                        <p class="text-xs text-gray-500">{{ $product->views }} kunjungan</p>
-                                    </div>
-                                </div>
-                                <a href="{{ route('produk.detail', $product->slug) }}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Lihat</a>
-                            </li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
+                <span class="text-xs font-semibold text-[#1a5c2a] bg-[#e8f5ec] px-2.5 py-1 rounded-full">Cakupan Wilayah</span>
             </div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">UMKM Bojongsoang</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $total_categories }}</p>
+        </div>
 
+        {{-- Card 3: Review --}}
+        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 bg-[#e8f5ec] rounded-lg flex items-center justify-center">
+                    <i class='bx bx-star text-xl text-[#1a5c2a]'></i>
+                </div>
+                <span class="text-xs font-semibold text-orange-500 bg-orange-50 px-2.5 py-1 rounded-full">4.8 Avg Rating</span>
+            </div>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Review</p>
+            <p class="text-3xl font-bold text-gray-800">850</p>
         </div>
     </div>
 
-    <!-- Tambahkan library Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const ctx = document.getElementById('userChart').getContext('2d');
-            const userChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($labels) !!},
-                    datasets: [{
-                        label: 'Pengguna Baru',
-                        data: {!! json_encode($data) !!},
-                        borderColor: 'rgb(59, 130, 246)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
-</x-app-layout>
+    {{-- Bottom Section --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        {{-- Aktivitas Terkini --}}
+        <div class="lg:col-span-2 bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="font-bold text-gray-800">Aktivitas Terkini</h2>
+                <a href="#" class="text-sm font-semibold text-[#1a5c2a] hover:underline">Lihat Semua</a>
+            </div>
+
+            <div class="space-y-4">
+                {{-- Activity 1 --}}
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-[#e8f5ec] rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class='bx bx-plus text-[#1a5c2a] text-base'></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            <span class="font-semibold text-gray-900">Admin</span> menambahkan produk baru
+                            <span class="font-semibold text-[#1a5c2a]">{{ $top_products->first()->name ?? 'Tas Anyaman Pandan Premium' }}</span>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-0.5">5 menit yang lalu • Menu: Produk</p>
+                    </div>
+                </div>
+
+                {{-- Activity 2 --}}
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-[#e8f5ec] rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class='bx bx-check-circle text-[#1a5c2a] text-base'></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            <span class="font-semibold text-gray-900">Admin</span> memverifikasi UMKM
+                            <span class="font-semibold text-[#1a5c2a]">Kelompok Tani Mekar Wangi</span>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-0.5">25 menit yang lalu • Menu: UMKM</p>
+                    </div>
+                </div>
+
+                {{-- Activity 3 --}}
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-[#e8f5ec] rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class='bx bx-image text-[#1a5c2a] text-base'></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            <span class="font-semibold text-gray-900">Admin</span> mengubah banner
+                            <span class="font-semibold text-[#1a5c2a]">Promo Merdeka Sale 2024</span>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-0.5">2 jam yang lalu • Menu: Konten</p>
+                    </div>
+                </div>
+
+                {{-- Activity 4 --}}
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-[#e8f5ec] rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class='bx bx-file text-[#1a5c2a] text-base'></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            <span class="font-semibold text-gray-900">Admin</span> menerbitkan panduan
+                            <span class="font-semibold text-[#1a5c2a]">Digitalisasi Pasar Kaget Bojongsoang</span>
+                        </p>
+                        <p class="text-xs text-gray-400 mt-0.5">3 jam yang lalu • Menu: Konten</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Featured Card (Pasar Kreatif) --}}
+        <div class="relative rounded-xl overflow-hidden shadow-sm border border-gray-100 min-h-[280px]">
+            {{-- Background image --}}
+            <div class="absolute inset-0 bg-gradient-to-b from-black/20 to-black/70"></div>
+            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80"
+                 alt="Pasar Kreatif"
+                 class="absolute inset-0 w-full h-full object-cover -z-10">
+
+            {{-- Content --}}
+            <div class="absolute bottom-0 left-0 right-0 p-5 text-white">
+                <h3 class="font-bold text-lg leading-tight">Pasar Kreatif Bojongsoang</h3>
+                <p class="text-sm text-white/75 mt-1">Jadwal pameran di Kantor Desa Lengkong.</p>
+            </div>
+        </div>
+    </div>
+
+</x-admin-panel>
