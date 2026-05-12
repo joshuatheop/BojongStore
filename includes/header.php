@@ -16,80 +16,96 @@ if (isset($_SESSION['user_id']) && function_exists('get_defined_vars')) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BojongStore - Dukung UMKM Lokal Tumbuh Lebih Jauh</title>
-  <meta name="description" content="BojongStore adalah platform digital yang dikembangkan mahasiswa untuk membantu UMKM di Bojongsoang. Temukan berbagai produk unggulan dari sekitar anda.">
+  <title><?= isset($pageTitle) ? htmlspecialchars($pageTitle) : 'BojongStore - Dukung UMKM Lokal Tumbuh Lebih Jauh' ?></title>
+  <meta name="description" content="<?= isset($pageDescription) ? htmlspecialchars($pageDescription) : 'BojongStore adalah platform digital yang dikembangkan mahasiswa untuk membantu UMKM di Bojongsoang. Temukan berbagai produk unggulan dari sekitar anda.' ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <?php if (!empty($extraStyles)): ?>
+  <style><?= $extraStyles ?></style>
+  <?php endif; ?>
 </head>
 <body>
 
-<!-- ===== NAVBAR ===== -->
-<nav class="navbar" id="navbar">
-  <a href="index.php" class="navbar-brand">
-    <div class="brand-icon">
-      <img src="assets/images/logo_tree.png" alt="BojongStore Logo">
+<!-- ===== HEADER ===== -->
+<header>
+    <div class="container">
+        <div class="header-left">
+            <a href="index.php" class="logo-wrapper">
+                <span class="logo-text">BOJONGSTORE</span>
+                <img src="assets/images/logo_tree.png" width="36" height="36" alt="Logo" class="logo-img">
+            </a>
+            <nav class="nav-links">
+                <a href="index.php" class="nav-link <?= (basename($_SERVER['PHP_SELF']) == 'index.php') ? 'active' : '' ?>">Beranda</a>
+                <a href="produk.php" class="nav-link <?= (basename($_SERVER['PHP_SELF']) == 'produk.php') ? 'active' : '' ?>">Produk</a>
+            </nav>
+        </div>
+        
+        <div class="search-bar">
+            <span class="search-icon">
+              <i data-lucide="search" width="18" height="18"></i>
+            </span>
+            <input type="text" id="searchInput" placeholder="Cari produk...">
+        </div>
+
+        <div class="header-actions">
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <!-- Bookmark -->
+                <a href="favorit.php" class="action-btn-bookmark" title="Favorit">
+                    <i data-lucide="bookmark" width="22" height="22" style="fill:var(--green-primary);stroke:var(--green-primary);"></i>
+                </a>
+
+                <!-- User dropdown -->
+                <div class="user-dropdown-wrap" id="userDropdownWrap">
+                    <button class="action-btn-user" id="userDropdownBtn" title="Akun Saya" type="button">
+                        <?php if (!empty($user['foto'])): ?>
+                            <img src="<?= htmlspecialchars($user['foto']) ?>" alt="Avatar" class="user-avatar-img">
+                        <?php else: ?>
+                            <i data-lucide="user" width="18" height="18"></i>
+                        <?php endif; ?>
+                    </button>
+                    <div class="user-dropdown-menu" id="userDropdownMenu">
+                        <a href="profile.php" class="user-dropdown-item">
+                            <i data-lucide="user" width="15" height="15"></i>
+                            Profil Saya
+                        </a>
+                        <div class="user-dropdown-divider"></div>
+                        <a href="logout.php" class="user-dropdown-item user-dropdown-item--danger">
+                            <i data-lucide="log-out" width="15" height="15"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            <?php else: ?>
+                <!-- User belum login -->
+                <div class="auth-btns">
+                    <a href="login.php" class="header-btn header-btn-login">Masuk</a>
+                    <a href="register.php" class="header-btn header-btn-signup">Daftar</a>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
-    BOJONGSTORE
-  </a>
+</header>
 
-  <nav class="navbar-nav">
-    <a href="index.php" class="active">Beranda</a>
-    <a href="produk.php">Produk</a>
-  </nav>
+<script>
+    lucide.createIcons();
 
-  <div class="navbar-search">
-    <span class="search-icon">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-      </svg>
-    </span>
-    <input type="text" id="searchInput" placeholder="Cari produk..." autocomplete="off">
-  </div>
+    // ── User Dropdown Toggle ──
+    const dropWrap  = document.getElementById('userDropdownWrap');
+    const dropBtn   = document.getElementById('userDropdownBtn');
+    const dropMenu  = document.getElementById('userDropdownMenu');
 
-  <div class="navbar-actions">
-    <?php if (isset($_SESSION['user_id'])): ?>
-      <!-- User sudah login - Avatar Style -->
-      <div class="navbar-user-section">
-        <!-- Wishlist/Bookmark Button -->
-        <a href="#" class="navbar-icon-btn" title="Wishlist">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-            <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
-          </svg>
-        </a>
+    if (dropBtn && dropMenu) {
+        dropBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropWrap.classList.toggle('open');
+        });
+        document.addEventListener('click', () => {
+            dropWrap.classList.remove('open');
+        });
+        dropMenu.addEventListener('click', (e) => e.stopPropagation());
+    }
+</script>
 
-        <!-- Profile Avatar Button -->
-        <a href="profile.php" class="navbar-avatar-btn" title="Profil Saya">
-           <?php 
-           $fotoPath = !empty($user['foto']) ? htmlspecialchars($user['foto']) : 'assets/images/default-avatar.svg';
-           $userExists = isset($user) && !empty($user['foto']);
-           ?>
-           <?php if ($userExists && !empty($user['foto'])): ?>
-             <img src="<?= $fotoPath ?>" alt="<?= htmlspecialchars($_SESSION['user_name']) ?>" class="avatar-image">
-          <?php else: ?>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/>
-            </svg>
-          <?php endif; ?>
-        </a>
-
-        <!-- Logout Button -->
-        <a href="logout.php" class="navbar-logout-btn" title="Logout">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
-          </svg>
-        </a>
-      </div>
-    <?php else: ?>
-      <!-- User belum login -->
-      <a href="register.php" class="btn btn-outline" id="btnSignUp">Sign Up</a>
-      <a href="login.php" class="btn btn-primary" id="btnLogin">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/>
-        </svg>
-        Log In
-      </a>
-    <?php endif; ?>
-  </div>
-</nav>
