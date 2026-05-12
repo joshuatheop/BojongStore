@@ -56,4 +56,19 @@ class ProductController extends Controller
 
         return view('detail-produk', compact('product', 'relatedProducts'));
     }
+
+    /**
+     * Redirect legacy ID-based URLs to new slug-based URLs.
+     */
+    public function showLegacy(Request $request)
+    {
+        $id = $request->query('id');
+        $product = $id ? Product::find($id) : Product::first();
+        
+        if (!$product) {
+            return redirect()->route('katalog');
+        }
+
+        return redirect()->route('produk.detail', ['slug' => $product->slug]);
+    }
 }

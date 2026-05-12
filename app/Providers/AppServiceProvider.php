@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Sembunyikan pesan Deprecated agar tidak merusak tampilan di PHP 8.5
+        error_reporting(E_ALL & ~E_DEPRECATED);
     }
 }

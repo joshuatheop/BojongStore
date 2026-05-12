@@ -1,72 +1,293 @@
-{{-- resources/views/katalog.blade.php --}}
-
 @extends('layouts.landing')
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4" style="padding-top: 120px;">
-<div class="max-w-6xl mx-auto px-4" style="padding-top: 10px;">
-    {{-- Filter & Search --}}
-    <form method="GET" action="{{ route('katalog') }}" class="flex flex-col md:flex-row gap-4 mb-12">
-        {{-- Dropdown Kategori --}}
-        <div class="w-full md:w-1/4">
-            <select name="category" class="border border-gray-300 rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                <option value="">Semua Kategori</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+<style>
+/* Hero Banner */
+.produk-hero {
+  background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
+  color: white;
+  padding: 100px 40px 50px; /* Adjusted padding-top for fixed header */
+  margin-bottom: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
 
-        {{-- Input Pencarian --}}
-        <div class="flex w-full md:w-2/4">
-            <input type="text" name="search" value="{{ request('search') }}" class="border border-gray-300 rounded-l-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Cari Produk">
-            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-12 rounded-r-lg transition-colors duration-200 font-medium whitespace-nowrap">
-                Cari
-            </button>
-        </div>
-    </form>
+.produk-hero-content h1 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
 
-    {{-- Produk Grid - Menggunakan data dari Controller --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+.produk-hero-content p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  opacity: 0.95;
+}
 
-        {{-- Menghapus data statis dan langsung loop data $products dari controller --}}
-        @foreach($products as $product)
-        {{-- Mengubah div menjadi tag <a> agar seluruh kartu produk bisa diklik --}}
-        <a href="{{ route('produk.detail', $product->slug) }}" class="bg-white border rounded-xl shadow-lg p-4 flex flex-col items-center hover:shadow-xl transition-shadow duration-300 no-underline">
-            <div class="w-full h-48 mb-4 flex items-center justify-center">
-                {{-- Menggunakan gambar placeholder karena belum ada kolom gambar di database --}}
-                <img  src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $product->name }}" class="max-h-full max-w-full object-contain">
+.produk-hero-content .btn {
+  display: inline-block;
+  padding: 10px 24px;
+  background: white;
+  color: #3a7d44;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.produk-hero-content .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.produk-hero-image {
+  flex: 1;
+  text-align: center;
+}
+
+.produk-hero-image img {
+  max-width: 100%;
+  height: auto;
+  max-height: 250px;
+}
+
+/* Main Content */
+.produk-page {
+  padding: 0 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Category Pills */
+.kategori-section h2 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 24px;
+}
+
+.kategori-pills {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 50px;
+}
+
+.kategori-pill {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: white;
+  text-decoration: none;
+  color: inherit;
+}
+
+.kategori-pill:hover {
+  border-color: var(--green-primary);
+  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.1);
+}
+
+.kategori-pill-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.kategori-pill-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+/* Produk Section */
+.produk-section h2 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 24px;
+}
+
+.produk-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 50px;
+}
+
+.produk-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+  background: white;
+  text-decoration: none;
+  color: inherit;
+}
+
+.produk-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.produk-card .prod-thumb {
+  height: 160px;
+  background: var(--bg-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.produk-card .prod-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.produk-card .prod-info {
+  padding: 16px;
+}
+
+.produk-card .prod-name {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: var(--text-dark);
+}
+
+.produk-card .prod-toko {
+  font-size: 12px;
+  color: var(--text-gray);
+  margin-bottom: 10px;
+}
+
+.produk-card .prod-price {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--green-primary);
+  margin-bottom: 12px;
+}
+
+.produk-card .prod-btn {
+  display: block;
+  text-align: center;
+  padding: 8px 12px;
+  background: var(--green-primary);
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.produk-card .prod-btn:hover {
+  background: #2d5016;
+}
+
+.no-result {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-gray);
+}
+
+.no-result .icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 1024px) {
+  .produk-grid,
+  .kategori-pills {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .produk-hero {
+    flex-direction: column;
+    text-align: center;
+    padding-top: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .produk-grid,
+  .kategori-pills {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
+
+<!-- Hero Banner -->
+<div class="produk-hero">
+  <div class="produk-hero-content">
+    <h1>PRODUK TERBARU, LANGSUNG DARI JANTUNG DESA</h1>
+    <p>Belanja produk segar berkualitas tinggi langsung dari petani dan pengrajin lokal. Dukung UMKM sambil menikmati kesegaran terjamin!</p>
+    <a href="#semua-produk" class="btn">LIHAT SEMUA PRODUK</a>
+  </div>
+  <div class="produk-hero-image">
+    <img src="{{ asset('assets/images/Grocery Iteam 1.png') }}" alt="Produk Segar">
+  </div>
+</div>
+
+<div class="produk-page">
+  <!-- Kategori Pills -->
+  <div class="kategori-section">
+    <h2>Kategori Pilihan</h2>
+    <div class="kategori-pills">
+      <a href="{{ route('katalog') }}" class="kategori-pill">
+        <div class="kategori-pill-icon">🥬</div>
+        <div class="kategori-pill-name">Sayuran</div>
+      </a>
+      <a href="{{ route('katalog', ['category' => 2]) }}" class="kategori-pill">
+        <div class="kategori-pill-icon">🍊</div>
+        <div class="kategori-pill-name">Buah</div>
+      </a>
+      <a href="{{ route('katalog', ['category' => 1]) }}" class="kategori-pill">
+        <div class="kategori-pill-icon">🍲</div>
+        <div class="kategori-pill-name">Makanan</div>
+      </a>
+      <a href="{{ route('katalog', ['category' => 3]) }}" class="kategori-pill">
+        <div class="kategori-pill-icon">🥤</div>
+        <div class="kategori-pill-name">Minuman</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Semua Produk -->
+  <div class="produk-section" id="semua-produk">
+    <h2>SEMUA PRODUK</h2>
+    
+    @if ($products->isEmpty())
+      <div class="no-result">
+        <div class="icon">🔍</div>
+        <p>Produk tidak ditemukan. Coba kategori atau kata kunci lain.</p>
+      </div>
+    @else
+      <div class="produk-grid">
+        @foreach ($products as $p)
+          <div class="produk-card">
+            <div class="prod-thumb">
+              <img src="{{ asset($p->image) }}" alt="{{ $p->name }}">
             </div>
-            <div class="text-center w-full">
-                {{-- Mengambil nama dari database --}}
-                <h3 class="font-semibold text-sm md:text-base mb-2 text-gray-800 line-clamp-2">{{ $product->name }}</h3>
-                
-                {{-- Mengambil harga dari database --}}
-                <div class="text-green-700 font-bold text-lg mb-2">
-                    Rp{{ number_format($product->price, 0, ',', '.') }}
-                </div>
-                
-                {{-- Memberi rating statis untuk menjaga tampilan --}}
-                <div class="flex justify-center text-yellow-400 text-sm mb-3">
-                    @for ($i = 1; $i <= 5; $i++)
-                        {!! $i <= 4 ? '★' : '☆' !!} {{-- Rating statis 4 bintang --}}
-                    @endfor
-                </div>
-
-                {{-- Tombol ini sekarang bagian dari link, fungsinya menjadi visual --}}
-                <div class="w-full bg-green-600 text-white py-2 px-4 rounded-lg text-sm font-medium">
-                    Lihat Detail
-                </div>
+            <div class="prod-info">
+              <div class="prod-name">{{ $p->name }}</div>
+              <div class="prod-toko">by {{ $p->seller }}</div>
+              <div class="prod-price">Rp {{ number_format($p->price, 0, ',', '.') }}</div>
+              <a href="{{ route('produk.detail', $p->slug) }}" class="prod-btn">Lihat Produk</a>
             </div>
-        </a>
+          </div>
         @endforeach
-    </div>
-
-    {{-- Pagination - Menggunakan link dari Laravel Pagination --}}
-    <div class="mt-12 flex justify-center items-center">
-        {{ $products->links() }}
-    </div>
+      </div>
+      
+      <div class="mt-4">
+          {{ $products->links() }}
+      </div>
+    @endif
+  </div>
 </div>
 @endsection

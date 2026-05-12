@@ -3,43 +3,64 @@
         :class="{ 'header-scrolled': scrolled }">
     <div class="container">
         <div class="header-left">
-            <a href="{{ url('/') }}" class="logo-wrapper">
+            <a href="{{ route('home') }}" class="logo-wrapper">
                 <span class="logo-text">BOJONGSTORE</span>
-                <img src="{{ asset('images/logo.png') }}" width="36" height="36" alt="Logo" class="logo-img">
+                <img src="{{ asset('assets/images/logo_tree.png') }}" width="36" height="36" alt="Logo" class="logo-img">
             </a>
             <nav class="nav-links">
-                <a href="{{ url('/') }}" class="nav-link {{ request()->is('/') ? 'active' : '' }}">Beranda</a>
-                <a href="{{ url('/produk') }}" class="nav-link {{ request()->is('produk') ? 'active' : '' }}">Produk</a>
+                <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
+                <a href="{{ route('katalog') }}" class="nav-link {{ request()->routeIs('katalog') ? 'active' : '' }}">Produk</a>
             </nav>
         </div>
         
         <div class="search-bar">
             <span class="search-icon">
-                <i data-lucide="search" width="18" height="18"></i>
+              <i data-lucide="search" width="18" height="18"></i>
             </span>
-            <input type="text" placeholder="Cari produk...">
+            <input type="text" id="searchInput" placeholder="Cari produk...">
         </div>
 
         <div class="header-actions">
-            @guest
+            @auth
+                <!-- Bookmark -->
+                <a href="{{ url('/favorit') }}" class="action-btn-bookmark" title="Favorit">
+                    <i data-lucide="bookmark" width="22" height="22" style="fill:var(--green-primary);stroke:var(--green-primary);"></i>
+                </a>
+
+                <!-- User dropdown -->
+                <div class="user-dropdown-wrap" x-data="{ open: false }" @click.away="open = false">
+                    <button class="action-btn-user" @click="open = !open" title="Akun Saya" type="button">
+                        @if (Auth::user()->foto)
+                            <img src="{{ asset(Auth::user()->foto) }}" alt="Avatar" class="user-avatar-img">
+                        @else
+                            <i data-lucide="user" width="18" height="18"></i>
+                        @endif
+                    </button>
+                    <div class="user-dropdown-menu" x-show="open" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         :class="{ 'visible opacity-100 transform-none': open }">
+                        <a href="{{ route('profile.edit') }}" class="user-dropdown-item">
+                            <i data-lucide="user" width="15" height="15"></i>
+                            Profil Saya
+                        </a>
+                        <div class="user-dropdown-divider"></div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="user-dropdown-item user-dropdown-item--danger" style="width: 100%; border: none; background: none; text-align: left; padding: 10px 12px; cursor: pointer;">
+                                <i data-lucide="log-out" width="15" height="15"></i>
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @else
                 <div class="auth-btns">
                     <a href="{{ route('login') }}" class="header-btn header-btn-login">Masuk</a>
                     <a href="{{ route('register') }}" class="header-btn header-btn-signup">Daftar</a>
                 </div>
-            @else
-                <a href="{{ url('/favorit') }}" class="action-btn-bookmark" title="Favorit">
-                    <i data-lucide="bookmark" width="24" height="24"></i>
-                </a>
-                <a href="{{ route('profile.edit') }}" class="action-btn-user" title="Profil Saya">
-                    <i data-lucide="user" width="24" height="24"></i>
-                </a>
-                <form method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button type="submit" class="action-btn-logout" title="Logout">
-                        <i data-lucide="log-out" width="22" height="22"></i>
-                    </button>
-                </form>
-            @endguest
+            @endauth
         </div>
     </div>
 </header>
@@ -52,166 +73,3 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-<style>
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 1rem 0;
-  transition: all 0.3s ease;
-}
-
-header.header-scrolled {
-  padding: 0.6rem 0;
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-}
-
-header .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 3rem;
-}
-
-.logo-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
-}
-
-.logo-text {
-  font-weight: 800;
-  font-size: 1.3rem;
-  letter-spacing: -0.5px;
-  color: #1a1a2e;
-}
-
-.logo-img {
-  object-fit: contain;
-}
-
-.nav-links {
-  display: flex;
-  gap: 2rem;
-}
-
-.nav-link {
-  text-decoration: none;
-  color: #666;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: color 0.3s ease;
-}
-
-.nav-link:hover, .nav-link.active {
-  color: #00923F;
-}
-
-.search-bar {
-  flex: 1;
-  max-width: 400px;
-  position: relative;
-  margin: 0 2rem;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 0.6rem 1.2rem 0.6rem 2.8rem;
-  border: 1.5px solid #f0f0f0;
-  border-radius: 12px;
-  background: #f9f9f9;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-}
-
-.search-bar input:focus {
-  outline: none;
-  border-color: #00923F;
-  background: white;
-  box-shadow: 0 10px 25px rgba(0, 146, 63, 0.1);
-}
-
-.search-icon {
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #999;
-  display: flex;
-  align-items: center;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.action-btn-bookmark, .action-btn-user, .action-btn-logout {
-  color: #333;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border-radius: 10px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.action-btn-bookmark:hover, .action-btn-user:hover, .action-btn-logout:hover {
-  color: #00923F;
-  background: rgba(0, 146, 63, 0.05);
-}
-
-.auth-btns {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.header-btn {
-  padding: 8px 20px;
-  border-radius: 10px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.header-btn-login {
-  color: #00923F;
-  border: 1.5px solid #00923F;
-}
-
-.header-btn-login:hover {
-  background: #00923F;
-  color: white;
-}
-
-.header-btn-signup {
-  background: #00923F;
-  color: white;
-}
-
-.header-btn-signup:hover {
-  background: #007a35;
-  transform: translateY(-1px);
-}
-</style>
-
