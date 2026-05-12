@@ -25,6 +25,7 @@ class Product extends Model
         'category_id',
         'tags',
         'seller',
+        'is_featured',
     ];
 
     /**

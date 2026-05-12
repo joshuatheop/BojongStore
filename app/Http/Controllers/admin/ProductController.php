@@ -18,8 +18,10 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with('category')->latest()->paginate(10);
-        // Arahkan ke view di dalam folder user/products
-        return view('admin.products.index', compact('products'));
+        $total_products = Product::count();
+        $total_featured = Product::where('is_featured', true)->count();
+        $total_categories = \App\Models\Category::count();
+        return view('admin.products.index', compact('products', 'total_products', 'total_featured', 'total_categories'));
     }
 
     /**
@@ -41,13 +43,14 @@ class ProductController extends Controller
             'name' => 'required|string|max:255|unique:products',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'shoppee' => 'nullable|url',
             'whatsapp' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'tags' => 'nullable|string',
-            'seller' => 'required|string|max:255',
+            'seller' => 'nullable|string|max:255',
         ]);
+        $validatedData['is_featured'] = $request->boolean('is_featured');
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
@@ -81,13 +84,14 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255', Rule::unique('products')->ignore($product->id)],
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'shoppee' => 'nullable|url',
             'whatsapp' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'tags' => 'nullable|string',
-            'seller' => 'required|string|max:255',
+            'seller' => 'nullable|string|max:255',
         ]);
+        $validatedData['is_featured'] = $request->boolean('is_featured');
 
         if ($request->hasFile('image')) {
             if ($product->image) {
@@ -113,8 +117,16 @@ class ProductController extends Controller
             Storage::disk('public')->delete($product->image);
         }
         $product->delete();
-
-        // Arahkan kembali ke route user.products.index
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus.');
+    }
+
+    /**
+     * Toggle status unggulan produk.
+     */
+    public function toggleFeatured(Product $product)
+    {
+        $product->update(['is_featured' => !$product->is_featured]);
+        $status = $product->is_featured ? 'dijadikan unggulan' : 'dihapus dari unggulan';
+        return back()->with('success', "Produk berhasil {$status}.");
     }
 }

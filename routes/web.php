@@ -34,4 +34,5 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth', 'adminMiddleware'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::resource('admin/products', \App\Http\Controllers\admin\ProductController::class)->names('admin.products');
+    Route::post('/admin/products/{product}/toggle-featured', [\App\Http\Controllers\admin\ProductController::class, 'toggleFeatured'])->name('admin.products.toggleFeatured');
 });
