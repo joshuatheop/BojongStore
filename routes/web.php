@@ -36,4 +36,10 @@ Route::middleware(['auth', 'adminMiddleware'])->group(function () {
     Route::resource('admin/products', \App\Http\Controllers\admin\ProductController::class)->names('admin.products');
     Route::post('/admin/products/{product}/toggle-featured', [\App\Http\Controllers\admin\ProductController::class, 'toggleFeatured'])->name('admin.products.toggleFeatured');
     Route::resource('admin/umkm', \App\Http\Controllers\admin\UmkmController::class)->names('admin.umkm');
+    // Review
+    Route::get('/admin/review', [\App\Http\Controllers\admin\ReviewController::class, 'index'])->name('admin.review.index');
+    Route::delete('/admin/review/{review}', [\App\Http\Controllers\admin\ReviewController::class, 'destroy'])->name('admin.review.destroy');
+    // Konten
+    Route::get('/admin/konten', [\App\Http\Controllers\admin\KontenController::class, 'index'])->name('admin.konten.index');
+    Route::post('/admin/konten/{section}', [\App\Http\Controllers\admin\KontenController::class, 'update'])->name('admin.konten.update');
 });
