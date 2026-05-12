@@ -29,13 +29,16 @@
             <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden flex flex-col hover:shadow-xl transition-all hover:-translate-y-1 relative group">
                 
                 <!-- Remove Button -->
-                <button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors z-10 shadow-sm" title="Hapus dari Favorit" onclick="alert('Ini hanya UI demonstrasi. Fitur hapus favorit belum terhubung ke database.')">
-                    <i class='bx bxs-heart text-xl'></i>
-                </button>
+                <form action="{{ route('favorit.toggle', $product->id) }}" method="POST" class="absolute top-4 right-4 z-10">
+                    @csrf
+                    <button type="submit" class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition-colors shadow-sm" title="Hapus dari Favorit">
+                        <i class='bx bxs-heart text-xl'></i>
+                    </button>
+                </form>
 
                 <!-- Product Image -->
                 <div class="w-full aspect-square bg-gray-50 p-6 flex items-center justify-center">
-                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                    <img src="{{ $product->image ? asset('storage/' . str_replace('public/', '', $product->image)) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500">
                 </div>
                 
                 <!-- Product Info -->
@@ -69,14 +72,6 @@
             @endforeach
         </div>
         
-        <!-- Info Alert -->
-        <div class="mt-12 bg-surface border border-accent/30 rounded-xl p-4 flex gap-4 text-primary">
-            <i class='bx bx-info-circle text-2xl'></i>
-            <div>
-                <h4 class="font-bold text-gray-900">Info Pengembangan</h4>
-                <p class="text-sm mt-1 text-gray-600">Halaman ini adalah demonstrasi UI (Frontend). Untuk menyimpan favorit secara permanen, dibutuhkan integrasi Backend (Tabel Database, Model, dan Controller Favorit).</p>
-            </div>
-        </div>
         @endif
 
     </div>

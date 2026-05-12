@@ -32,11 +32,17 @@
                 <div class="w-full md:w-5/12 flex-shrink-0">
                     <div class="bg-gray-100 rounded-2xl aspect-square p-6 flex items-center justify-center relative overflow-hidden">
                         @auth
-                        <button class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow flex items-center justify-center text-gray-400 hover:text-primary transition-colors z-10">
-                            <i class='bx bx-bookmark text-xl'></i>
-                        </button>
+                        <form action="{{ route('favorit.toggle', $product->id) }}" method="POST" class="absolute top-4 right-4 z-10">
+                            @csrf
+                            @php
+                                $isFavorited = auth()->user()->favorites->contains($product->id);
+                            @endphp
+                            <button type="submit" class="w-10 h-10 rounded-full shadow flex items-center justify-center transition-colors {{ $isFavorited ? 'bg-primary text-white' : 'bg-white text-gray-400 hover:text-primary' }}" title="{{ $isFavorited ? 'Hapus dari Favorit' : 'Tambah ke Favorit' }}">
+                                <i class='bx {{ $isFavorited ? 'bxs-bookmark' : 'bx-bookmark' }} text-xl'></i>
+                            </button>
+                        </form>
                         @endauth
-                        <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain drop-shadow-xl hover:scale-105 transition-transform duration-500">
+                        <img src="{{ $product->image ? asset('storage/' . str_replace('public/', '', $product->image)) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain drop-shadow-xl hover:scale-105 transition-transform duration-500">
                     </div>
                 </div>
 
@@ -151,7 +157,7 @@
                 @foreach($relatedProducts as $relatedProduct)
                     <a href="{{ route('produk.detail', $relatedProduct->slug) }}" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
                         <div class="w-full h-40 bg-gray-50 p-4 relative flex items-center justify-center">
-                            <img class="w-full h-full object-contain group-hover:scale-105 transition-transform" src="{{ $relatedProduct->image ? asset('storage/' . $relatedProduct->image) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $relatedProduct->name }}">
+                            <img class="w-full h-full object-contain group-hover:scale-105 transition-transform" src="{{ $relatedProduct->image ? asset('storage/' . str_replace('public/', '', $relatedProduct->image)) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $relatedProduct->name }}">
                         </div>
                         <div class="p-4">
                             <h3 class="font-medium text-gray-800 text-sm mb-1 truncate">{{ $relatedProduct->name }}</h3>
@@ -181,7 +187,7 @@
         <div class="p-6">
             <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                 <div class="w-16 h-16 bg-gray-100 rounded-lg p-2 flex items-center justify-center">
-                    <img src="{{ $product->image ? asset('storage/' . $product->image) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain">
+                    <img src="{{ $product->image ? asset('storage/' . str_replace('public/', '', $product->image)) : 'https://placehold.co/400x400/e2e8f0/333333?text=No+Image' }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain">
                 </div>
                 <div>
                     <div class="font-bold text-gray-900 text-sm line-clamp-2">{{ $product->name }}</div>

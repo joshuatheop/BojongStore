@@ -84,9 +84,15 @@
                 <!-- Product Image -->
                 <div class="w-full aspect-square bg-gray-50/30 relative p-4 flex items-center justify-center">
                     @auth
-                    <button class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all z-10">
-                        <i class='bx bx-bookmark'></i>
-                    </button>
+                    <form action="{{ route('favorit.toggle', $product->id) }}" method="POST" class="absolute top-3 right-3 z-10">
+                        @csrf
+                        @php
+                            $isFavorited = auth()->user()->favorites->contains($product->id);
+                        @endphp
+                        <button type="submit" class="w-8 h-8 rounded-full flex items-center justify-center transition-all {{ $isFavorited ? 'bg-primary text-white shadow-md' : 'bg-black/5 text-primary hover:bg-primary hover:text-white' }}" title="{{ $isFavorited ? 'Hapus dari Favorit' : 'Tambah ke Favorit' }}">
+                            <i class='bx {{ $isFavorited ? 'bxs-bookmark' : 'bx-bookmark' }}'></i>
+                        </button>
+                    </form>
                     @endauth
                     <img src="{{ $product->image ? asset('storage/' . str_replace('public/', '', $product->image)) : 'https://placehold.co/400x400/ffffff/334155?text=Produk' }}" alt="{{ $product->name }}" class="max-w-[80%] max-h-[80%] object-contain">
                 </div>

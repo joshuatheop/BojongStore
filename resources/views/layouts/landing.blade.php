@@ -45,6 +45,28 @@
         <main class="min-h-[calc(100vh-200px)]">
             @yield('content')
         </main>
+
+        {{-- Flash Message Toast --}}
+        @if (session('success'))
+            <div x-data="{ show: true }" 
+                 x-show="show"
+                 x-init="setTimeout(() => show = false, 3000)"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-10"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-300"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-10"
+                 class="fixed bottom-6 right-6 z-[100] bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 border border-green-400">
+                <div class="bg-white/20 rounded-full w-8 h-8 flex items-center justify-center">
+                    <i class='bx bx-check text-xl'></i>
+                </div>
+                <span class="font-medium text-sm">{{ session('success') }}</span>
+                <button @click="show = false" class="ml-4 text-white/80 hover:text-white transition-colors">
+                    <i class='bx bx-x text-xl'></i>
+                </button>
+            </div>
+        @endif
         
         {{-- Footer --}}
         <footer class="bg-surface pt-16 pb-8">
