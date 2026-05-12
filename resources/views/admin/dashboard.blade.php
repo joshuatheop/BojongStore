@@ -128,7 +128,7 @@
         <div class="relative rounded-xl overflow-hidden shadow-sm border border-gray-100 min-h-[280px]">
             {{-- Background image --}}
             <div class="absolute inset-0 bg-gradient-to-b from-black/20 to-black/70"></div>
-            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80"
+            <img src="{{ asset('images/pasar-kreatif.png') }}"
                  alt="Pasar Kreatif"
                  class="absolute inset-0 w-full h-full object-cover -z-10">
 
