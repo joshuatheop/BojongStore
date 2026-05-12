@@ -1,33 +1,23 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+
+use App\Http\Controllers\UlasanController;
 
 use App\Http\Controllers\ProductController;
 
-// User Controllers
-use App\Http\Controllers\user\UserController;
-
-// Admin Controllers
-use App\Http\Controllers\admin\AdminController;
-
-Route::get('/', [ProductController::class, 'index'])->name('katalog');
-Route::get('/produk-unggulan', function () { return view('produkunggulan'); })->name('produk.unggulan');
-Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('produk.detail');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::get('/', function () {
+    $products = \App\Models\Product::all();
+    return view('welcome', compact('products'));
 });
 
-require __DIR__.'/auth.php';
+Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('product.show');
 
-Route::middleware(['auth', 'userMiddleware'])->group(function () {
-    Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
+Route::post('/reviews', [UlasanController::class, 'store'])->name('reviews.store');
+Route::get('/api/reviews/{product_id}', [UlasanController::class, 'getReviews']);
+Route::get('/favorit', function () {
+    $products = \App\Models\Product::all();
+    return view('favorit', compact('products'));
 });
 
-Route::middleware(['auth', 'adminMiddleware'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::resource('admin/products', \App\Http\Controllers\admin\ProductController::class)->names('admin.products');
-});
+Route::delete('/reviews/{id}', [UlasanController::class, 'destroy']);
