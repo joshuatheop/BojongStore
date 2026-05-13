@@ -8,10 +8,11 @@ use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     $products = \App\Models\Product::all();
-    return view('welcome', compact('products'));
+    $categories = \App\Models\Category::all();
+    return view('welcome', compact('products', 'categories'));
 });
 
-Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('product-detail');
 
 Route::post('/reviews', [UlasanController::class, 'store'])->name('reviews.store');
 Route::get('/api/reviews/{product_id}', [UlasanController::class, 'getReviews']);
@@ -19,5 +20,9 @@ Route::get('/favorit', function () {
     $products = \App\Models\Product::all();
     return view('favorit', compact('products'));
 });
+
+Route::get('/search', [ProductController::class, 'search'])->name('product.search');
+Route::get('/katalog', [ProductController::class, 'katalog'])->name('katalog');
+
 
 Route::delete('/reviews/{id}', [UlasanController::class, 'destroy']);

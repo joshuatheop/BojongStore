@@ -20,4 +20,26 @@ class ProductController extends Controller
 
         return view('product-detail', compact('product'));
     }
+      public function search(Request $request)
+{
+    $query = $request->get('q');
+    $categories = \App\Models\Category::all();
+    $products = Product::where('name', 'like', '%' . $query . '%')
+                ->orWhere('description', 'like', '%' . $query . '%')
+                ->orWhere('type', 'like', '%' . $query . '%')
+                ->paginate(10);
+
+    return view('katalog', compact('products', 'categories', 'query'));
+}
+    public function katalog(Request $request)
+{
+    $categories = \App\Models\Category::all();
+    
+    $products = Product::query()
+        ->when($request->category, fn($q) => $q->where('category_id', $request->category))
+        ->when($request->search, fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
+        ->paginate(10);
+
+    return view('katalog', compact('products', 'categories'));
+}
 }

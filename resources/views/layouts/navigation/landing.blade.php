@@ -6,9 +6,9 @@
     
     <!-- Logo -->
     <a href="/" class="logo">
-                <img :src="scrolled ? '{{ asset('images/logo.png') }}' : '{{ asset('images/logo.png') }}'" 
+          <span style="font-size: 1.1rem; font-weight: 700; letter-spacing: 1px;color: #1a1a1a;">BOJONGSTORE</span>
+          <img :src="scrolled ? '{{ asset('images/logo.png') }}' : '{{ asset('images/logo.png') }}'" 
           alt="BojongStore" 
-          class="h-8 transition-all duration-300"
           style="width: 40px; height: auto; transition: all 0.3s ease;">
     </a>
 
@@ -24,11 +24,11 @@
       @endguest
       @auth
         @if(auth()->user()->role === 'admin')
-          <a href="{{ route('admin.dashboard') }}" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Dashboard Admin</a>
+          <a href="/" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Dashboard Admin</a>
         @else
-          <a href="{{ route('user.dashboard') }}" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Dashboard Saya</a>
-        @endif
-      @endauth
+          <a href="/" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Dashboard Saya</a>
+    @endif
+@endauth
     </div>
   </div>
 </nav>

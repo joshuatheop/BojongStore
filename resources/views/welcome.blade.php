@@ -17,13 +17,15 @@
                     <img src="{{ asset('images/logo.png') }}" width="36" height="36" alt="Logo" class="logo-img">
                 </div>
                 <nav class="nav-links">
-                    <a href="/" class="nav-link">Beranda</a>
-                    <a href="#" class="nav-link active">Produk</a>
+                    <a href="#" class="nav-link">Beranda</a>
+                    <a href="/" class="nav-link active">Produk</a>
                 </nav>
             </div>
             <div class="search-bar">
+                <form action="/search" method="GET" style="display:flex;align-items:center;width:100%">
                 <i data-lucide="search" class="search-icon" width="18" height="18"></i>
-                <input type="text" placeholder="Cari produk...">
+                <input type="text" name="q" placeholder="Cari produk..." value="{{ request('q') }}">
+                </form>
             </div>
             <div class="header-actions">
                 <a href="/favorit" class="action-btn-bookmark"><i data-lucide="bookmark" width="28" height="28"></i></a>
@@ -53,26 +55,25 @@
                     <p>Temukan keajaiban lokal dalam berbagai varian.</p>
                 </div>
                 <div class="categories-grid">
-                    <div class="category-card">
-                        <div class="category-icon"><i data-lucide="leaf" width="32" height="32"></i></div>
-                        <h3>Sayuran</h3>
-                        <p>Segar & Organik</p>
-                    </div>
-                    <div class="category-card">
-                        <div class="category-icon"><i data-lucide="apple" width="32" height="32"></i></div>
-                        <h3>Buah</h3>
-                        <p>Lokal & Manis</p>
-                    </div>
-                    <div class="category-card">
-                        <div class="category-icon"><i data-lucide="croissant" width="32" height="32"></i></div>
-                        <h3>Makanan</h3>
-                        <p>Resep Warisan</p>
-                    </div>
-                    <div class="category-card">
-                        <div class="category-icon"><i data-lucide="coffee" width="32" height="32"></i></div>
-                        <h3>Minuman</h3>
-                        <p>Alami & Menyehatkan</p>
-                    </div>
+                    @foreach($categories as $category)
+                    <a href="{{ route('katalog', ['category' => $category->id]) }}" class="category-card">
+                        <div class="category-icon">
+                            @php
+                                $icons = [
+                                    'Sayuran'          => 'leaf',
+                                    'Buah-buahan'      => 'apple',
+                                    'Kerajinan Tangan' => 'scissors',
+                                    'Makanan Olahan'   => 'croissant',
+                                    'Minuman'          => 'coffee',
+                                    'Jasa'             => 'briefcase',
+                                ];
+                                $icon = $icons[$category->name] ?? 'tag';
+                            @endphp
+                            <i data-lucide="{{ $icon }}" width="32" height="32"></i>
+                        </div>
+                        <h3>{{ $category->name }}</h3>
+                    </a>
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -112,10 +113,10 @@
                 <div class="footer-column">
                     <h4 class="footer-title">Kategori</h4>
                     <ul class="footer-links">
-                        <li><a href="#">Sayuran Segar</a></li>
-                        <li><a href="#">Buah Tropis</a></li>
-                        <li><a href="#">Makanan Siap Saji</a></li>
-                        <li><a href="#">Minuman</a></li>
+                        <li><a href="{{ route('katalog', ['category' => 1]) }}">Sayuran Segar</a></li>
+                        <li><a href="{{ route('katalog', ['category' => 2]) }}">Buah-buahan</a></li>
+                        <li><a href="{{route('katalog', ['category' => 4]) }}">Makanan Olahan</a></li>
+                        <li><a href="{{ route('katalog', ['category' => 5]) }}">Minuman</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">

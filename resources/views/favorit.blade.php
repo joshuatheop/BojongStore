@@ -22,8 +22,11 @@
                 </nav>
             </div>
             <div class="search-bar">
-                <i data-lucide="search" class="search-icon" width="18" height="18"></i>
+                <form action="/search" method="GET" style="display:flex;align-items:center;width:100%">
+                    <i data-lucide="search" class="search-icon" width="18" height="18"></i>
+                    <input type="text" name="q" placeholder="Cari produk..." value="{{ request('q') }}">
                 <input type="text" placeholder="Cari produk...">
+                </form>
             </div>
             <div class="header-actions">
                 <a href="/favorit" class="action-btn-bookmark active"><i data-lucide="bookmark" width="28" height="28"></i></a>

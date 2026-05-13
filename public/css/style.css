@@ -291,7 +291,7 @@ header .container {
 .category-card:nth-child(1) .category-icon { background: #ecfdf5; color: #059669; }
 .category-card:nth-child(2) .category-icon { background: #fff7ed; color: #ea580c; }
 .category-card:nth-child(3) .category-icon { background: #fefce8; color: #ca8a04; }
-.category-card:nth-child(4) .category-icon { background: #eff6ff; color: #2563eb; }
+.category-card:nth-child(4) .category-icon { background: #fdf4ff; color: #9333ea; }
 
 .category-card h3 {
   font-size: 16px;

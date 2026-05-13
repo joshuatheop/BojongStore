@@ -7,9 +7,6 @@ use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $products = [
@@ -22,8 +19,9 @@ class ProductSeeder extends Seeder
                 'packaging' => 'Vacuum pack',
                 'shelf_life' => '3-5 hari (suhu ruang), hingga 7 hari (dalam kulkas)',
                 'production' => 'UMKM Lokal Bojongsoang',
-                'description' => 'Nikmati kelezatan Rendang Daging Sapi asli dengan resep turun-temurun. Daging pilihan yang empuk dipadu dengan bumbu rempah melimpah yang meresap hingga ke serat daging.',
-                'image' => '/images/rendang-kemasan.png'
+                'description' => 'Nikmati kelezatan Rendang Daging Sapi asli dengan resep turun-temurun.',
+                'image' => '/images/rendang-kemasan.png',
+                'category_id' => 4,
             ],
             [
                 'name' => 'Cimol Bojot Frozen Premium',
@@ -34,8 +32,9 @@ class ProductSeeder extends Seeder
                 'packaging' => 'Plastik Vacuum',
                 'shelf_life' => '7 hari (suhu ruang), 1 bulan (freezer)',
                 'production' => 'UMKM Bojongsoang',
-                'description' => 'Cimol bojot khas Garut dengan tekstur kenyal dan bumbu bawang serta cabai yang melimpah. Praktis tinggal goreng dan campur bumbu.',
-                'image' => '/images/cimol-bojot.png'
+                'description' => 'Cimol bojot khas Garut dengan tekstur kenyal dan bumbu bawang serta cabai yang melimpah.',
+                'image' => '/images/cimol-bojot.png',
+                'category_id' => 4,
             ],
             [
                 'name' => 'Basreng Pedas Daun Jeruk',
@@ -46,8 +45,9 @@ class ProductSeeder extends Seeder
                 'packaging' => 'Pouch Zipper',
                 'shelf_life' => '3 bulan',
                 'production' => 'Camilan Lokal Bojong',
-                'description' => 'Baso goreng renyah dengan bumbu pedas spesial dan aroma daun jeruk yang segar. Cocok untuk teman santai atau topping makanan.',
-                'image' => '/images/basreng-kemasan.png'
+                'description' => 'Baso goreng renyah dengan bumbu pedas spesial dan aroma daun jeruk yang segar.',
+                'image' => '/images/basreng-kemasan.png',
+                'category_id' => 4,
             ],
             [
                 'name' => 'Kerupuk Kulit Sapi Asli',
@@ -58,8 +58,9 @@ class ProductSeeder extends Seeder
                 'packaging' => 'Plastik Besar',
                 'shelf_life' => '2 bulan',
                 'production' => 'Produksi Lokal',
-                'description' => 'Kerupuk kulit sapi kualitas super, renyah and gurih. Tanpa bahan pengawet and diolah secara higienis.',
-                'image' => '/images/kerupuk-kulit.png'
+                'description' => 'Kerupuk kulit sapi kualitas super, renyah dan gurih. Tanpa bahan pengawet.',
+                'image' => '/images/kerupuk-kulit.png',
+                'category_id' => 4,
             ],
             [
                 'name' => 'Daging Sapi Segar Pilihan',
@@ -70,8 +71,9 @@ class ProductSeeder extends Seeder
                 'packaging' => 'Wadah Steril',
                 'shelf_life' => '1 hari (suhu ruang), 3-5 hari (kulkas)',
                 'production' => 'Peternakan Lokal',
-                'description' => 'Daging sapi segar kualitas terbaik dari peternakan lokal Bojongsoang. Dipotong secara higienis and dikemas rapi untuk menjaga kesegaran.',
-                'image' => '/images/daging-sapi.png'
+                'description' => 'Daging sapi segar kualitas terbaik dari peternakan lokal Bojongsoang.',
+                'image' => '/images/daging-sapi.png',
+                'category_id' => 4,
             ],
             [
                 'name' => 'Ayam Potong Segar Bojongsoang',
@@ -82,8 +84,9 @@ class ProductSeeder extends Seeder
                 'packaging' => 'Plastik Higienis',
                 'shelf_life' => '1 hari (suhu ruang), 3 hari (kulkas)',
                 'production' => 'Peternakan Ayam Lokal',
-                'description' => 'Ayam potong segar yang diproses secara halal and higienis. Tekstur daging yang lembut and segar, cocok untuk berbagai olahan masakan rumah.',
-                'image' => '/images/ayam-potong.png'
+                'description' => 'Ayam potong segar yang diproses secara halal dan higienis.',
+                'image' => '/images/ayam-potong.png',
+                'category_id' => 4,
             ],
             [
                 'name' => 'Ikan Laut Pilihan Segar',
@@ -94,8 +97,9 @@ class ProductSeeder extends Seeder
                 'packaging' => 'Es Batu & Plastik',
                 'shelf_life' => '1 hari (suhu ruang), 2 hari (kulkas)',
                 'production' => 'Nelayan Lokal',
-                'description' => 'Ikan laut pilihan yang diambil langsung dari nelayan dalam kondisi segar. Kaya akan protein and omega-3, sangat baik untuk kesehatan keluarga.',
-                'image' => '/images/ikan-laut.png'
+                'description' => 'Ikan laut pilihan langsung dari nelayan. Kaya protein dan omega-3.',
+                'image' => '/images/ikan-laut.png',
+                'category_id' => 4,
             ],
             [
                 'name' => 'Ikan Campur Segar Pilihan',
@@ -106,9 +110,10 @@ class ProductSeeder extends Seeder
                 'packaging' => 'Plastik & Es',
                 'shelf_life' => '1 hari',
                 'production' => 'Budidaya Lokal Bojong',
-                'description' => 'Berbagai jenis ikan air tawar segar pilihan hasil budidaya lokal Bojongsoang. Kondisi sangat segar dan siap diolah menjadi hidangan lezat.',
-                'image' => '/images/ikan-campur.png'
-            ]
+                'description' => 'Berbagai jenis ikan air tawar segar hasil budidaya lokal Bojongsoang.',
+                'image' => '/images/ikan-campur.png',
+                'category_id' => 4,
+            ],
         ];
 
         foreach ($products as $product) {
