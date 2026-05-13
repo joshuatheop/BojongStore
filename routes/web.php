@@ -2,10 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+use App\Http\Controllers\UlasanController;
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+use App\Http\Controllers\ProductController;
+
+Route::get('/', function () {
+    $products = \App\Models\Product::all();
+    return view('welcome', compact('products'));
 });
 
-require __DIR__.'/settings.php';
+Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('product.show');
+
+Route::post('/reviews', [UlasanController::class, 'store'])->name('reviews.store');
+Route::get('/api/reviews/{product_id}', [UlasanController::class, 'getReviews']);
+Route::get('/favorit', function () {
+    $products = \App\Models\Product::all();
+    return view('favorit', compact('products'));
+});
+
+Route::delete('/reviews/{id}', [UlasanController::class, 'destroy']);
