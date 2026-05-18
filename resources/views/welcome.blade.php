@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -23,8 +25,8 @@
             </div>
             <div class="search-bar">
                 <form action="/search" method="GET" style="display:flex;align-items:center;width:100%">
-                <i data-lucide="search" class="search-icon" width="18" height="18"></i>
-                <input type="text" name="q" placeholder="Cari produk..." value="{{ request('q') }}">
+                    <i data-lucide="search" class="search-icon" width="18" height="18"></i>
+                    <input type="text" name="q" placeholder="Cari produk..." value="{{ request('q') }}">
                 </form>
             </div>
             <div class="header-actions">
@@ -40,10 +42,12 @@
                 <div class="hero-banner">
                     <div class="hero-content">
                         <h1>PRODUK TERBAIK, LANGSUNG DARI JANTUNG DESA.</h1>
-                        <p>LEBIH DARI SEKADAR BELANJA. SETIAP PRODUK YANG ANDA BELI MEMBANTU PENGRAJIN DAN PETANI LOKAL KITA UNTUK TERUS BERTUMBUH DI ERA DIGITAL.</p>
+                        <p>LEBIH DARI SEKADAR BELANJA. SETIAP PRODUK YANG ANDA BELI MEMBANTU PENGRAJIN DAN PETANI LOKAL
+                            KITA UNTUK TERUS BERTUMBUH DI ERA DIGITAL.</p>
                         <a href="#" class="btn-primary">BELANJA SEKARANG</a>
                     </div>
-                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800" alt="Groceries" class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800"
+                        alt="Groceries" class="hero-image">
                 </div>
             </div>
         </section>
@@ -56,23 +60,24 @@
                 </div>
                 <div class="categories-grid">
                     @foreach($categories as $category)
-                    <a href="{{ route('katalog', ['category' => $category->id]) }}" class="category-card">
-                        <div class="category-icon">
-                            @php
-                                $icons = [
-                                    'Sayuran'          => 'leaf',
-                                    'Buah-buahan'      => 'apple',
-                                    'Kerajinan Tangan' => 'scissors',
-                                    'Makanan Olahan'   => 'croissant',
-                                    'Minuman'          => 'coffee',
-                                    'Jasa'             => 'briefcase',
-                                ];
-                                $icon = $icons[$category->name] ?? 'tag';
-                            @endphp
-                            <i data-lucide="{{ $icon }}" width="32" height="32"></i>
-                        </div>
-                        <h3>{{ $category->name }}</h3>
-                    </a>
+                        <a href="{{ route('katalog', ['category' => $category->id]) }}" class="category-card">
+                            <div class="category-icon">
+                                @php
+                                    $icons = [
+                                        'Sayuran' => 'sayuranlogo.png',
+                                        'Buah-buahan' => 'buahlogo.png',
+                                        'Kerajinan Tangan' => 'kerajinanlogo.png',
+                                        'Makanan Olahan' => 'makananlogo.png',
+                                        'Minuman' => 'minumanlogo.png',
+                                        'Jasa' => 'jasalogo.png',
+                                    ];
+                                    $icon = $icons[$category->name] ?? 'logo.png';
+                                @endphp
+                                <img src="{{ asset('images/' . $icon) }}" width="60" height="60"
+                                    alt="{{ $category->name }}">
+                            </div>
+                            <h3>{{ $category->name }}</h3>
+                        </a>
                     @endforeach
                 </div>
             </div>
@@ -85,16 +90,17 @@
                 </div>
                 <div class="products-grid">
                     @foreach($products as $product)
-                    <div class="product-card">
-                        <div class="product-image-container">
-                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="product-image">
-                            <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
+                        <div class="product-card">
+                            <div class="product-image-container">
+                                <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="product-image">
+                                <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
+                            </div>
+                            <div class="product-title">{{ $product->name }}</div>
+                            <div class="product-weight">{{ $product->weight }}</div>
+                            <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
+                            <a href="/produk/{{ $product->slug }}" class="btn-secondary"
+                                style="text-decoration: none; text-align: center; display: block;">Lihat Detail</a>
                         </div>
-                        <div class="product-title">{{ $product->name }}</div>
-                        <div class="product-weight">{{ $product->weight }}</div>
-                        <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
-                        <a href="/produk/{{ $product->slug }}" class="btn-secondary" style="text-decoration: none; text-align: center; display: block;">Lihat Detail</a>
-                    </div>
                     @endforeach
                 </div>
             </div>
@@ -108,7 +114,8 @@
                     <div class="logo-wrapper footer-logo">
                         <span class="logo-text footer-logo-text">BojongStore</span>
                     </div>
-                    <p class="footer-desc">Mendukung keberlanjutan ekonomi lokal Indonesia melalui digitalisasi UMKM dengan cara yang elegan dan efisien.</p>
+                    <p class="footer-desc">Mendukung keberlanjutan ekonomi lokal Indonesia melalui digitalisasi UMKM
+                        dengan cara yang elegan dan efisien.</p>
                 </div>
                 <div class="footer-column">
                     <h4 class="footer-title">Kategori</h4>
@@ -121,7 +128,8 @@
                 </div>
                 <div class="footer-column">
                     <h4 class="footer-title">Bantuan</h4>
-                    <p class="footer-desc" style="margin-bottom: 16px;">Jika Anda mengalami kendala, silahkan hubungi kami dengan mudah melalui tombol di bawah.</p>
+                    <p class="footer-desc" style="margin-bottom: 16px;">Jika Anda mengalami kendala, silahkan hubungi
+                        kami dengan mudah melalui tombol di bawah.</p>
                     <button class="btn-footer">Bantuan</button>
                 </div>
             </div>
@@ -137,14 +145,14 @@
             <button class="btn-help-close" id="closeHelpModal">
                 <i data-lucide="x" width="18" height="18"></i>
             </button>
-            
+
             <div id="helpFormState">
                 <div class="help-modal-header">
                     <i data-lucide="help-circle" width="32" height="32"></i>
                     <h2>Pusat Bantuan</h2>
                     <p>Punya keluhan atau pertanyaan? Kami siap membantu Anda.</p>
                 </div>
-                
+
                 <form id="complaintForm">
                     <div class="help-form-group">
                         <label for="helpName">Nama Lengkap</label>
@@ -152,7 +160,8 @@
                     </div>
                     <div class="help-form-group">
                         <label for="helpContact">Email / WhatsApp</label>
-                        <input type="text" id="helpContact" class="help-input" placeholder="Contoh: 0812xxxx atau email@mail.com" required>
+                        <input type="text" id="helpContact" class="help-input"
+                            placeholder="Contoh: 0812xxxx atau email@mail.com" required>
                     </div>
                     <div class="help-form-group">
                         <label for="helpCategory">Kategori Keluhan</label>
@@ -166,7 +175,8 @@
                     </div>
                     <div class="help-form-group">
                         <label for="helpMessage">Detail Keluhan</label>
-                        <textarea id="helpMessage" class="help-textarea" placeholder="Ceritakan kendala yang Anda alami..." required></textarea>
+                        <textarea id="helpMessage" class="help-textarea"
+                            placeholder="Ceritakan kendala yang Anda alami..." required></textarea>
                     </div>
                     <button type="submit" class="btn-help-submit">
                         <span>Kirim Keluhan</span>
@@ -178,7 +188,8 @@
             <div id="helpSuccessState" class="success-state">
                 <i data-lucide="check-circle" width="64" height="64"></i>
                 <h2>Berhasil Terkirim!</h2>
-                <p>Terima kasih atas laporan Anda. Tim kami akan segera menindaklanjuti keluhan Anda melalui kontak yang tersedia.</p>
+                <p>Terima kasih atas laporan Anda. Tim kami akan segera menindaklanjuti keluhan Anda melalui kontak yang
+                    tersedia.</p>
                 <button class="btn-help-submit" style="margin-top: 32px;" onclick="closeModal()">Tutup</button>
             </div>
         </div>
@@ -192,7 +203,7 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault(); // Prevent navigation if wrapped in a link
                 btn.classList.toggle('active');
-                
+
                 // Toggle Lucide icon fill
                 const icon = btn.querySelector('i');
                 if (btn.classList.contains('active')) {
@@ -259,4 +270,5 @@
         });
     </script>
 </body>
+
 </html>
