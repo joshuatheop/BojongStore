@@ -1,44 +1,17 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Produk - BojongStore</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-</head>
-<body>
+@extends('layouts.landing')
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/produk.css') }}">
+<style>
+    body { font-family: 'Inter', 'Poppins', sans-serif; }
+</style>
+@endpush
+
+@section('content')
     <div id="notification-container" class="notification-container"></div>
 
-    <header>
-        <div class="container">
-            <div class="header-left">
-                <div class="logo-wrapper">
-                    <span class="logo-text">BOJONGSTORE</span>
-                    <img src="{{ asset('images/logo.png') }}" width="36" height="36" alt="Logo" class="logo-img">
-                </div>
-                <nav class="nav-links">
-                    <a href="/" class="nav-link">Beranda</a>
-                    <a href="#" class="nav-link active">Produk</a>
-                </nav>
-            </div>
-            <div class="search-bar">
-                <form action="/search" method="GET" style="display:flex;align-items:center;width:100%">
-                <i data-lucide="search" class="search-icon" width="18" height="18"></i>
-                <input type="text" name="q" placeholder="Cari produk..." value="{{ request('q') }}">
-                </form>
-            </div>
-            <div class="header-actions">
-                <a href="/favorit" class="action-btn-bookmark"><i data-lucide="bookmark" width="28" height="28"></i></a>
-                <a href="#" class="action-btn-user"><i data-lucide="user" width="20" height="20"></i></a>
-            </div>
-        </div>
-    </header>
-
-    <main>
-        <div class="container">
+    <div style="padding-top: 80px;">
+    <div class="container">
             <div class="breadcrumb">
                 <a href="/">Beranda</a> <span style="margin: 0 4px;">&rsaquo;</span>
                 <a href="/">Produk</a> <span style="margin: 0 4px;">&rsaquo;</span>
@@ -232,7 +205,7 @@
                 <button class="btn-load-more">Muat Lebih Banyak</button>
             </div>
         </section>
-    </main>
+    </div>{{-- end padding-top wrapper --}}
 
     <footer>
         <div class="container">
@@ -718,5 +691,5 @@
             }, 1500);
         });
     </script>
-</body>
-</html>
+
+@endsection

@@ -60,50 +60,7 @@
       </div>
     </div><!-- /.hero-visual -->
   </div><!-- /.hero-container -->
-</section>
-
-
-<!-- ===== KATEGORI PILIHAN ===== -->
-<section class="section categories" id="kategori">
-  <div class="section-container">
-    <div class="section-header">
-      <div>
-        <h2 class="section-title">Kategori Pilihan</h2>
-        <p class="section-sub">Temukan kebutuhan dari berbagai jenis pilihan</p>
-      </div>
-      <a href="{{ route('katalog') }}" class="see-all">
-        Lihat Semua
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </a>
-    </div>
-
-    <div class="category-grid">
-      <a href="{{ route('katalog', ['category' => 1]) }}" class="category-card">
-        <div class="cat-icon green">🥬</div>
-        <div class="cat-name">Sayuran</div>
-        <div class="cat-count">Hijau &amp; Organik</div>
-      </a>
-      <a href="{{ route('katalog', ['category' => 2]) }}" class="category-card">
-        <div class="cat-icon orange">🍊</div>
-        <div class="cat-name">Buah</div>
-        <div class="cat-count">Lokal &amp; Segar</div>
-      </a>
-      <a href="{{ route('katalog', ['category' => 4]) }}" class="category-card">
-        <div class="cat-icon brown">🍲</div>
-        <div class="cat-name">Makanan</div>
-        <div class="cat-count">Produk olahan</div>
-      </a>
-      <a href="{{ route('katalog', ['category' => 5]) }}" class="category-card">
-        <div class="cat-icon blue">🥤</div>
-        <div class="cat-name">Minuman</div>
-        <div class="cat-count">Segar &amp; Lokal</div>
-      </a>
-    </div>
-  </div>
-</section>
-
+</section>  
 
 <!-- ===== TESTIMONI ===== -->
 <section class="section testimonials" id="testimonials">
