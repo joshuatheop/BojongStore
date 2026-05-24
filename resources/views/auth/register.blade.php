@@ -1,52 +1,259 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar - BojongStore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-primary: #2e7d32;
+            --text-dark: #333;
+            --text-light: #999;
+            --border: #eee;
+            --radius-sm: 8px;
+        }
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .auth-container {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+        }
+
+        .auth-image-section {
+            position: relative;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(56, 142, 60, 0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .auth-image-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .auth-form-section {
+            background: #f8f8f8;
+            padding: 40px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .auth-form-wrapper {
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .auth-form-section h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--green-primary);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            border-color: var(--green-primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px 20px;
+            background: var(--green-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-submit:hover {
+            background: #235d25;
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .auth-divider::before { margin-right: 12px; }
+        .auth-divider::after { margin-left: 12px; }
+
+        .social-login {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .social-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .social-btn:hover {
+            border-color: var(--green-primary);
+            transform: scale(1.05);
+        }
+
+        .auth-footer-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .auth-footer-link a {
+            color: var(--green-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .error-msg {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            list-style: none;
+            padding-left: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .auth-container { grid-template-columns: 1fr; }
+            .auth-image-section { display: none; }
+            .auth-form-section { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-image-section">
+            <img src="{{ asset('images/auth_bg.png') }}" alt="BojongStore">
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="auth-form-section">
+            <div class="auth-form-wrapper">
+                <h1>Buat Akun Kamu</h1>
+
+                @if ($errors->any())
+                    <div class="error-msg">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
+
+                    <div class="form-group">
+                        <label for="name">Nama Lengkap</label>
+                        <input id="name" type="text" name="name" value="{{ old('name') }}" placeholder="Masukkan nama anda" required autofocus />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="Masukkan alamat email" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telepon">No. Telepon</label>
+                        <input id="telepon" type="tel" name="telepon" value="{{ old('telepon') }}" placeholder="Masukkan nomor telepon" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input id="password" type="password" name="password" placeholder="Buat password anda" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password_confirmation">Konfirmasi Password</label>
+                        <input id="password_confirmation" type="password" name="password_confirmation" placeholder="Konfirmasi password anda" required />
+                    </div>
+
+                    <button type="submit" class="btn-submit">Buat Akun</button>
+                </form>
+
+                <div class="auth-divider">Atau lanjutkan dengan</div>
+
+                <div class="social-login">
+                    <a href="#" class="social-btn">f</a>
+                    <a href="#" class="social-btn">G</a>
+                </div>
+
+                <div class="auth-footer-link">
+                    Sudah punya akun? <a href="{{ route('login') }}">Masuk</a>
+                </div>
+            </div>
         </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </div>
+</body>
+</html>

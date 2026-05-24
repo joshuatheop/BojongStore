@@ -1,186 +1,113 @@
-<nav x-data="{ scrolled: false }"
-     @scroll.window="scrolled = window.scrollY > 10"
-     :class="{ 'navbar-scrolled': scrolled }"
-     class="navbar">
-  <div class="navbar-container">
-    
-    <!-- Logo -->
-    <a href="/" class="logo">
-          <span style="font-size: 1.1rem; font-weight: 700; letter-spacing: 1px;color: #1a1a1a;">BOJONGSTORE</span>
-          <img :src="scrolled ? '{{ asset('images/logo.png') }}' : '{{ asset('images/logo.png') }}'" 
-          alt="BojongStore" 
-          style="width: 40px; height: auto; transition: all 0.3s ease;">
-    </a>
+<header x-data="{ scrolled: false }"
+        @scroll.window="scrolled = window.scrollY > 10"
+        :class="{ 'header-scrolled': scrolled }">
+    <div class="container">
+        <div class="header-left">
+            <a href="{{ route('home') }}" class="logo-wrapper">
+                <span class="logo-text">BOJONGSTORE</span>
+                <img src="{{ asset('images/logo_tree.png') }}" width="36" height="36" alt="Logo" class="logo-img">
+            </a>
+            <nav class="nav-links">
+                <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Beranda</a>
+                <a href="{{ route('produk') }}" class="nav-link {{ request()->routeIs('produk') ? 'active' : '' }}">Produk</a>
+            </nav>
+        </div>
 
-    <!-- Menu Tengah (Removed) -->
-    <div class="nav-links flex gap-4 items-center">
+        <div class="search-bar">
+            <span class="search-icon">
+              <i data-lucide="search" width="18" height="18"></i>
+            </span>
+            <input type="text" id="searchInput" placeholder="Cari produk...">
+        </div>
+
+        <div class="header-actions">
+            @auth
+                {{-- === SUDAH LOGIN: Bookmark + User Dropdown === --}}
+                <a href="{{ url('/favorit') }}" class="action-btn-bookmark" title="Favorit">
+                    <i data-lucide="bookmark" width="22" height="22"></i>
+                </a>
+
+                <div class="user-dropdown-wrap" x-data="{ open: false }" @click.away="open = false">
+                    <button class="action-btn-user" @click="open = !open" title="Akun Saya" type="button">
+                        @if (Auth::user()->foto ?? null)
+                            <img src="{{ asset(Auth::user()->foto) }}" alt="Avatar" class="user-avatar-img">
+                        @else
+                            <i data-lucide="user" width="18" height="18"></i>
+                        @endif
+                    </button>
+
+                    <div class="user-dropdown-menu" x-show="open"
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0">
+
+                        {{-- Info user --}}
+                        <div class="dropdown-user-info">
+                            <div class="dropdown-avatar">
+                                <i data-lucide="user" width="18" height="18"></i>
+                            </div>
+                            <div>
+                                <div class="dropdown-name">{{ Auth::user()->name }}</div>
+                                <div class="dropdown-email">{{ Auth::user()->email }}</div>
+                            </div>
+                        </div>
+
+                        <div class="user-dropdown-divider"></div>
+
+                        @if(Route::has('profile.edit'))
+                        <a href="{{ route('profile.edit') }}" class="user-dropdown-item">
+                            <i data-lucide="user" width="15" height="15"></i>
+                            Profile
+                        </a>
+                        @endif
+
+                        <div class="user-dropdown-divider"></div>
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="user-dropdown-item user-dropdown-item--danger">
+                                <i data-lucide="log-out" width="15" height="15"></i>
+                                Log Out
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            @else
+                {{-- === BELUM LOGIN: Sign Up + Log In === --}}
+                <div class="auth-btns">
+                    <a href="{{ route('register') }}" class="header-btn header-btn-signup-outline">Sign Up</a>
+                    <a href="{{ route('login') }}" class="header-btn header-btn-login-filled">
+                        <i data-lucide="user" width="14" height="14"></i>
+                        Log In
+                    </a>
+                </div>
+            @endauth
+        </div>
     </div>
+</header>
 
-    <!-- Tombol Login/Register -->
-    <div class="auth-buttons flex gap-3">
-      @guest
-        <a href="{{ route('register') }}" class="register-btn" style="background-color: white; color: #00923F; border: 1px solid #00923F; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Daftar</a>
-        <a href="{{ route('login') }}" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Masuk</a>
-      @endguest
-      @auth
-        @if(auth()->user()->role === 'admin')
-          <a href="/" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Dashboard Admin</a>
-        @else
-          <a href="/" class="login-btn" style="background-color: #00923F; color: white; padding: 8px 20px; border-radius: 20px; transition: all 0.3s ease;">Dashboard Saya</a>
-    @endif
-@endauth
-    </div>
-  </div>
-</nav>
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-<style>
-.navbar {
-  width: 100%;
-  padding: 30px 5%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  transition: all 0.3s ease;
-}
+{{-- Toast Notification --}}
+@if(session('auth_required'))
+<div id="authToast" class="auth-toast">
+    <i data-lucide="alert-circle" width="18" height="18"></i>
+    <span>{{ session('auth_required') }}</span>
+</div>
+@endif
 
-.navbar-scrolled {
-  background-color: white !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 15px 5% !important;
-}
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
 
-.navbar-scrolled .nav-link,
-.navbar-scrolled .login-btn {
-  color: #010101 !important;
-}
-
-.navbar-scrolled .login-btn {
-  border-color: #00923F !important;
-}
-
-.navbar-scrolled .login-btn:hover {
-  background-color: rgba(29, 29, 29, 0.1) !important;
-}
-
-.navbar-scrolled .register-btn {
-  background-color: #00923F !important;
-  color: white !important;
-}
-
-.navbar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.logo {
-  flex-shrink: 0;
-}
-
-.nav-links {
-  display: flex;
-  gap: 25px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.login-btn {
-  color: rgb(0, 0, 0);
-  text-decoration: none;
-  padding: 8px 20px;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  border: 1px solid #00923F;
-}
-.register-btn {
-  background-color: #00923F;
-  color: white;
-  text-decoration: none;
-  padding: 8px 20px;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-}
-
-.navbar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 15px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: white;
-  font-weight: 700;
-  font-size: 1.5rem;
-  text-decoration: none;
-}
-
-.nav-links {
-  display: flex;
-  gap: 25px;
-  align-items: center;
-}
-
-.logo img {
-  height: 32px;
-  width: auto;
-}
-
-.nav-link {
-  color: rgb(0, 0, 0);
-  text-decoration: none;
-  position: relative;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  color: #00923F;
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: -2px;
-  left: 0;
-  background-color: #00923F;
-  transition: width 0.3s ease;
-}
-
-.nav-link:hover::after,
-.nav-link.active::after {
-  width: 100%;
-}
-
-.btn-daftar {
-  background-color: #00923F;
-  color: white;
-  padding: 6px 18px;
-  border-radius: 20px;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-  margin-left: 20px;
-}
-
-.btn-masuk {
-  border: 1px solid black;
-  color: black;
-  padding: 6px 18px;
-  border-radius: 20px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-</style>
+        // Auto-hide toast
+        const toast = document.getElementById('authToast');
+        if (toast) {
+            setTimeout(() => toast.classList.add('auth-toast--hide'), 3500);
+            setTimeout(() => toast.remove(), 4000);
+        }
+    });
+</script>

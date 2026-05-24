@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    BOJONGSTORE - Main Stylesheet
    ============================================ */
 
@@ -299,112 +299,26 @@ header .container {
   transition: all 0.3s ease;
 }
 
-/* ── Sign Up: outline hijau ── */
-.header-btn-signup-outline {
+.header-btn-login {
   color: var(--green-primary);
   border: 1.5px solid var(--green-primary);
-  background: transparent;
 }
 
-.header-btn-signup-outline:hover {
+.header-btn-login:hover {
   background: var(--green-primary);
   color: white;
 }
 
-/* ── Log In: filled hijau + icon ── */
-.header-btn-login-filled {
+.header-btn-signup {
   background: var(--green-primary);
   color: white;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  box-shadow: 0 4px 15px rgba(58, 125, 68, 0.25);
+  box-shadow: 0 4px 15px rgba(58, 125, 68, 0.2);
 }
 
-.header-btn-login-filled svg,
-.header-btn-login-filled i {
-  width: 14px;
-  height: 14px;
-  stroke: white;
-}
-
-.header-btn-login-filled:hover {
+.header-btn-signup:hover {
   background: #2d6335;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(58, 125, 68, 0.35);
-}
-
-/* ── Dropdown: user info block ── */
-.dropdown-user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px 8px;
-}
-
-.dropdown-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #e8f5e9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--green-primary);
-  flex-shrink: 0;
-}
-
-.dropdown-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-dark);
-  line-height: 1.3;
-}
-
-.dropdown-email {
-  font-size: 11px;
-  color: var(--text-gray);
-  line-height: 1.3;
-  max-width: 150px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ── Toast Notification ── */
-.auth-toast {
-  position: fixed;
-  top: 90px;
-  right: 24px;
-  background: #1a1a2e;
-  color: white;
-  padding: 13px 20px;
-  border-radius: 10px;
-  font-size: 13.5px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-  z-index: 9999;
-  animation: toastSlideIn 0.3s ease;
-  border-left: 4px solid var(--green-primary);
-}
-
-.auth-toast svg { stroke: var(--green-primary); flex-shrink: 0; }
-
-.auth-toast--hide {
-  animation: toastSlideOut 0.4s ease forwards;
-}
-
-@keyframes toastSlideIn {
-  from { opacity: 0; transform: translateX(60px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes toastSlideOut {
-  from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(60px); }
+  box-shadow: 0 6px 20px rgba(58, 125, 68, 0.3);
 }
 
 
