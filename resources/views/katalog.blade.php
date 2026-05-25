@@ -2,394 +2,481 @@
 @extends('layouts.landing')
 @section('content')
 
-<style>
-    :root {
-        --green: #00923F;
-        --green-dark: #007a34;
-        --green-light: #e8f5ee;
-        --text-dark: #1a1a1a;
-        --text-muted: #6b7280;
-        --border: #e5e7eb;
-        --card-shadow: 0 2px 12px rgba(0,0,0,0.07);
-        --card-shadow-hover: 0 8px 32px rgba(0,146,63,0.13);
-    }
+    <style>
+        :root {
+            --green: #00923F;
+            --green-dark: #007a34;
+            --green-light: #e8f5ee;
+            --text-dark: #1a1a1a;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            --card-shadow-hover: 0 8px 32px rgba(0, 146, 63, 0.12);
+            --bg-gray: #f9fafb;
+        }
 
-    .katalog-wrapper {
-        padding-top: 100px;
-        min-height: 100vh;
-        background: #ffffff;
-    }
+        .katalog-wrapper {
+            padding-top: 40px;
+            min-height: 100vh;
+            background: #ffffff;
+            font-family: 'Poppins', sans-serif;
+        }
 
-    /* Search Bar */
-    .search-section {
-        background: white;
-        border-bottom: 1px solid var(--border);
-        padding: 18px 0 16px;
-        position: sticky;
-        top: 64px;
-        z-index: 100;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
+        .katalog-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
 
-    .search-inner {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 24px;
-        display: flex;
-        gap: 12px;
-        align-items: center;
-    }
+        body {
+            overflow-x: clip !important;
+        }
 
-    .search-select {
-        border: 1.5px solid var(--border);
-        border-radius: 10px;
-        padding: 10px 16px;
-        font-size: 14px;
-        color: var(--text-dark);
-        background: white;
-        cursor: pointer;
-        min-width: 180px;
-        outline: none;
-        transition: border-color 0.2s;
-        font-family: 'Poppins', sans-serif;
-    }
-    .search-select:focus { border-color: var(--green); }
+        /* Sidebar */
+        .sidebar-filter {
+            width: 260px;
+            flex-shrink: 0;
+            position: -webkit-sticky;
+            position: sticky;
+            top: 100px;
+            height: auto;
+            align-self: flex-start;
+            z-index: 10;
+        }
 
-    .search-input-wrap {
-        flex: 1;
-        display: flex;
-        border: 1.5px solid var(--border);
-        border-radius: 10px;
-        overflow: hidden;
-        background: white;
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .search-input-wrap:focus-within {
-        border-color: var(--green);
-        box-shadow: 0 0 0 3px rgba(0,146,63,0.10);
-    }
+        .filter-group {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .filter-group:last-child {
+            border-bottom: none;
+        }
 
-    .search-input {
-        flex: 1;
-        border: none;
-        outline: none;
-        padding: 10px 16px;
-        font-size: 14px;
-        font-family: 'Poppins', sans-serif;
-        color: var(--text-dark);
-    }
-    .search-input::placeholder { color: #adb5bd; }
+        .filter-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .search-btn {
-        background: var(--green);
-        color: white;
-        border: none;
-        padding: 10px 28px;
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background 0.2s;
-        font-family: 'Poppins', sans-serif;
-        letter-spacing: 0.3px;
-    }
-    .search-btn:hover { background: var(--green-dark); }
+        /* Checkbox Styles */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-dark);
+            user-select: none;
+        }
 
-    /* Main content */
-    .katalog-main {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 32px 24px 64px;
-    }
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
 
-    /* Result header */
-    .result-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 24px;
-    }
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
 
-    .result-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--text-dark);
-    }
+        .checkbox-container:hover input ~ .checkmark {
+            border-color: var(--green);
+        }
 
-    .result-title span {
-        color: var(--green);
-    }
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: var(--green);
+            border-color: var(--green);
+        }
 
-    .result-count {
-        font-size: 13px;
-        color: var(--text-muted);
-        background: var(--green-light);
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: 500;
-    }
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
 
-    /* Product Grid */
-    .product-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-    }
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
 
-    @media (max-width: 1024px) {
-        .product-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (max-width: 768px) {
-        .product-grid { grid-template-columns: repeat(2, 1fr); }
-        .search-select { min-width: 130px; }
-    }
-    @media (max-width: 480px) {
-        .product-grid { grid-template-columns: repeat(1, 1fr); }
-        .search-inner { flex-wrap: wrap; }
-        .search-select { width: 100%; }
-    }
+        .checkbox-container .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
 
-    /* Product Card */
-    .product-card {
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: var(--card-shadow);
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.22s ease, box-shadow 0.22s ease;
-        border: 1.5px solid transparent;
-    }
-    .product-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--card-shadow-hover);
-        border-color: var(--green-light);
-        text-decoration: none;
-        color: inherit;
-    }
+        /* Price Inputs */
+        .price-inputs {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
 
-    .card-img-wrap {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        background: #f0f4f2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        padding: 16px;
-    }
-    .card-img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        transition: transform 0.3s ease;
-    }
-    .product-card:hover .card-img-wrap img {
-        transform: scale(1.05);
-    }
+        .price-inputs input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
 
-    .card-body {
-        padding: 14px 16px 16px;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
+        .price-inputs input:focus {
+            border-color: var(--green);
+        }
 
-    .card-name {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 2px;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
+        .btn-apply, .btn-clear {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
 
-    .card-weight {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin-bottom: 8px;
-    }
+        .btn-apply {
+            background: var(--green);
+            color: white;
+            border: none;
+            margin-bottom: 10px;
+        }
 
-    .card-price {
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--green);
-        margin-bottom: 10px;
-    }
+        .btn-apply:hover {
+            background: var(--green-dark);
+        }
 
-    .card-stars {
-        display: flex;
-        gap: 2px;
-        margin-bottom: 12px;
-    }
-    .star { font-size: 13px; }
-    .star.filled { color: #f59e0b; }
-    .star.empty { color: #d1d5db; }
+        .btn-clear {
+            background: white;
+            color: var(--text-dark);
+            border: 1px solid var(--border);
+        }
 
-    .card-btn {
-        display: block;
-        width: 100%;
-        background: var(--green);
-        color: white;
-        text-align: center;
-        padding: 9px 0;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: background 0.2s;
-        margin-top: auto;
-        font-family: 'Poppins', sans-serif;
-    }
-    .card-btn:hover {
-        background: var(--green-dark);
-        color: white;
-        text-decoration: none;
-    }
+        .btn-clear:hover {
+            background: var(--bg-gray);
+            color: var(--text-dark);
+        }
 
-    /* Empty state */
-    .empty-state {
-        text-align: center;
-        padding: 80px 24px;
-        color: var(--text-muted);
-    }
-    .empty-icon {
-        font-size: 56px;
-        margin-bottom: 16px;
-        opacity: 0.4;
-    }
-    .empty-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 8px;
-    }
-    .empty-sub {
-        font-size: 14px;
-    }
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
 
-    /* Pagination */
-    .pagination-wrap {
-        margin-top: 40px;
-        display: flex;
-        justify-content: center;
-    }
-    .pagination-wrap nav span,
-    .pagination-wrap nav a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        margin: 0 2px;
-        text-decoration: none;
-        transition: all 0.2s;
-        border: 1.5px solid var(--border);
-        color: var(--text-dark);
-        background: white;
-    }
-    .pagination-wrap nav a:hover {
-        border-color: var(--green);
-        color: var(--green);
-    }
-    .pagination-wrap nav span[aria-current] {
-        background: var(--green);
-        color: white;
-        border-color: var(--green);
-    }
-</style>
+        .katalog-header {
+            margin-bottom: 24px;
+        }
 
-<div class="katalog-wrapper">
+        .breadcrumbs {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .breadcrumbs span {
+            color: var(--text-dark);
+        }
 
-    {{-- Search Bar --}}
-    <div class="search-section">
-        <div class="search-inner">
-            <form method="GET" action="{{ route('katalog') }}" style="display:flex;gap:12px;width:100%;align-items:center;">
-                <select name="category" class="search-select">
-                    <option value="">Semua Kategori</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <div class="search-input-wrap">
-                    <input
-                        type="text"
-                        name="search"
-                        value="{{ $query ?? request('search') }}"
-                        class="search-input"
-                        placeholder="Cari Produk..."
-                        autofocus
-                    >
-                    <button type="submit" class="search-btn">Cari</button>
-                </div>
-            </form>
-        </div>
-    </div>
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    {{-- Main --}}
-    <div class="katalog-main">
+        .filter-count {
+            background: var(--green);
+            color: white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            vertical-align: middle;
+        }
 
-        {{-- Result header --}}
-        <div class="result-header">
-            <div class="result-title">
-                @if(isset($query) && $query)
-                    Hasil untuk "<span>{{ $query }}</span>"
-                @else
-                    Semua Produk
-                @endif
-            </div>
-            <div class="result-count">{{ $products->total() }} produk</div>
-        </div>
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
 
-        {{-- Grid --}}
-        @if($products->count() > 0)
-        <div class="product-grid">
-            @foreach($products as $product)
-            <a href="{{ route('product-detail', $product->slug) }}" class="product-card">
-                <div class="card-img-wrap">
-                    <img
-                        src="{{ $product->image ? asset($product->image) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}"
-                        alt="{{ $product->name }}"
-                        loading="lazy"
-                    >
-                </div>
-                <div class="card-body">
-                    <div class="card-name">{{ $product->name }}</div>
-                    <div class="card-weight">1kg</div>
-                    <div class="card-price">Rp{{ number_format($product->price, 0, ',', '.') }}</div>
-                    <div class="card-stars">
-                        @for($i = 1; $i <= 5; $i++)
-                            <span class="star {{ $i <= 4 ? 'filled' : 'empty' }}">★</span>
-                        @endfor
+        .result-count {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .katalog-container {
+                flex-direction: column;
+            }
+            .sidebar-filter {
+                width: 100%;
+                position: static;
+            }
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Product Card */
+        .product-card {
+            background: var(--white);
+            border: 1.5px solid #f1f5f9;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+        }
+
+        .product-card:hover {
+            border-color: var(--green);
+            box-shadow: var(--card-shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        .product-image-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 160px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s;
+            color: #94a3b8;
+        }
+
+        .wishlist-btn:hover {
+            transform: scale(1.1);
+            color: var(--green);
+        }
+
+        .wishlist-btn.active {
+            color: var(--green);
+        }
+
+        .wishlist-btn.active i {
+            fill: currentColor;
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.3;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .product-weight {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            margin-top: auto;
+        }
+
+        .btn-secondary {
+            background: var(--green);
+            color: var(--white);
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            width: 100%;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background: var(--green-dark);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Pagination */
+        .pagination-wrap {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--bg-gray);
+            border-radius: 16px;
+            color: var(--text-muted);
+        }
+    </style>
+
+    <div class="katalog-wrapper">
+        <div class="katalog-container">
+            
+            {{-- Sidebar Filter --}}
+            <aside class="sidebar-filter">
+                <form id="filter-form" action="{{ route('katalog') }}" method="GET">
+                    
+                    @if(request('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+
+                    <div class="filter-group">
+                        <h4 class="filter-title">Kategori</h4>
+                        <div class="filter-options">
+                            @foreach($categories as $category)
+                                <label class="checkbox-container">
+                                    <input type="checkbox" name="categories[]" value="{{ $category->id }}"
+                                        {{ in_array($category->id, request('categories', [])) ? 'checked' : '' }}
+                                        onchange="document.getElementById('filter-form').submit()">
+                                    <span class="checkmark"></span>
+                                    {{ $category->name }}
+                                </label>
+                            @endforeach
+                        </div>
                     </div>
-                    <span class="card-btn">Lihat Detail</span>
+
+                    <div class="filter-group">
+                        <h4 class="filter-title">Rentang Harga</h4>
+                        <div class="price-inputs">
+                            <input type="number" name="min_price" placeholder="Min (Rp)" value="{{ request('min_price') }}">
+                            <span>-</span>
+                            <input type="number" name="max_price" placeholder="Max (Rp)" value="{{ request('max_price') }}">
+                        </div>
+                        <button type="submit" class="btn-apply">Terapkan</button>
+                        <a href="{{ route('katalog') }}" class="btn-clear">Hapus Filter</a>
+                    </div>
+                </form>
+            </aside>
+
+            {{-- Main Content --}}
+            <div class="main-content">
+
+                <div class="toolbar">
+                    <div class="result-count">Menampilkan {{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }} dari {{ $products->total() }} item</div>
                 </div>
-            </a>
-            @endforeach
-        </div>
-        @else
-        <div class="empty-state">
-            <div class="empty-icon">🔍</div>
-            <div class="empty-title">Produk tidak ditemukan</div>
-            <div class="empty-sub">Coba kata kunci yang berbeda atau lihat semua produk</div>
-        </div>
-        @endif
 
-        {{-- Pagination --}}
-        <div class="pagination-wrap">
-            {{ $products->links() }}
-        </div>
+                @if($products->count() > 0)
+                    <div class="product-grid">
+                        @foreach($products as $product)
+                            <div class="product-card">
+                                <div class="product-image-container">
+                                    <img src="{{ $product->image ? asset($product->image) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}" alt="{{ $product->name }}" class="product-image" loading="lazy">
+                                    <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
+                                </div>
+                                <div class="product-title">{{ $product->name }}</div>
+                                <div class="product-weight">{{ $product->weight ?? '300 gram' }}</div>
+                                <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
+                                <a href="{{ route('product-detail', $product->slug) }}" class="btn-secondary">Lihat Detail</a>
+                            </div>
+                        @endforeach
+                    </div>
+                    
+                    <div class="pagination-wrap">
+                        {{ $products->links() }}
+                    </div>
+                @else
+                    <div class="empty-state">
+                        <h3>Produk tidak ditemukan</h3>
+                        <p>Coba sesuaikan filter atau kata kunci pencarian Anda.</p>
+                        <a href="{{ route('katalog') }}" class="btn-apply" style="display:inline-block; width:auto; padding:10px 24px; margin-top:16px;">Clear Semua Filter</a>
+                    </div>
+                @endif
 
+            </div>
+        </div>
     </div>
-</div>
 
 @endsection

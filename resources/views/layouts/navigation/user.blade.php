@@ -31,25 +31,35 @@
             {{-- User Dropdown --}}
             <div class="user-dropdown-wrap" x-data="{ open: false }" @click.away="open = false">
                 <button class="action-btn-user" @click="open = !open" title="Akun Saya" type="button">
-                    @if (Auth::user()->foto ?? null)
+                    @if (Auth::user()->avatar)
+                        <img src="{{ Auth::user()->avatar }}" alt="Avatar" class="user-avatar-img">
+                    @elseif (Auth::user()->foto ?? null)
                         <img src="{{ asset(Auth::user()->foto) }}" alt="Avatar" class="user-avatar-img">
                     @else
-                        <i data-lucide="user" width="18" height="18"></i>
+                        <img src="{{ asset('images/default-avatar.svg') }}" alt="Avatar" class="user-avatar-img" style="width:22px;height:22px;object-fit:contain;">
                     @endif
                 </button>
 
-                <div class="user-dropdown-menu" x-show="open"
+                <div class="user-dropdown-menu"
+                     x-show="open"
                      x-transition:enter="transition ease-out duration-150"
-                     x-transition:enter-start="opacity-0 transform -translate-y-2"
-                     x-transition:enter-end="opacity-100 transform translate-y-0"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
                      x-transition:leave="transition ease-in duration-100"
                      x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0">
+                     x-transition:leave-end="opacity-0"
+                     style="display:none;">
 
                     {{-- Info user --}}
                     <div class="dropdown-user-info">
-                        <div class="dropdown-avatar">
-                            <i data-lucide="user" width="18" height="18"></i>
+                        <div class="dropdown-avatar" style="overflow:hidden; padding:0;">
+                            @if (Auth::user()->avatar)
+                                <img src="{{ Auth::user()->avatar }}" alt="Avatar" style="width:34px;height:34px;border-radius:50%;object-fit:cover;">
+                            @elseif (Auth::user()->foto ?? null)
+                                <img src="{{ asset(Auth::user()->foto) }}" alt="Avatar" style="width:34px;height:34px;border-radius:50%;object-fit:cover;">
+                            @else
+                                <img src="{{ asset('images/default-avatar.svg') }}" alt="Avatar" style="width:20px;height:20px;object-fit:contain;">
+                            @endif
                         </div>
                         <div>
                             <div class="dropdown-name">{{ Auth::user()->name }}</div>

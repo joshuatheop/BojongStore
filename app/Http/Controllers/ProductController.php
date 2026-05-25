@@ -33,9 +33,17 @@ class ProductController extends Controller
     $categories = \App\Models\Category::all();
 
     $products = Product::query()
-        ->when($request->category, fn($q) => $q->where('category_id', $request->category))
+        ->when($request->categories, function ($q) use ($request) {
+            $q->whereIn('category_id', $request->categories);
+        })
+        ->when($request->min_price, function ($q) use ($request) {
+            $q->where('price', '>=', $request->min_price);
+        })
+        ->when($request->max_price, function ($q) use ($request) {
+            $q->where('price', '<=', $request->max_price);
+        })
         ->when($request->search, fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
-        ->paginate(10);
+        ->paginate(12)->withQueryString();
 
     return view('katalog', compact('products', 'categories'));
 }

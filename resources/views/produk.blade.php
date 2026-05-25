@@ -10,8 +10,8 @@
     <div class="container">
         <div class="hero-banner">
             <div class="hero-content">
-                <h1>PRODUK TERBAIK, LANGSUNG DARI JANTUNG DESA.</h1>
-                <p>LEBIH DARI SEKADAR BELANJA. SETIAP PRODUK YANG ANDA BELI MEMBANTU PENGRAJIN DAN PETANI LOKAL
+                <h1 style="color: white;">PRODUK TERBAIK, LANGSUNG DARI JANTUNG DESA.</h1>
+                <p style="color: white;">LEBIH DARI SEKADAR BELANJA. SETIAP PRODUK YANG ANDA BELI MEMBANTU PENGRAJIN DAN PETANI LOKAL
                     KITA UNTUK TERUS BERTUMBUH DI ERA DIGITAL.</p>
                 <a href="{{ route('katalog') }}" class="btn-primary">BELANJA SEKARANG</a>
             </div>
