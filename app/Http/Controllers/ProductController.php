@@ -15,6 +15,8 @@ class ProductController extends Controller
         }
 
         $product = Product::where('slug', $slug)->firstOrFail();
+        $product->increment('views');
+        
         return view('product-detail', compact('product'));
     }
     public function search(Request $request)

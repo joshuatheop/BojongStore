@@ -8,7 +8,8 @@ use App\Http\Controllers\ProfileController;
 
 // ======= HALAMAN UTAMA =======
 Route::get('/', function () {
-    return view('home');
+    $mostViewedProduct = \App\Models\Product::orderBy('views', 'desc')->first();
+    return view('home', compact('mostViewedProduct'));
 })->name('home');
 
 Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('product-detail');
