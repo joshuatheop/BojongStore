@@ -1,21 +1,23 @@
 @extends('layouts.landing')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/produk.css') }}">
-<style>
-    body { font-family: 'Inter', 'Poppins', sans-serif; }
-</style>
+    <link rel="stylesheet" href="{{ asset('css/produk.css') }}">
+    <style>
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+        }
+    </style>
 @endpush
 
 @section('content')
     <div id="notification-container" class="notification-container"></div>
 
     <div style="padding-top: 80px;">
-    <div class="container">
+        <div class="container">
             <div class="breadcrumb">
                 <a href="/">Beranda</a> <span style="margin: 0 4px;">&rsaquo;</span>
                 <a href="/">Produk</a> <span style="margin: 0 4px;">&rsaquo;</span>
-                <a href="/">Produk Unggulan</a> <span style="margin: 0 4px;">&rsaquo;</span>
+                <a href="/">Detail Produk</a> <span style="margin: 0 4px;">&rsaquo;</span>
                 <span style="color: #1a1a1a;">{{ $product->name }}</span>
             </div>
 
@@ -32,38 +34,51 @@
                 <div class="product-info-content">
                     <h1>{{ $product->name }}</h1>
                     <div class="product-rating-inline">
-                        <div class="stars">
-                            <i data-lucide="star" fill="currentColor" width="16" height="16"></i>
-                            <i data-lucide="star" fill="currentColor" width="16" height="16"></i>
-                            <i data-lucide="star" fill="currentColor" width="16" height="16"></i>
-                            <i data-lucide="star" fill="currentColor" width="16" height="16"></i>
-                            <i data-lucide="star" fill="currentColor" width="16" height="16"></i>
+                        <div class="stars" id="productAverageStars">
+                            @php
+                                $averageRating = \App\Models\Review::where('product_id', $product->slug)->avg('rating') ?? 0;
+                                $reviewCount = \App\Models\Review::where('product_id', $product->slug)->count();
+                                $roundedRating = round($averageRating);
+                            @endphp
+                            @for ($i = 1; $i <= 5; $i++)
+                                <i data-lucide="star" fill="{{ $i <= $roundedRating ? '#fbbf24' : 'none' }}" width="16" height="16" style="color: {{ $i <= $roundedRating ? '#fbbf24' : '#e2e8f0' }}"></i>
+                            @endfor
                         </div>
-                        <span class="rating-value">5/5</span>
+                        <span class="rating-value" id="productAverageRatingValue">{{ $averageRating > 0 ? number_format($averageRating, 1) : '0' }}/5 ({{ $reviewCount }} Ulasan)</span>
                     </div>
                     <div class="product-price-large">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
-                    
+
                     <div class="product-desc-text">
                         {{ $product->description }}
                     </div>
 
                     <div class="product-specs">
-                        <div><span class="spec-label">Berat Bersih:</span> <span class="spec-value">{{ $product->weight }}</span></div>
-                        <div><span class="spec-label">Jenis:</span> <span class="spec-value">{{ $product->type }}</span></div>
-                        <div><span class="spec-label">Kemasan:</span> <span class="spec-value">{{ $product->packaging }}</span></div>
-                        <div><span class="spec-label">Daya Tahan:</span> <span class="spec-value">{{ $product->shelf_life }}</span></div>
-                        <div><span class="spec-label">Produksi:</span> <span class="spec-value">{{ $product->production }}</span></div>
+                        <div><span class="spec-label">Berat Bersih:</span> <span
+                                class="spec-value">{{ $product->weight }}</span></div>
+                        <div><span class="spec-label">Jenis:</span> <span class="spec-value">{{ $product->type }}</span>
+                        </div>
+                        <div><span class="spec-label">Kemasan:</span> <span
+                                class="spec-value">{{ $product->packaging }}</span></div>
+                        <div><span class="spec-label">Daya Tahan:</span> <span
+                                class="spec-value">{{ $product->shelf_life }}</span></div>
+                        <div><span class="spec-label">Produksi:</span> <span
+                                class="spec-value">{{ $product->production }}</span></div>
                     </div>
                     <hr style="border: none; border-top: 1px solid #f1f5f9; margin-top: 0; margin-bottom: 24px;">
 
                     <div class="purchase-actions">
-                        <p style="font-weight: 400; margin-bottom: 12px; font-size: 14px; color: #71717a;">Pilih Metode Pembelian</p>
-                        <a href="https://shopee.co.id/search?keyword=rendang%20daging%20sapi" target="_blank" class="btn-shopee">
-                            <img src="https://api.iconify.design/simple-icons:shopee.svg?color=black" width="28" height="28" alt="Shopee">
+                        <p style="font-weight: 400; margin-bottom: 12px; font-size: 14px; color: #71717a;">Pilih Metode
+                            Pembelian</p>
+                        <a href="https://shopee.co.id/search?keyword=rendang%20daging%20sapi" target="_blank"
+                            class="btn-shopee">
+                            <img src="https://api.iconify.design/simple-icons:shopee.svg?color=black" width="28" height="28"
+                                alt="Shopee">
                             Beli Di Shopee
                         </a>
-                        <a href="https://wa.me/628123456789?text=Halo%20BojongStore,%20saya%20tertarik%20dengan%20produk%20Rendang%20Daging%20Sapi%20Kemasan." target="_blank" class="btn-whatsapp">
-                            <img src="https://api.iconify.design/simple-icons:whatsapp.svg?color=black" width="28" height="28" alt="WhatsApp">
+                        <a href="https://wa.me/628123456789?text=Halo%20BojongStore,%20saya%20tertarik%20dengan%20produk%20Rendang%20Daging%20Sapi%20Kemasan."
+                            target="_blank" class="btn-whatsapp">
+                            <img src="https://api.iconify.design/simple-icons:whatsapp.svg?color=black" width="28"
+                                height="28" alt="WhatsApp">
                             Chat Penjual
                         </a>
                     </div>
@@ -79,10 +94,12 @@
                 </div>
 
                 <div class="reviews-header">
-                    <h2 style="font-size: 24px; font-weight: 800;">Semua Ulasan <span id="reviewCount" style="font-weight: 400; color: #94a3b8;">(0)</span></h2>
+                    <h2 style="font-size: 24px; font-weight: 800;">Semua Ulasan <span id="reviewCount"
+                            style="font-weight: 400; color: #94a3b8;">(0)</span></h2>
                     <div class="reviews-controls">
                         <div class="filter-wrapper" style="position: relative;">
-                            <button class="btn-filter-icon" id="btnFilter"><i data-lucide="sliders-horizontal" width="18" height="18"></i></button>
+                            <button class="btn-filter-icon" id="btnFilter"><i data-lucide="sliders-horizontal" width="18"
+                                    height="18"></i></button>
                             <div class="filter-dropdown" id="filterDropdown">
                                 <div class="filter-option active" data-rating="0">Semua Rating</div>
                                 <div class="filter-option" data-rating="5">5 Bintang</div>
@@ -93,7 +110,8 @@
                             </div>
                         </div>
                         <div class="sort-wrapper" style="position: relative;">
-                            <button class="btn-sort" id="btnSort">Terbaru <i data-lucide="chevron-down" width="16" height="16"></i></button>
+                            <button class="btn-sort" id="btnSort">Terbaru <i data-lucide="chevron-down" width="16"
+                                    height="16"></i></button>
                             <div class="filter-dropdown" id="sortDropdown">
                                 <div class="sort-option active" data-sort="latest">Terbaru</div>
                                 <div class="sort-option" data-sort="oldest">Terlama</div>
@@ -104,102 +122,7 @@
                 </div>
 
                 <div class="reviews-grid">
-                    <!-- Review 1 -->
-                    <div class="review-card">
-                        <div class="review-card-header">
-                            <div class="stars">
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                            </div>
-                            <i data-lucide="more-horizontal" width="18" height="18" style="color: #94a3b8;"></i>
-                        </div>
-                        <div class="reviewer-name">Rizky A. <i data-lucide="check-circle-2" class="verify-badge" width="14" height="14"></i></div>
-                        <p class="review-text">"Rasanya enak banget, bumbunya meresap sampai ke dalam daging. Pedasnya pas, cocok banget dimakan sama nasi hangat."</p>
-                        <div class="review-date">Ditulis pada 15 April 2026</div>
-                    </div>
-                    <!-- Review 2 -->
-                    <div class="review-card">
-                        <div class="review-card-header">
-                            <div class="stars">
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                            </div>
-                            <i data-lucide="more-horizontal" width="18" height="18" style="color: #94a3b8;"></i>
-                        </div>
-                        <div class="reviewer-name">Siti N. <i data-lucide="check-circle-2" class="verify-badge" width="14" height="14"></i></div>
-                        <p class="review-text">"Bumbunya berasa banget rempahnya, khas masakan rumahan. Jadi inget masakan ibu di kampung."</p>
-                        <div class="review-date">Ditulis pada 14 April 2026</div>
-                    </div>
-                    <!-- Review 3 -->
-                    <div class="review-card">
-                        <div class="review-card-header">
-                            <div class="stars">
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                            </div>
-                            <i data-lucide="more-horizontal" width="18" height="18" style="color: #94a3b8;"></i>
-                        </div>
-                        <div class="reviewer-name">Andi P. <i data-lucide="check-circle-2" class="verify-badge" width="14" height="14"></i></div>
-                        <p class="review-text">"Packaging rapi dan higienis. Rendangnya juga tahan lama, cocok buat stok di rumah. Recommended banget!"</p>
-                        <div class="review-date">Ditulis pada 14 April 2026</div>
-                    </div>
-                    <!-- Review 4 -->
-                    <div class="review-card">
-                        <div class="review-card-header">
-                            <div class="stars">
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                            </div>
-                            <i data-lucide="more-horizontal" width="18" height="18" style="color: #94a3b8;"></i>
-                        </div>
-                        <div class="reviewer-name">Dewi M. <i data-lucide="check-circle-2" class="verify-badge" width="14" height="14"></i></div>
-                        <p class="review-text">"Ini sih rendang terenak yang pernah gua coba dari UMKM. Dagingnya empuk, ga alot sama sekali."</p>
-                        <div class="review-date">Ditulis pada 13 April 2026</div>
-                    </div>
-                    <!-- Review 5 -->
-                    <div class="review-card">
-                        <div class="review-card-header">
-                            <div class="stars">
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                            </div>
-                            <i data-lucide="more-horizontal" width="18" height="18" style="color: #94a3b8;"></i>
-                        </div>
-                        <div class="reviewer-name">Fajar M. <i data-lucide="check-circle-2" class="verify-badge" width="14" height="14"></i></div>
-                        <p class="review-text">"Udah repeat order beberapa kali. Selalu konsisten rasanya, dan pengirimannya juga cepat."</p>
-                        <div class="review-date">Ditulis pada 13 April 2026</div>
-                    </div>
-                    <!-- Review 6 -->
-                    <div class="review-card">
-                        <div class="review-card-header">
-                            <div class="stars">
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                                <i data-lucide="star" fill="currentColor" width="14" height="14"></i>
-                            </div>
-                            <i data-lucide="more-horizontal" width="18" height="18" style="color: #94a3b8;"></i>
-                        </div>
-                        <div class="reviewer-name">Nabila S. <i data-lucide="check-circle-2" class="verify-badge" width="14" height="14"></i></div>
-                        <p class="review-text">"Worth it banget harganya. Porsi cukup buat 3 - 4 orang, dan rasanya ga kalah sama restoran."</p>
-                        <div class="review-date">Ditulis pada 12 April 2026</div>
-                    </div>
+                    <!-- Ulasan dimuat secara dinamis -->
                 </div>
 
                 <button class="btn-load-more">Muat Lebih Banyak</button>
@@ -214,7 +137,8 @@
                     <div class="logo-wrapper footer-logo">
                         <span class="logo-text footer-logo-text">BojongStore</span>
                     </div>
-                    <p class="footer-desc">Mendukung keberlanjutan ekonomi lokal Indonesia melalui digitalisasi UMKM dengan cara yang elegan dan efisien.</p>
+                    <p class="footer-desc">Mendukung keberlanjutan ekonomi lokal Indonesia melalui digitalisasi UMKM dengan
+                        cara yang elegan dan efisien.</p>
                 </div>
                 <div class="footer-column">
                     <h4 class="footer-title">Kategori</h4>
@@ -227,7 +151,8 @@
                 </div>
                 <div class="footer-column">
                     <h4 class="footer-title">Bantuan</h4>
-                    <p class="footer-desc" style="margin-bottom: 16px;">Jika Anda mengalami kendala, silahkan hubungi kami dengan mudah melalui tombol di bawah.</p>
+                    <p class="footer-desc" style="margin-bottom: 16px;">Jika Anda mengalami kendala, silahkan hubungi kami
+                        dengan mudah melalui tombol di bawah.</p>
                     <button class="btn-footer">Bantuan</button>
                 </div>
             </div>
@@ -252,7 +177,7 @@
                 </div>
                 <span style="font-weight: 700; color: var(--text-dark);">Anda</span>
             </div>
-            
+
             <span class="modal-label">Rating Produk</span>
             <div class="rating-input" id="starRating">
                 <i data-lucide="star" class="star-input" data-value="1" width="32" height="32"></i>
@@ -263,7 +188,8 @@
             </div>
 
             <span class="modal-label">Ulasan Anda</span>
-            <textarea id="reviewComment" class="textarea-review" placeholder="Bagikan pengalaman Anda tentang produk ini..."></textarea>
+            <textarea id="reviewComment" class="textarea-review"
+                placeholder="Bagikan pengalaman Anda tentang produk ini..."></textarea>
 
             <div class="modal-footer">
                 <button class="btn-submit-review" id="submitReview">
@@ -280,14 +206,14 @@
             <button class="btn-help-close" id="closeHelpModal">
                 <i data-lucide="x" width="18" height="18"></i>
             </button>
-            
+
             <div id="helpFormState">
                 <div class="help-modal-header">
                     <i data-lucide="help-circle" width="32" height="32"></i>
                     <h2>Pusat Bantuan</h2>
                     <p>Punya keluhan atau pertanyaan? Kami siap membantu Anda.</p>
                 </div>
-                
+
                 <form id="complaintForm">
                     <div class="help-form-group">
                         <label for="helpName">Nama Lengkap</label>
@@ -295,7 +221,8 @@
                     </div>
                     <div class="help-form-group">
                         <label for="helpContact">Email / WhatsApp</label>
-                        <input type="text" id="helpContact" class="help-input" placeholder="Contoh: 0812xxxx atau email@mail.com" required>
+                        <input type="text" id="helpContact" class="help-input"
+                            placeholder="Contoh: 0812xxxx atau email@mail.com" required>
                     </div>
                     <div class="help-form-group">
                         <label for="helpCategory">Kategori Keluhan</label>
@@ -309,7 +236,8 @@
                     </div>
                     <div class="help-form-group">
                         <label for="helpMessage">Detail Keluhan</label>
-                        <textarea id="helpMessage" class="help-textarea" placeholder="Ceritakan kendala yang Anda alami..." required></textarea>
+                        <textarea id="helpMessage" class="help-textarea" placeholder="Ceritakan kendala yang Anda alami..."
+                            required></textarea>
                     </div>
                     <button type="submit" class="btn-help-submit">
                         <span>Kirim Keluhan</span>
@@ -321,7 +249,8 @@
             <div id="helpSuccessState" class="success-state">
                 <i data-lucide="check-circle" width="64" height="64"></i>
                 <h2>Berhasil Terkirim!</h2>
-                <p>Terima kasih atas laporan Anda. Tim kami akan segera menindaklanjuti keluhan Anda melalui kontak yang tersedia.</p>
+                <p>Terima kasih atas laporan Anda. Tim kami akan segera menindaklanjuti keluhan Anda melalui kontak yang
+                    tersedia.</p>
                 <button class="btn-help-submit" style="margin-top: 32px;" onclick="closeHelpModalAction()">Tutup</button>
             </div>
         </div>
@@ -351,9 +280,28 @@
         function renderReviews() {
             const grid = document.querySelector('.reviews-grid');
             const countSpan = document.getElementById('reviewCount');
-            
-            let filtered = currentFilter === 0 
-                ? [...allReviews] 
+
+            // Calculate average rating from allReviews (not filtered)
+            const totalReviews = allReviews.length;
+            const sumRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
+            const averageRating = totalReviews > 0 ? (sumRating / totalReviews) : 0;
+            const roundedRating = Math.round(averageRating);
+
+            // Update average rating stars in the top section
+            const avgStarsContainer = document.getElementById('productAverageStars');
+            const avgRatingTextSpan = document.getElementById('productAverageRatingValue');
+
+            if (avgStarsContainer && avgRatingTextSpan) {
+                let starsHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    starsHTML += `<i data-lucide="star" fill="${i <= roundedRating ? '#fbbf24' : 'none'}" width="16" height="16" style="color: ${i <= roundedRating ? '#fbbf24' : '#e2e8f0'}"></i>`;
+                }
+                avgStarsContainer.innerHTML = starsHTML;
+                avgRatingTextSpan.textContent = `${averageRating > 0 ? averageRating.toFixed(1) : '0'}/5 (${totalReviews} Ulasan)`;
+            }
+
+            let filtered = currentFilter === 0
+                ? [...allReviews]
                 : allReviews.filter(r => r.rating === currentFilter);
 
             // Apply Sort
@@ -365,38 +313,39 @@
 
             countSpan.textContent = `(${filtered.length})`;
             grid.innerHTML = '';
-            
+
             if (filtered.length === 0) {
                 grid.innerHTML = '<p style="grid-column: span 2; text-align: center; color: #94a3b8; padding: 40px;">Belum ada ulasan untuk rating ini.</p>';
+                lucide.createIcons();
                 return;
             }
 
             filtered.forEach(review => {
                 const isOwnReview = current_user_id && review.user_id == current_user_id;
                 const nameDisplay = isOwnReview ? `${review.user_name} ( Anda )` : review.user_name;
-                
+
                 const card = `
-                    <div class="review-card">
-                        <div class="review-card-header">
-                            <div class="stars">
-                                ${Array(5).fill(0).map((_, i) => `<i data-lucide="star" fill="${i < review.rating ? '#fbbf24' : 'none'}" width="14" height="14" style="color: ${i < review.rating ? '#fbbf24' : '#e2e8f0'}"></i>`).join('')}
+                        <div class="review-card">
+                            <div class="review-card-header">
+                                <div class="stars">
+                                    ${Array(5).fill(0).map((_, i) => `<i data-lucide="star" fill="${i < review.rating ? '#fbbf24' : 'none'}" width="14" height="14" style="color: ${i < review.rating ? '#fbbf24' : '#e2e8f0'}"></i>`).join('')}
+                                </div>
+                                ${isOwnReview ? `
+                                <button class="btn-delete-review" data-id="${review.id}" style="background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;">
+                                    <i data-lucide="trash-2" width="16" height="16"></i>
+                                </button>
+                                ` : ''}
                             </div>
-                            ${isOwnReview ? `
-                            <button class="btn-delete-review" data-id="${review.id}" style="background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;">
-                                <i data-lucide="trash-2" width="16" height="16"></i>
-                            </button>
-                            ` : ''}
-                        </div>
-                        <div class="reviewer-name" style="display: flex; align-items: center; gap: 6px;">
-                            ${nameDisplay} 
-                            <div style="background: #22c55e; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                <i data-lucide="check" style="color: white;" width="10" height="10" stroke-width="4"></i>
+                            <div class="reviewer-name" style="display: flex; align-items: center; gap: 6px;">
+                                ${nameDisplay} 
+                                <div style="background: #22c55e; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                    <i data-lucide="check" style="color: white;" width="10" height="10" stroke-width="4"></i>
+                                </div>
                             </div>
+                            <p class="review-text">"${review.comment}"</p>
+                            <div class="review-date">Ditulis pada ${new Date(review.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
                         </div>
-                        <p class="review-text">"${review.comment}"</p>
-                        <div class="review-date">Ditulis pada ${new Date(review.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}</div>
-                    </div>
-                `;
+                    `;
                 grid.insertAdjacentHTML('beforeend', card);
             });
             lucide.createIcons();
@@ -430,7 +379,7 @@
         });
 
         document.querySelectorAll('.filter-option').forEach(option => {
-            option.addEventListener('click', function() {
+            option.addEventListener('click', function () {
                 document.querySelectorAll('.filter-option').forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
                 currentFilter = parseInt(this.dataset.rating);
@@ -440,7 +389,7 @@
         });
 
         document.querySelectorAll('.sort-option').forEach(option => {
-            option.addEventListener('click', function() {
+            option.addEventListener('click', function () {
                 document.querySelectorAll('.sort-option').forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
                 currentSort = this.dataset.sort;
@@ -467,11 +416,11 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        fetchReviews();
-                    })
-                    .catch(err => console.error(err));
+                        .then(res => res.json())
+                        .then(data => {
+                            fetchReviews();
+                        })
+                        .catch(err => console.error(err));
                 }
             }
         });
@@ -516,19 +465,19 @@
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.innerHTML = `
-                <div class="toast-icon">
-                    <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div class="toast-icon">
+                        <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
                     </div>
-                </div>
-                <div class="toast-message">Ulasan mu berhasil terkirim !</div>
-                <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
-            `;
+                    <div class="toast-message">Ulasan mu berhasil terkirim !</div>
+                    <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
+                `;
             container.appendChild(toast);
             lucide.createIcons();
 
             toast.querySelector('.toast-close').onclick = () => toast.remove();
-            
+
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateX(100%)';
@@ -540,7 +489,7 @@
         // Submit Review
         document.getElementById('submitReview').addEventListener('click', () => {
             const comment = document.getElementById('reviewComment').value;
-            
+
             if (currentRating === 0 || !comment) {
                 alert('Silakan pilih rating dan isi ulasan Anda.');
                 return;
@@ -558,46 +507,46 @@
                     product_id: product_id
                 })
             })
-            .then(res => res.json())
-            .then(data => {
-                showNotification(); // Show the new toast
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-                document.getElementById('reviewComment').value = '';
-                currentRating = 0;
-                document.querySelectorAll('.star-input').forEach(s => {
-                    s.classList.remove('active');
-                    s.setAttribute('fill', 'none');
-                    s.style.color = '#e2e8f0';
+                .then(res => res.json())
+                .then(data => {
+                    showNotification(); // Show the new toast
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                    document.getElementById('reviewComment').value = '';
+                    currentRating = 0;
+                    document.querySelectorAll('.star-input').forEach(s => {
+                        s.classList.remove('active');
+                        s.setAttribute('fill', 'none');
+                        s.style.color = '#e2e8f0';
+                    });
+                    fetchReviews();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal mengirim ulasan.');
                 });
-                fetchReviews();
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Gagal mengirim ulasan.');
-            });
         });
         function showFavNotification() {
             const container = document.getElementById('notification-container');
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.innerHTML = `
-                <div class="toast-icon">
-                    <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div class="toast-icon">
+                        <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </div>
                     </div>
-                </div>
-                <div class="toast-message" style="display: flex; flex-direction: column; gap: 4px;">
-                    <span style="font-weight: 700; color: #000; font-size: 15px;">Produk berhasil ditambahkan ke favorit</span>
-                    <a href="/favorit" style="color: #166534; font-weight: 700; text-decoration: none; font-size: 14px;">Lihat Produk Favorit</a>
-                </div>
-                <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
-            `;
+                    <div class="toast-message" style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-weight: 700; color: #000; font-size: 15px;">Produk berhasil ditambahkan ke favorit</span>
+                        <a href="/favorit" style="color: #166534; font-weight: 700; text-decoration: none; font-size: 14px;">Lihat Produk Favorit</a>
+                    </div>
+                    <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
+                `;
             container.appendChild(toast);
             lucide.createIcons();
 
             toast.querySelector('.toast-close').onclick = () => toast.remove();
-            
+
             setTimeout(() => {
                 if (toast.parentElement) {
                     toast.style.opacity = '0';
@@ -620,14 +569,14 @@
         }
 
         // Favorite Toggle Logic
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             const btn = e.target.closest('.btn-fav-circle');
             if (!btn) return;
 
             btn.classList.toggle('active');
             const icon = btn.querySelector('svg') || btn.querySelector('i');
             const isActive = btn.classList.contains('active');
-            
+
             if (icon) {
                 if (isActive) {
                     icon.setAttribute('fill', 'currentColor');

@@ -458,6 +458,19 @@
                                 </div>
                                 <div class="product-title">{{ $product->name }}</div>
                                 <div class="product-weight">{{ $product->weight ?? '300 gram' }}</div>
+                                <div class="product-rating-card" style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 8px;">
+                                    <div class="stars" style="display: flex; gap: 2px; color: #fbbf24;">
+                                        @php
+                                            $averageRating = $product->reviews_avg_rating ?? 0;
+                                            $reviewCount = $product->reviews_count ?? 0;
+                                            $roundedRating = round($averageRating);
+                                        @endphp
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i data-lucide="star" fill="{{ $i <= $roundedRating ? '#fbbf24' : 'none' }}" width="14" height="14" style="color: {{ $i <= $roundedRating ? '#fbbf24' : '#e2e8f0' }}"></i>
+                                        @endfor
+                                    </div>
+                                    <span style="font-size: 12px; color: #71717a;">({{ $reviewCount }})</span>
+                                </div>
                                 <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
                                 <a href="{{ route('product-detail', $product->slug) }}" class="btn-secondary">Lihat Detail</a>
                             </div>

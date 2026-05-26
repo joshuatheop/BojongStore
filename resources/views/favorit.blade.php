@@ -83,22 +83,35 @@
                     </div>
                 `;
             } else {
-                grid.innerHTML = favoriteProducts.map(product => `
-                    <div class="product-card-fav" style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 20px; position: relative; display: flex; flex-direction: column;">
-                        <div class="product-image-container" style="position: relative; background: #f8fafc; border-radius: 8px; margin-bottom: 20px; padding: 20px; text-align: center;">
-                            <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 180px; object-fit: contain;">
-                            <div class="btn-fav-circle active" style="cursor: pointer;" onclick="toggleFav('${product.slug}')">
-                                <i data-lucide="bookmark" fill="currentColor" width="28" height="28"></i>
+                grid.innerHTML = favoriteProducts.map(product => {
+                    const averageRating = product.reviews_avg_rating ? parseFloat(product.reviews_avg_rating) : 0;
+                    const reviewCount = product.reviews_count || 0;
+                    const roundedRating = Math.round(averageRating);
+                    const starsHTML = Array(5).fill(0).map((_, i) => `<i data-lucide="star" fill="${i < roundedRating ? '#fbbf24' : 'none'}" width="14" height="14" style="color: ${i < roundedRating ? '#fbbf24' : '#e2e8f0'}"></i>`).join('');
+
+                    return `
+                        <div class="product-card-fav" style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 20px; position: relative; display: flex; flex-direction: column;">
+                            <div class="product-image-container" style="position: relative; background: #f8fafc; border-radius: 8px; margin-bottom: 20px; padding: 20px; text-align: center;">
+                                <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 180px; object-fit: contain;">
+                                <div class="btn-fav-circle active" style="cursor: pointer;" onclick="toggleFav('${product.slug}')">
+                                    <i data-lucide="bookmark" fill="currentColor" width="28" height="28"></i>
+                                </div>
+                            </div>
+                            <div class="product-info-fav" style="text-align: center; display: flex; flex-direction: column; flex: 1;">
+                                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">${product.name}</h3>
+                                <p style="color: #64748b; font-size: 14px; margin-bottom: 8px;">${product.weight}</p>
+                                <div class="product-rating-card" style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 12px;">
+                                    <div class="stars" style="display: flex; gap: 2px; color: #fbbf24;">
+                                        ${starsHTML}
+                                    </div>
+                                    <span style="font-size: 12px; color: #71717a;">(${reviewCount})</span>
+                                </div>
+                                <div class="price" style="font-size: 20px; font-weight: 800; margin-bottom: 20px; margin-top: auto;">Rp ${new Intl.NumberFormat('id-ID').format(product.price)}</div>
+                                <a href="/produk/${product.slug}" style="display: block; width: 100%; padding: 12px; background: #0a4d2e; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; transition: background 0.3s;">Lihat Detail</a>
                             </div>
                         </div>
-                        <div class="product-info-fav" style="text-align: center; display: flex; flex-direction: column; flex: 1;">
-                            <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">${product.name}</h3>
-                            <p style="color: #64748b; font-size: 14px; margin-bottom: 12px;">${product.weight}</p>
-                            <div class="price" style="font-size: 20px; font-weight: 800; margin-bottom: 20px; margin-top: auto;">Rp ${new Intl.NumberFormat('id-ID').format(product.price)}</div>
-                            <a href="/produk/${product.slug}" style="display: block; width: 100%; padding: 12px; background: #0a4d2e; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; transition: background 0.3s;">Lihat Detail</a>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             lucide.createIcons();
         }

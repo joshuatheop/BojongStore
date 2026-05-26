@@ -18,7 +18,7 @@ Route::get('/produk', [ProductController::class, 'produkPage'])->name('produk');
 
 // ======= FAVORIT =======
 Route::get('/favorit', function () {
-    $products = \App\Models\Product::all();
+    $products = \App\Models\Product::withAvg('reviews', 'rating')->withCount('reviews')->get();
     return view('favorit', compact('products'));
 });
 
