@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Umkm;
+use App\Models\Review;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -16,7 +18,10 @@ class AdminController extends Controller
     {
         $total_products = Product::count();
         $total_categories = Category::count();
-        $top_products = Product::orderBy('views', 'desc')->take(5)->get();
+        $total_umkm = Umkm::count();
+        $total_reviews = Review::count();
+        $avg_rating = Review::avg('rating') ?? 0;
+        $top_products = Product::with('umkm')->orderBy('views', 'desc')->take(5)->get();
 
         // Data chart statistik pengguna (7 hari terakhir)
         $labels = [];
@@ -29,6 +34,6 @@ class AdminController extends Controller
             $data[] = $count;
         }
 
-        return view('admin.dashboard', compact('total_products', 'total_categories', 'top_products', 'labels', 'data'));
+        return view('admin.dashboard', compact('total_products', 'total_categories', 'total_umkm', 'total_reviews', 'avg_rating', 'top_products', 'labels', 'data'));
     }
 }

@@ -106,6 +106,10 @@
                                 <div>
                                     <p class="text-sm font-semibold text-gray-800">{{ $product->name }}</p>
                                     <p class="text-xs text-gray-400">SKU: PRD-{{ str_pad($product->id, 3, '0', STR_PAD_LEFT) }}</p>
+                                    @php $shopName = $product->umkm?->name ?? $product->seller; @endphp
+                                    @if($shopName)
+                                    <span class="inline-flex items-center gap-1 mt-0.5 text-xs font-semibold text-[#1a5c2a]">🏪 {{ $shopName }}</span>
+                                    @endif
                                 </div>
                             </div>
                         </td>
@@ -291,6 +295,18 @@
                                 </label>
                             </div>
 
+                            {{-- UMKM & Seller --}}
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Nama Toko / UMKM</label>
+                                <select name="umkm_id"
+                                        class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a5c2a]/20">
+                                    <option value="">-- Pilih UMKM (opsional) --</option>
+                                    @foreach(\App\Models\Umkm::where('status','terverifikasi')->orderBy('name')->get() as $umkm)
+                                        <option value="{{ $umkm->id }}">{{ $umkm->name }} ({{ $umkm->category }})</option>
+                                    @endforeach
+                                </select>
+                                <p class="text-xs text-gray-400 mt-1">Atau isi nama penjual manual jika UMKM belum terdaftar.</p>
+                            </div>
                             {{-- Hidden fields --}}
                             <input type="hidden" name="seller" value="{{ Auth::user()->name }}">
                         </div>

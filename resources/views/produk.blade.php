@@ -59,7 +59,7 @@
                 <p>Pilihan terbaik yang paling diminati pelanggan kami.</p>
             </div>
             <div class="products-grid">
-                @forelse($featuredProducts as $product)
+                    @forelse($featuredProducts as $product)
                     <div class="product-card">
                         <div class="product-image-container">
                             <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="product-image">
@@ -71,6 +71,15 @@
                             </span>
                         </div>
                         <div class="product-title">{{ $product->name }}</div>
+                        {{-- Badge nama toko / UMKM --}}
+                        @php $shopName = $product->umkm?->name ?? $product->seller; @endphp
+                        @if($shopName)
+                        <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:6px;">
+                            <span style="font-size:11px;color:#fff;background:#00923F;border-radius:12px;padding:2px 8px;font-weight:600;">
+                                🏪 {{ $shopName }}
+                            </span>
+                        </div>
+                        @endif
                         <div class="product-weight">{{ $product->weight }}</div>
                         <div class="product-rating-card"
                             style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 8px;">
@@ -91,11 +100,11 @@
                         <a href="{{ route('product-detail', $product->slug) }}" class="btn-secondary"
                             style="text-decoration: none; text-align: center; display: block;">Lihat Detail</a>
                     </div>
-                @empty
-                    <p style="color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 40px 0;">
-                        Belum ada produk unggulan saat ini.
-                    </p>
-                @endforelse
+                    @empty
+                        <p style="color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 40px 0;">
+                            Belum ada produk unggulan saat ini.
+                        </p>
+                    @endforelse
             </div>
         </div>
     </section>
@@ -116,6 +125,15 @@
                                 <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
                             </div>
                             <div class="product-title">{{ $product->name }}</div>
+                            {{-- Badge nama toko / UMKM --}}
+                            @php $shopName = $product->umkm?->name ?? $product->seller; @endphp
+                            @if($shopName)
+                            <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:6px;">
+                                <span style="font-size:11px;color:#fff;background:#00923F;border-radius:12px;padding:2px 8px;font-weight:600;">
+                                    🏪 {{ $shopName }}
+                                </span>
+                            </div>
+                            @endif
                             <div class="product-weight">{{ $product->weight }}</div>
                             <div class="product-rating-card"
                                 style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 8px;">

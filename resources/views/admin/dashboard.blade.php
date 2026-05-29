@@ -36,10 +36,10 @@
                 <div class="w-10 h-10 bg-[#e8f5ec] rounded-lg flex items-center justify-center">
                     <i class='bx bx-store text-xl text-[#1a5c2a]'></i>
                 </div>
-                <span class="text-xs font-semibold text-[#1a5c2a] bg-[#e8f5ec] px-2.5 py-1 rounded-full">Cakupan Wilayah</span>
+                <span class="text-xs font-semibold text-[#1a5c2a] bg-[#e8f5ec] px-2.5 py-1 rounded-full">Mitra Aktif</span>
             </div>
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">UMKM Bojongsoang</p>
-            <p class="text-3xl font-bold text-gray-800">{{ $total_categories }}</p>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total UMKM</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $total_umkm }}</p>
         </div>
 
         {{-- Card 3: Review --}}
@@ -48,10 +48,10 @@
                 <div class="w-10 h-10 bg-[#e8f5ec] rounded-lg flex items-center justify-center">
                     <i class='bx bx-star text-xl text-[#1a5c2a]'></i>
                 </div>
-                <span class="text-xs font-semibold text-orange-500 bg-orange-50 px-2.5 py-1 rounded-full">4.8 Avg Rating</span>
+                <span class="text-xs font-semibold text-orange-500 bg-orange-50 px-2.5 py-1 rounded-full">{{ $avg_rating > 0 ? number_format($avg_rating, 1) : '0' }} Avg Rating</span>
             </div>
             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Review</p>
-            <p class="text-3xl font-bold text-gray-800">850</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $total_reviews }}</p>
         </div>
     </div>
 

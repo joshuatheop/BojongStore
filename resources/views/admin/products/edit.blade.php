@@ -33,12 +33,22 @@
                                         required>
                                 </div>
                                 <div class="mb-4">
-                                    <label for="seller" class="block text-sm font-medium text-gray-700">Nama
-                                        Penjual</label>
+                                    <label for="umkm_id" class="block text-sm font-medium text-gray-700">Nama Toko / UMKM</label>
+                                    <select name="umkm_id" id="umkm_id"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0a6634] focus:ring-[#0a6634] sm:text-sm">
+                                        <option value="">-- Pilih UMKM (opsional) --</option>
+                                        @foreach($umkms as $umkm)
+                                            <option value="{{ $umkm->id }}" {{ old('umkm_id', $product->umkm_id) == $umkm->id ? 'selected' : '' }}>{{ $umkm->name }} ({{ $umkm->category }})</option>
+                                        @endforeach
+                                    </select>
+                                    <p class="text-xs text-gray-400 mt-1">Hanya UMKM terverifikasi yang ditampilkan. Jika kosong, isi nama penjual di bawah.</p>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="seller" class="block text-sm font-medium text-gray-700">Nama Penjual (jika tidak ada UMKM)</label>
                                     <input type="text" name="seller" id="seller"
                                         value="{{ old('seller', $product->seller) }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#0a6634] focus:ring-[#0a6634] sm:text-sm"
-                                        required>
+                                        placeholder="Nama penjual manual jika belum ada di daftar UMKM">
                                 </div>
                                 <div class="mb-4">
                                     <label for="price" class="block text-sm font-medium text-gray-700">Harga

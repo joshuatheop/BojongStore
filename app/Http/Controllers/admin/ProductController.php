@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Umkm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +18,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('category')->latest()->paginate(10);
+        $products = Product::with('category', 'umkm')->latest()->paginate(10);
         $total_products = Product::count();
         $total_featured = Product::where('is_featured', true)->count();
         $total_categories = \App\Models\Category::count();
@@ -30,8 +31,8 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::all();
-        // Arahkan ke view di dalam folder user/products
-        return view('admin.products.create', compact('categories'));
+        $umkms = Umkm::where('status', 'terverifikasi')->orderBy('name')->get();
+        return view('admin.products.create', compact('categories', 'umkms'));
     }
 
     /**
@@ -47,6 +48,7 @@ class ProductController extends Controller
             'shoppee' => 'nullable|url',
             'whatsapp' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
+            'umkm_id' => 'nullable|exists:umkms,id',
             'tags' => 'nullable|string',
             'seller' => 'nullable|string|max:255',
         ]);
@@ -71,8 +73,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::all();
-        // Arahkan ke view di dalam folder user/products
-        return view('admin.products.edit', compact('product', 'categories'));
+        $umkms = Umkm::where('status', 'terverifikasi')->orderBy('name')->get();
+        return view('admin.products.edit', compact('product', 'categories', 'umkms'));
     }
 
     /**
@@ -88,6 +90,7 @@ class ProductController extends Controller
             'shoppee' => 'nullable|url',
             'whatsapp' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
+            'umkm_id' => 'nullable|exists:umkms,id',
             'tags' => 'nullable|string',
             'seller' => 'nullable|string|max:255',
         ]);
