@@ -7,6 +7,9 @@
 
         <title>{{ config('app.name', 'Banjarsari') }}</title>
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="{{ asset('images/logo_tree.png') }}">
+
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700,800&display=swap" rel="stylesheet" />
