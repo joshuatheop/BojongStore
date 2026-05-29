@@ -56,7 +56,6 @@
                     ['route' => 'admin.products.index', 'icon' => 'bx-package', 'label' => 'Produk', 'pattern' => 'admin.products.*'],
                     ['route' => 'admin.umkm.index', 'icon' => 'bx-store', 'label' => 'UMKM', 'pattern' => 'admin.umkm*'],
                     ['route' => 'admin.review.index', 'icon' => 'bx-star', 'label' => 'Review', 'pattern' => 'admin.review*'],
-                    ['route' => 'admin.konten.index', 'icon' => 'bx-news', 'label' => 'Konten', 'pattern' => 'admin.konten*'],
                 ];
             @endphp
 

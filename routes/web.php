@@ -66,7 +66,4 @@ Route::middleware(['auth', 'adminMiddleware'])->group(function () {
     // Review
     Route::get('/admin/review', [\App\Http\Controllers\admin\ReviewController::class, 'index'])->name('admin.review.index');
     Route::delete('/admin/review/{review}', [\App\Http\Controllers\admin\ReviewController::class, 'destroy'])->name('admin.review.destroy');
-    // Konten
-    Route::get('/admin/konten', [\App\Http\Controllers\admin\KontenController::class, 'index'])->name('admin.konten.index');
-    Route::post('/admin/konten/{section}', [\App\Http\Controllers\admin\KontenController::class, 'update'])->name('admin.konten.update');
 });

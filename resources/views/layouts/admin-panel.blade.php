@@ -72,11 +72,6 @@
                 <i class='bx bx-star text-lg'></i>
                 Review
             </a>
-            <a href="#"
-               class="sidebar-link {{ request()->routeIs('admin.konten*') ? 'active' : '' }}">
-                <i class='bx bx-news text-lg'></i>
-                Konten
-            </a>
         </nav>
 
         {{-- Bottom actions --}}
