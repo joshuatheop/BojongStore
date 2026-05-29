@@ -2,58 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
-    /**
-     * Tampilkan daftar produk dengan filter dan pencarian.
-     */
-    public function index(Request $request)
+    public function show($slug)
     {
-        // Ambil semua kategori untuk dropdown
-        $categories = Category::all();
-
-        // Query dasar produk
-        $query = Product::query();
-
-        // Filter berdasarkan kategori (jika dipilih)
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+        if (!auth()->check()) {
+            return redirect()->route('login')
+                ->with('auth_required', 'Anda perlu Login terlebih dahulu untuk mengakses konten.');
         }
 
-        // Pencarian nama produk, seller, atau tag
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%$search%")
-                  ->orWhere('seller', 'like', "%$search%")
-                  ->orWhereJsonContains('tags', $search);
-            });
-        }
+        $product = Product::where('slug', $slug)->firstOrFail();
+        $product->increment('views');
+        
+        return view('product-detail', compact('product'));
+    }
+    public function search(Request $request)
+    {
+        $query = $request->get('q');
+        $categories = \App\Models\Category::all();
+        $products = Product::withAvg('reviews', 'rating')
+                    ->withCount('reviews')
+                    ->where(function($q) use ($query) {
+                        $q->where('name', 'like', '%' . $query . '%')
+                          ->orWhere('description', 'like', '%' . $query . '%')
+                          ->orWhere('type', 'like', '%' . $query . '%');
+                    })
+                    ->paginate(10);
 
-        // Paginate hasilnya
-        $products = $query->paginate(10);
+        return view('katalog', compact('products', 'categories', 'query'));
+    }
 
-        // Kirim ke view katalog
+    public function katalog(Request $request)
+    {
+        $categories = \App\Models\Category::all();
+
+        $products = Product::query()
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->when($request->categories, function ($q) use ($request) {
+                $q->whereIn('category_id', $request->categories);
+            })
+            ->when($request->min_price, function ($q) use ($request) {
+                $q->where('price', '>=', $request->min_price);
+            })
+            ->when($request->max_price, function ($q) use ($request) {
+                $q->where('price', '<=', $request->max_price);
+            })
+            ->when($request->search, fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
+            ->paginate(12)->withQueryString();
+
         return view('katalog', compact('products', 'categories'));
     }
 
-    /**
-     * Tampilkan detail produk berdasarkan slug.
-     */
-    public function show($slug)
+    public function produkPage(Request $request)
     {
-        $product = Product::where('slug', $slug)->firstOrFail();
-
-        $relatedProducts = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->inRandomOrder()
-            ->take(4)
+        $featuredProducts = Product::withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->featured()
             ->get();
 
-        return view('detail-produk', compact('product', 'relatedProducts'));
+        $regularProducts = Product::withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->notFeatured()
+            ->get();
+
+        $categories = \App\Models\Category::all();
+
+        return view('produk', compact('featuredProducts', 'regularProducts', 'categories'));
     }
 }

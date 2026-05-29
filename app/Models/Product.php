@@ -9,49 +9,40 @@ class Product extends Model
 {
     use HasFactory;
 
-    /**
-     * Atribut yang dapat diisi secara massal.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'name',
-        'slug',
-        'description',
-        'price',
-        'image',
-        'shoppee',
-        'whatsapp',
-        'category_id',
-        'tags',
-        'seller',
-        'is_featured',
+        'name', 'slug', 'description', 'price', 'image',
+        'shoppee', 'whatsapp', 'weight', 'type', 'packaging',
+        'shelf_life', 'production', 'category_id', 'views', 'is_featured',
+        'tags', 'seller',
     ];
 
-    /**
-     * Atribut yang perlu di-cast ke tipe data lain.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'tags' => 'array',
+        'is_featured' => 'boolean',
     ];
 
-    /**
-     * Relasi ke kategori (category).
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * The users that have favorited this product.
-     */
     public function favoritedBy()
     {
         return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'product_id', 'slug');
+    }
+
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function scopeNotFeatured($query)
+    {
+        return $query->where('is_featured', false);
     }
 }

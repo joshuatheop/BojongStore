@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -26,13 +27,23 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $data = $request->validated();
+
+        // Only update password if provided
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
         }
 
-        $request->user()->save();
+        if (array_key_exists('email', $data) && $user->email !== $data['email']) {
+            $user->email_verified_at = null;
+        }
+
+        $user->fill($data);
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
@@ -42,9 +53,12 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
+        // For social login users, skip password check
+        if (!$request->user()->provider) {
+            $request->validateWithBag('userDeletion', [
+                'password' => ['required', 'current_password'],
+            ]);
+        }
 
         $user = $request->user();
 

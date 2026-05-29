@@ -9,36 +9,27 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'role',
         'password',
+        'telepon',
+        'negara',
+        'provider',
+        'provider_id',
+        'provider_token',
+        'avatar',
+        'email_verified_at',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -47,9 +38,6 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * The products that this user has favorited.
-     */
     public function favorites()
     {
         return $this->belongsToMany(Product::class, 'favorites')->withTimestamps();
