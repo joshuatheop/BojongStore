@@ -457,15 +457,6 @@
                                     <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
                                 </div>
                                 <div class="product-title">{{ $product->name }}</div>
-                                {{-- Badge nama toko / UMKM --}}
-                                @php $shopName = $product->umkm?->name ?? $product->seller; @endphp
-                                @if($shopName)
-                                <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:6px;">
-                                    <span style="font-size:11px;color:#fff;background:#00923F;border-radius:12px;padding:2px 8px;font-weight:600;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;">
-                                        🏪 {{ $shopName }}
-                                    </span>
-                                </div>
-                                @endif
                                 <div class="product-weight">{{ $product->weight ?? '300 gram' }}</div>
                                 <div class="product-rating-card" style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 8px;">
                                     <div class="stars" style="display: flex; gap: 2px; color: #fbbf24;">

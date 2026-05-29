@@ -30,16 +30,16 @@
             <p class="text-3xl font-bold text-gray-800">{{ $total_products }}</p>
         </div>
 
-        {{-- Card 2: UMKM --}}
+        {{-- Card 2: Kategori --}}
         <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
             <div class="flex items-start justify-between mb-4">
                 <div class="w-10 h-10 bg-[#e8f5ec] rounded-lg flex items-center justify-center">
-                    <i class='bx bx-store text-xl text-[#1a5c2a]'></i>
+                    <i class='bx bx-category text-xl text-[#1a5c2a]'></i>
                 </div>
-                <span class="text-xs font-semibold text-[#1a5c2a] bg-[#e8f5ec] px-2.5 py-1 rounded-full">Mitra Aktif</span>
+                <span class="text-xs font-semibold text-[#1a5c2a] bg-[#e8f5ec] px-2.5 py-1 rounded-full">Aktif</span>
             </div>
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total UMKM</p>
-            <p class="text-3xl font-bold text-gray-800">{{ $total_umkm }}</p>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Kategori</p>
+            <p class="text-3xl font-bold text-gray-800">{{ $total_categories }}</p>
         </div>
 
         {{-- Card 3: Review --}}

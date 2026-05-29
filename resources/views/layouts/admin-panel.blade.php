@@ -27,8 +27,6 @@
 
     <style>
         html, body, * { font-family: 'Poppins', sans-serif; }
-        .sidebar-link { @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white/75 hover:bg-white/10 hover:text-white transition-all; }
-        .sidebar-link.active { @apply bg-white/15 text-white font-semibold; }
     </style>
 </head>
 <body class="bg-[#f0f2f0] antialiased">
@@ -62,12 +60,7 @@
                 <i class='bx bx-package text-lg'></i>
                 Produk
             </a>
-            <a href="#"
-               class="sidebar-link {{ request()->routeIs('admin.umkm*') ? 'active' : '' }}">
-                <i class='bx bx-store text-lg'></i>
-                UMKM
-            </a>
-            <a href="#"
+            <a href="{{ route('admin.review.index') }}"
                class="sidebar-link {{ request()->routeIs('admin.review*') ? 'active' : '' }}">
                 <i class='bx bx-star text-lg'></i>
                 Review
@@ -76,9 +69,9 @@
 
         {{-- Bottom actions --}}
         <div class="px-3 py-4 border-t border-white/10 space-y-1">
-            <a href="#" class="sidebar-link">
-                <i class='bx bx-support text-lg'></i>
-                Bantuan Support
+            <a href="{{ route('home') }}" class="sidebar-link">
+                <i class='bx bx-home text-lg'></i>
+                Ke Halaman Home
             </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

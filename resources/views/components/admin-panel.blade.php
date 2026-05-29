@@ -54,7 +54,6 @@
                 $navItems = [
                     ['route' => 'admin.dashboard', 'icon' => 'bxs-grid-alt', 'label' => 'Dashboard', 'pattern' => 'admin.dashboard'],
                     ['route' => 'admin.products.index', 'icon' => 'bx-package', 'label' => 'Produk', 'pattern' => 'admin.products.*'],
-                    ['route' => 'admin.umkm.index', 'icon' => 'bx-store', 'label' => 'UMKM', 'pattern' => 'admin.umkm*'],
                     ['route' => 'admin.review.index', 'icon' => 'bx-star', 'label' => 'Review', 'pattern' => 'admin.review*'],
                 ];
             @endphp
@@ -72,9 +71,9 @@
 
         {{-- Bottom --}}
         <div class="px-3 py-4 border-t border-white/10 space-y-1">
-            <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-all">
-                <i class='bx bx-support text-lg'></i>
-                Bantuan Support
+            <a href="{{ route('home') }}" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white transition-all">
+                <i class='bx bx-home text-lg'></i>
+                Ke Halaman Home
             </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

@@ -55,20 +55,6 @@
                     </div>
 
                     <div class="product-specs">
-                        {{-- Nama toko / UMKM --}}
-                        @php $shopName = $product->umkm?->name ?? $product->seller; @endphp
-                        @if($shopName)
-                        <div style="background:#f0fdf4;border-radius:8px;padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
-                            <span style="font-size:18px;">🏪</span>
-                            <div>
-                                <span style="font-size:11px;color:#6b7280;display:block;">Nama Toko</span>
-                                <span style="font-size:14px;font-weight:700;color:#00923F;">{{ $shopName }}</span>
-                                @if($product->umkm)
-                                    <span style="font-size:11px;color:#6b7280;display:block;">{{ $product->umkm->category }} • {{ $product->umkm->kelurahan }}</span>
-                                @endif
-                            </div>
-                        </div>
-                        @endif
                         <div><span class="spec-label">Berat Bersih:</span> <span
                                 class="spec-value">{{ $product->weight }}</span></div>
                         <div><span class="spec-label">Jenis:</span> <span class="spec-value">{{ $product->type }}</span>
