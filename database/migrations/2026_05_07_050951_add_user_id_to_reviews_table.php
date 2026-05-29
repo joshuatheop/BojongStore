@@ -8,12 +8,15 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * Using hasColumn check to prevent duplicate column error.
      */
     public function up(): void
     {
-        Schema::table('reviews', function (Blueprint $table) {
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
-        });
+        if (!Schema::hasColumn('reviews', 'user_id')) {
+            Schema::table('reviews', function (Blueprint $table) {
+                $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            });
+        }
     }
 
     /**
@@ -21,9 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reviews', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropColumn('user_id');
-        });
+        if (Schema::hasColumn('reviews', 'user_id')) {
+            Schema::table('reviews', function (Blueprint $table) {
+                $table->dropForeign(['user_id']);
+                $table->dropColumn('user_id');
+            });
+        }
     }
 };

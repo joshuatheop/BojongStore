@@ -8,15 +8,27 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * Adds extra product fields from main branch.
+     * Using hasColumn checks to prevent duplicate column errors.
      */
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->string('weight')->nullable();
-            $table->string('type')->nullable();
-            $table->string('packaging')->nullable();
-            $table->string('shelf_life')->nullable();
-            $table->string('production')->nullable();
+            if (!Schema::hasColumn('products', 'weight')) {
+                $table->string('weight')->nullable();
+            }
+            if (!Schema::hasColumn('products', 'type')) {
+                $table->string('type')->nullable();
+            }
+            if (!Schema::hasColumn('products', 'packaging')) {
+                $table->string('packaging')->nullable();
+            }
+            if (!Schema::hasColumn('products', 'shelf_life')) {
+                $table->string('shelf_life')->nullable();
+            }
+            if (!Schema::hasColumn('products', 'production')) {
+                $table->string('production')->nullable();
+            }
         });
     }
 

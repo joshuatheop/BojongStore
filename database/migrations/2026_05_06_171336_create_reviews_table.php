@@ -8,17 +8,21 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     * NOTE: Table 'reviews' might already exist from migration 2026_05_12_151933.
+     * Using conditional check to prevent duplicate table error.
      */
     public function up(): void
     {
-        Schema::create('reviews', function (Blueprint $table) {
-            $table->id();
-            $table->string('user_name')->default('Anonim');
-            $table->integer('rating');
-            $table->text('comment');
-            $table->string('product_id')->default('rendang-kemasan');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('reviews')) {
+            Schema::create('reviews', function (Blueprint $table) {
+                $table->id();
+                $table->string('user_name')->default('Anonim');
+                $table->integer('rating');
+                $table->text('comment');
+                $table->string('product_id')->default('rendang-kemasan');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -9,19 +9,29 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('provider')->nullable()->after('email');
-            $table->string('provider_id')->nullable()->after('provider');
-            $table->text('provider_token')->nullable()->after('provider_id');
-            $table->string('avatar')->nullable()->after('provider_token');
-            $table->string('password')->nullable()->change();
+            if (!Schema::hasColumn('users', 'provider')) {
+                $table->string('provider')->nullable()->after('email');
+            }
+            if (!Schema::hasColumn('users', 'provider_id')) {
+                $table->string('provider_id')->nullable()->after('provider');
+            }
+            if (!Schema::hasColumn('users', 'provider_token')) {
+                $table->text('provider_token')->nullable()->after('provider_id');
+            }
+            if (!Schema::hasColumn('users', 'avatar')) {
+                $table->string('avatar')->nullable()->after('provider_token');
+            }
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['provider', 'provider_id', 'provider_token', 'avatar']);
-            $table->string('password')->nullable(false)->change();
+            $columns = ['provider', 'provider_id', 'provider_token', 'avatar'];
+            $existingColumns = array_filter($columns, fn($col) => Schema::hasColumn('users', $col));
+            if (!empty($existingColumns)) {
+                $table->dropColumn($existingColumns);
+            }
         });
     }
 };
