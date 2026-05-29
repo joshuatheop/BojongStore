@@ -19,7 +19,7 @@
             padding-top: 40px;
             min-height: 100vh;
             background: #ffffff;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         .katalog-container {

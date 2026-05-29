@@ -59,8 +59,18 @@ class ProductController extends Controller
 
     public function produkPage(Request $request)
     {
-        $products   = Product::withAvg('reviews', 'rating')->withCount('reviews')->get();
+        $featuredProducts = Product::withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->featured()
+            ->get();
+
+        $regularProducts = Product::withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->notFeatured()
+            ->get();
+
         $categories = \App\Models\Category::all();
-        return view('produk', compact('products', 'categories'));
+
+        return view('produk', compact('featuredProducts', 'regularProducts', 'categories'));
     }
 }

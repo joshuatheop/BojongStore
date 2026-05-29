@@ -19,7 +19,7 @@
         min-height: 100vh;
         background: var(--bg);
         padding: 48px 24px 80px;
-        font-family: 'Inter', 'Poppins', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 
     .profile-container {

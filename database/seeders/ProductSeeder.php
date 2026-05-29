@@ -22,6 +22,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Nikmati kelezatan Rendang Daging Sapi asli dengan resep turun-temurun.',
                 'image' => '/images/rendang-kemasan.png',
                 'category_id' => 4,
+                'shoppee' => 'https://shopee.co.id/Paket-Salero-Dua-Rendang-Daging-Sapi-Santapan-Minang-i.750979323.22822973015?extraParams=%7B%22display_model_id%22%3A203819085977%2C%22model_selection_logic%22%3A3%7D&sp_atk=4a78ebf1-5a3d-4bc3-8906-1974eea1531e&xptdk=4a78ebf1-5a3d-4bc3-8906-1974eea1531e',
             ],
             [
                 'name' => 'Cimol Bojot Frozen Premium',
@@ -113,6 +114,21 @@ class ProductSeeder extends Seeder
                 'description' => 'Berbagai jenis ikan air tawar segar hasil budidaya lokal Bojongsoang.',
                 'image' => '/images/ikan-campur.png',
                 'category_id' => 4,
+            ],
+            [
+                'name' => 'Es Cendol Durian Bojong',
+                'slug' => 'es-cendol-durian-bojong',
+                'price' => 15000,
+                'weight' => '400 ml',
+                'type' => 'Minuman Dingin',
+                'packaging' => 'Cup Plastik',
+                'shelf_life' => '1 hari',
+                'production' => 'Cendol Mantap Bojongsoang',
+                'description' => 'Cendol kenyal dengan santan gurih, gula merah asli, dan topping durian segar yang melimpah.',
+                'image' => '/images/cendol-durian.png',
+                'category_id' => 5,
+                'shoppee' => 'https://shopee.co.id/search?keyword=es-cendol-durian',
+                'whatsapp' => '081298765432',
             ],
         ];
 

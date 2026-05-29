@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{{ asset('css/produk.css') }}">
     <style>
         body {
-            font-family: 'Inter', 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 @endpush
@@ -12,12 +12,11 @@
 @section('content')
     <div id="notification-container" class="notification-container"></div>
 
-    <div style="padding-top: 80px;">
+    <div style="padding-top: 0px;">
         <div class="container">
             <div class="breadcrumb">
                 <a href="/">Beranda</a> <span style="margin: 0 4px;">&rsaquo;</span>
                 <a href="/">Produk</a> <span style="margin: 0 4px;">&rsaquo;</span>
-                <a href="/">Detail Produk</a> <span style="margin: 0 4px;">&rsaquo;</span>
                 <span style="color: #1a1a1a;">{{ $product->name }}</span>
             </div>
 
@@ -41,10 +40,13 @@
                                 $roundedRating = round($averageRating);
                             @endphp
                             @for ($i = 1; $i <= 5; $i++)
-                                <i data-lucide="star" fill="{{ $i <= $roundedRating ? '#fbbf24' : 'none' }}" width="16" height="16" style="color: {{ $i <= $roundedRating ? '#fbbf24' : '#e2e8f0' }}"></i>
+                                <i data-lucide="star" fill="{{ $i <= $roundedRating ? '#fbbf24' : 'none' }}" width="16"
+                                    height="16" style="color: {{ $i <= $roundedRating ? '#fbbf24' : '#e2e8f0' }}"></i>
                             @endfor
                         </div>
-                        <span class="rating-value" id="productAverageRatingValue">{{ $averageRating > 0 ? number_format($averageRating, 1) : '0' }}/5 ({{ $reviewCount }} Ulasan)</span>
+                        <span class="rating-value"
+                            id="productAverageRatingValue">{{ $averageRating > 0 ? number_format($averageRating, 1) : '0' }}/5
+                            ({{ $reviewCount }} Ulasan)</span>
                     </div>
                     <div class="product-price-large">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
 
@@ -69,15 +71,35 @@
                     <div class="purchase-actions">
                         <p style="font-weight: 400; margin-bottom: 12px; font-size: 14px; color: #71717a;">Pilih Metode
                             Pembelian</p>
-                        <a href="https://shopee.co.id/search?keyword=rendang%20daging%20sapi" target="_blank"
+                        
+                        @php
+                            $whatsappUrl = '#';
+                            if (!empty($product->whatsapp)) {
+                                if (str_starts_with($product->whatsapp, 'http://') || str_starts_with($product->whatsapp, 'https://')) {
+                                    $whatsappUrl = $product->whatsapp;
+                                } else {
+                                    $cleanNumber = preg_replace('/[^0-9]/', '', $product->whatsapp);
+                                    if (str_starts_with($cleanNumber, '0')) {
+                                        $cleanNumber = '62' . substr($cleanNumber, 1);
+                                    }
+                                    $whatsappUrl = 'https://wa.me/' . $cleanNumber . '?text=' . urlencode('Halo BojongStore, saya tertarik dengan produk ' . $product->name . '.');
+                                }
+                            } else {
+                                $whatsappUrl = 'https://wa.me/628123456789?text=' . urlencode('Halo BojongStore, saya tertarik dengan produk ' . $product->name . '.');
+                            }
+                        @endphp
+
+                        @if($product->shoppee)
+                        <a href="{{ $product->shoppee }}" target="_blank"
                             class="btn-shopee">
-                            <img src="https://api.iconify.design/simple-icons:shopee.svg?color=black" width="28" height="28"
+                            <img src="https://api.iconify.design/simple-icons:shopee.svg?color=white" width="28" height="28"
                                 alt="Shopee">
                             Beli Di Shopee
                         </a>
-                        <a href="https://wa.me/628123456789?text=Halo%20BojongStore,%20saya%20tertarik%20dengan%20produk%20Rendang%20Daging%20Sapi%20Kemasan."
+                        @endif
+                        <a href="{{ $whatsappUrl }}"
                             target="_blank" class="btn-whatsapp">
-                            <img src="https://api.iconify.design/simple-icons:whatsapp.svg?color=black" width="28"
+                            <img src="https://api.iconify.design/simple-icons:whatsapp.svg?color=white" width="28"
                                 height="28" alt="WhatsApp">
                             Chat Penjual
                         </a>
@@ -130,38 +152,6 @@
         </section>
     </div>{{-- end padding-top wrapper --}}
 
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-info">
-                    <div class="logo-wrapper footer-logo">
-                        <span class="logo-text footer-logo-text">BojongStore</span>
-                    </div>
-                    <p class="footer-desc">Mendukung keberlanjutan ekonomi lokal Indonesia melalui digitalisasi UMKM dengan
-                        cara yang elegan dan efisien.</p>
-                </div>
-                <div class="footer-column">
-                    <h4 class="footer-title">Kategori</h4>
-                    <ul class="footer-links">
-                        <li><a href="#">Sayuran Segar</a></li>
-                        <li><a href="#">Buah Tropis</a></li>
-                        <li><a href="#">Makanan Siap Saji</a></li>
-                        <li><a href="#">Minuman</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h4 class="footer-title">Bantuan</h4>
-                    <p class="footer-desc" style="margin-bottom: 16px;">Jika Anda mengalami kendala, silahkan hubungi kami
-                        dengan mudah melalui tombol di bawah.</p>
-                    <button class="btn-footer">Bantuan</button>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                &copy; 2026 BojongStore. Mendukung UMKM Lokal Indonesia.
-            </div>
-        </div>
-    </footer>
-
     <!-- Review Modal -->
     <div class="modal-overlay" id="reviewModal">
         <div class="modal-content">
@@ -196,62 +186,6 @@
                     Kirim Ulasan
                     <i data-lucide="send" width="18" height="18"></i>
                 </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Help Center Modal -->
-    <div class="help-modal-overlay" id="helpModal">
-        <div class="help-modal-content">
-            <button class="btn-help-close" id="closeHelpModal">
-                <i data-lucide="x" width="18" height="18"></i>
-            </button>
-
-            <div id="helpFormState">
-                <div class="help-modal-header">
-                    <i data-lucide="help-circle" width="32" height="32"></i>
-                    <h2>Pusat Bantuan</h2>
-                    <p>Punya keluhan atau pertanyaan? Kami siap membantu Anda.</p>
-                </div>
-
-                <form id="complaintForm">
-                    <div class="help-form-group">
-                        <label for="helpName">Nama Lengkap</label>
-                        <input type="text" id="helpName" class="help-input" placeholder="Masukkan nama Anda" required>
-                    </div>
-                    <div class="help-form-group">
-                        <label for="helpContact">Email / WhatsApp</label>
-                        <input type="text" id="helpContact" class="help-input"
-                            placeholder="Contoh: 0812xxxx atau email@mail.com" required>
-                    </div>
-                    <div class="help-form-group">
-                        <label for="helpCategory">Kategori Keluhan</label>
-                        <select id="helpCategory" class="help-select" required>
-                            <option value="">Pilih Kategori</option>
-                            <option value="Produk">Masalah Produk</option>
-                            <option value="Pengiriman">Masalah Pengiriman</option>
-                            <option value="Pembayaran">Masalah Pembayaran</option>
-                            <option value="Lainnya">Lainnya</option>
-                        </select>
-                    </div>
-                    <div class="help-form-group">
-                        <label for="helpMessage">Detail Keluhan</label>
-                        <textarea id="helpMessage" class="help-textarea" placeholder="Ceritakan kendala yang Anda alami..."
-                            required></textarea>
-                    </div>
-                    <button type="submit" class="btn-help-submit">
-                        <span>Kirim Keluhan</span>
-                        <i data-lucide="send" width="18" height="18"></i>
-                    </button>
-                </form>
-            </div>
-
-            <div id="helpSuccessState" class="success-state">
-                <i data-lucide="check-circle" width="64" height="64"></i>
-                <h2>Berhasil Terkirim!</h2>
-                <p>Terima kasih atas laporan Anda. Tim kami akan segera menindaklanjuti keluhan Anda melalui kontak yang
-                    tersedia.</p>
-                <button class="btn-help-submit" style="margin-top: 32px;" onclick="closeHelpModalAction()">Tutup</button>
             </div>
         </div>
     </div>
@@ -325,27 +259,27 @@
                 const nameDisplay = isOwnReview ? `${review.user_name} ( Anda )` : review.user_name;
 
                 const card = `
-                        <div class="review-card">
-                            <div class="review-card-header">
-                                <div class="stars">
-                                    ${Array(5).fill(0).map((_, i) => `<i data-lucide="star" fill="${i < review.rating ? '#fbbf24' : 'none'}" width="14" height="14" style="color: ${i < review.rating ? '#fbbf24' : '#e2e8f0'}"></i>`).join('')}
-                                </div>
-                                ${isOwnReview ? `
-                                <button class="btn-delete-review" data-id="${review.id}" style="background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;">
-                                    <i data-lucide="trash-2" width="16" height="16"></i>
-                                </button>
-                                ` : ''}
-                            </div>
-                            <div class="reviewer-name" style="display: flex; align-items: center; gap: 6px;">
-                                ${nameDisplay} 
-                                <div style="background: #22c55e; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                    <i data-lucide="check" style="color: white;" width="10" height="10" stroke-width="4"></i>
-                                </div>
-                            </div>
-                            <p class="review-text">"${review.comment}"</p>
-                            <div class="review-date">Ditulis pada ${new Date(review.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
-                        </div>
-                    `;
+                                                    <div class="review-card">
+                                                        <div class="review-card-header">
+                                                            <div class="stars">
+                                                                ${Array(5).fill(0).map((_, i) => `<i data-lucide="star" fill="${i < review.rating ? '#fbbf24' : 'none'}" width="14" height="14" style="color: ${i < review.rating ? '#fbbf24' : '#e2e8f0'}"></i>`).join('')}
+                                                            </div>
+                                                            ${isOwnReview ? `
+                                                            <button class="btn-delete-review" data-id="${review.id}" style="background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;">
+                                                                <i data-lucide="trash-2" width="16" height="16"></i>
+                                                            </button>
+                                                            ` : ''}
+                                                        </div>
+                                                        <div class="reviewer-name" style="display: flex; align-items: center; gap: 6px;">
+                                                            ${nameDisplay} 
+                                                            <div style="background: #22c55e; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                                <i data-lucide="check" style="color: white;" width="10" height="10" stroke-width="4"></i>
+                                                            </div>
+                                                        </div>
+                                                        <p class="review-text">"${review.comment}"</p>
+                                                        <div class="review-date">Ditulis pada ${new Date(review.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                                                    </div>
+                                                `;
                 grid.insertAdjacentHTML('beforeend', card);
             });
             lucide.createIcons();
@@ -465,14 +399,14 @@
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.innerHTML = `
-                    <div class="toast-icon">
-                        <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        </div>
-                    </div>
-                    <div class="toast-message">Ulasan mu berhasil terkirim !</div>
-                    <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
-                `;
+                                                <div class="toast-icon">
+                                                    <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                    </div>
+                                                </div>
+                                                <div class="toast-message">Ulasan mu berhasil terkirim !</div>
+                                                <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
+                                            `;
             container.appendChild(toast);
             lucide.createIcons();
 
@@ -531,17 +465,17 @@
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.innerHTML = `
-                    <div class="toast-icon">
-                        <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        </div>
-                    </div>
-                    <div class="toast-message" style="display: flex; flex-direction: column; gap: 4px;">
-                        <span style="font-weight: 700; color: #000; font-size: 15px;">Produk berhasil ditambahkan ke favorit</span>
-                        <a href="/favorit" style="color: #166534; font-weight: 700; text-decoration: none; font-size: 14px;">Lihat Produk Favorit</a>
-                    </div>
-                    <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
-                `;
+                                                <div class="toast-icon">
+                                                    <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                    </div>
+                                                </div>
+                                                <div class="toast-message" style="display: flex; flex-direction: column; gap: 4px;">
+                                                    <span style="font-weight: 700; color: #000; font-size: 15px;">Produk berhasil ditambahkan ke favorit</span>
+                                                    <a href="/favorit" style="color: #166534; font-weight: 700; text-decoration: none; font-size: 14px;">Lihat Produk Favorit</a>
+                                                </div>
+                                                <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
+                                            `;
             container.appendChild(toast);
             lucide.createIcons();
 
@@ -633,12 +567,125 @@
             submitBtn.innerHTML = '<span>Mengirim...</span>';
             submitBtn.disabled = true;
 
-            setTimeout(() => {
+            const name = document.getElementById('helpName').value;
+            const contact = document.getElementById('helpContact').value;
+            const category = document.getElementById('helpCategory').value;
+            const message = document.getElementById('helpMessage').value;
+
+            fetch('/help-complaints', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ name, contact, category, message })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Gagal mengirim');
+                return res.json();
+            })
+            .then(data => {
                 helpFormState.style.display = 'none';
                 helpSuccessState.style.display = 'block';
                 lucide.createIcons();
-            }, 1500);
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Gagal mengirim keluhan. Silakan coba lagi.');
+                submitBtn.innerHTML = '<span>Kirim Keluhan</span><i data-lucide="send" width="18" height="18"></i>';
+                submitBtn.disabled = false;
+                lucide.createIcons();
+            });
         });
     </script>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-info">
+                    <div class="logo-wrapper footer-logo">
+                        <span class="logo-text footer-logo-text">BojongStore</span>
+                    </div>
+                    <p class="footer-desc">Mendukung keberlanjutan ekonomi lokal Indonesia melalui digitalisasi UMKM
+                        dengan cara yang elegan dan efisien.</p>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Kategori</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('katalog', ['category' => 1]) }}">Sayuran</a></li>
+                        <li><a href="{{ route('katalog', ['category' => 2]) }}">Buah-buahan</a></li>
+                        <li><a href="{{ route('katalog', ['category' => 2]) }}">Kerajinan Tangan</a></li>
+                        <li><a href="{{ route('katalog', ['category' => 4]) }}">Makanan Olahan</a></li>
+                        <li><a href="{{ route('katalog', ['category' => 5]) }}">Minuman</a></li>
+                        <li><a href="{{ route('katalog', ['category' => 6]) }}">Jasa</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Bantuan</h4>
+                    <p class="footer-desc" style="margin-bottom: 16px;">Jika Anda mengalami kendala, silahkan hubungi
+                        kami dengan mudah melalui tombol di bawah.</p>
+                    <button class="btn-footer" id="openHelpBtn">Bantuan</button>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 BojongStore. Mendukung UMKM Lokal Indonesia.
+            </div>
+        </div>
+    </footer>
+    <!-- Help Center Modal -->
+    <div class="help-modal-overlay" id="helpModal">
+        <div class="help-modal-content">
+            <button class="btn-help-close" id="closeHelpModal">
+                <i data-lucide="x" width="18" height="18"></i>
+            </button>
+
+            <div id="helpFormState">
+                <div class="help-modal-header">
+                    <i data-lucide="help-circle" width="32" height="32"></i>
+                    <h2>Pusat Bantuan</h2>
+                    <p>Punya keluhan atau pertanyaan? Kami siap membantu Anda.</p>
+                </div>
+
+                <form id="complaintForm">
+                    <div class="help-form-group">
+                        <label for="helpName">Nama Lengkap</label>
+                        <input type="text" id="helpName" class="help-input" placeholder="Masukkan nama Anda" required>
+                    </div>
+                    <div class="help-form-group">
+                        <label for="helpContact">Email / WhatsApp</label>
+                        <input type="text" id="helpContact" class="help-input"
+                            placeholder="Contoh: 0812xxxx atau email@mail.com" required>
+                    </div>
+                    <div class="help-form-group">
+                        <label for="helpCategory">Kategori Keluhan</label>
+                        <select id="helpCategory" class="help-select" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="Produk">Masalah Produk</option>
+                            <option value="Pengiriman">Masalah Pengiriman</option>
+                            <option value="Pembayaran">Masalah Pembayaran</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="help-form-group">
+                        <label for="helpMessage">Detail Keluhan</label>
+                        <textarea id="helpMessage" class="help-textarea" placeholder="Ceritakan kendala yang Anda alami..."
+                            required></textarea>
+                    </div>
+                    <button type="submit" class="btn-help-submit">
+                        <span>Kirim Keluhan</span>
+                        <i data-lucide="send" width="18" height="18"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div id="helpSuccessState" class="success-state">
+                <i data-lucide="check-circle" width="64" height="64"></i>
+                <h2>Berhasil Terkirim!</h2>
+                <p>Terima kasih atas laporan Anda. Tim kami akan segera menindaklanjuti keluhan Anda melalui kontak yang
+                    tersedia.</p>
+                <button class="btn-help-submit" style="margin-top: 32px;" onclick="closeHelpModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
 
 @endsection

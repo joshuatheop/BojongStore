@@ -257,11 +257,35 @@
             submitBtn.innerHTML = '<span>Mengirim...</span>';
             submitBtn.disabled = true;
 
-            setTimeout(() => {
+            const name = document.getElementById('helpName').value;
+            const contact = document.getElementById('helpContact').value;
+            const category = document.getElementById('helpCategory').value;
+            const message = document.getElementById('helpMessage').value;
+
+            fetch('/help-complaints', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ name, contact, category, message })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Gagal mengirim');
+                return res.json();
+            })
+            .then(data => {
                 helpFormState.style.display = 'none';
                 helpSuccessState.style.display = 'block';
                 lucide.createIcons();
-            }, 1500);
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Gagal mengirim keluhan. Silakan coba lagi.');
+                submitBtn.innerHTML = '<span>Kirim Keluhan</span><i data-lucide="send" width="18" height="18"></i>';
+                submitBtn.disabled = false;
+                lucide.createIcons();
+            });
         });
     </script>
 </body>

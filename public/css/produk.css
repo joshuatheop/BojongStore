@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --primary-green: #1C6D25;
   --secondary-green: #1a7431;
   --accent-green: #2ecc71;
@@ -13,7 +13,7 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 24px;
-  --font-main: 'Inter', 'Poppins', sans-serif;
+  --font-main: 'Inter', sans-serif;
 }
 
 * {
@@ -51,7 +51,7 @@ button {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 40px;
 }
 
 /* Hero Section */
@@ -187,6 +187,36 @@ button {
 .products-section {
   padding: 80px 0;
   background: var(--white);
+}
+
+/* Produk Kami — subtle background to differentiate from Unggulan */
+.produk-kami-section {
+  background: var(--bg-cream);
+}
+
+/* Featured badge on product card image */
+.featured-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--primary-green);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 8px rgba(28, 109, 37, 0.25);
+}
+
+.featured-badge i {
+  width: 11px;
+  height: 11px;
+  color: #ffd166;
 }
 
 .products-grid {

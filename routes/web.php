@@ -28,6 +28,9 @@ Route::post('/reviews', [UlasanController::class, 'store'])->name('reviews.store
 Route::get('/api/reviews/{product_id}', [UlasanController::class, 'getReviews']);
 Route::delete('/reviews/{id}', [UlasanController::class, 'destroy']);
 
+// ======= BANTUAN / HELP COMPLAINTS =======
+Route::post('/help-complaints', [\App\Http\Controllers\HelpComplaintController::class, 'store'])->name('help-complaints.store');
+
 // ======= AUTH ROUTES =======
 require __DIR__ . '/auth.php';
 
