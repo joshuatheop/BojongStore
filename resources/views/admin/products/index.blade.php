@@ -19,7 +19,9 @@
             <div>
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total Produk</p>
                 <p class="text-2xl font-bold text-gray-800">{{ number_format($total_products) }}</p>
-                <p class="text-xs text-[#1a5c2a] font-semibold mt-0.5">↑ +12% bulan ini</p>
+                <p class="text-xs {{ $productGrowth >= 0 ? 'text-[#1a5c2a]' : 'text-red-600' }} font-semibold mt-0.5">
+                    {{ $productGrowth > 0 ? '↑ +' : ($productGrowth < 0 ? '↓ ' : '') }}{{ $productGrowth }}% bulan ini
+                </p>
             </div>
         </div>
 
@@ -103,9 +105,7 @@
                                     <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
                                         @if($product->image)
                                             @php
-                                                $imgUrl = str_starts_with($product->image, '/')
-                                                    ? asset($product->image)
-                                                    : asset('storage/' . $product->image);
+                                                $imgUrl = asset('storage/products/' . basename($product->image));
                                             @endphp
                                             <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
                                                 class="w-full h-full object-cover">

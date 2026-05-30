@@ -40,9 +40,7 @@
                         $hasImage = !empty($product->image);
                         $imgUrl = '';
                         if ($hasImage) {
-                            $imgUrl = str_starts_with($product->image, '/')
-                                ? asset($product->image)
-                                : asset('storage/' . $product->image);
+                            $imgUrl = asset('storage/products/' . basename($product->image));
                         }
                     @endphp
 
@@ -54,9 +52,9 @@
                             <i class='bx bx-upload text-4xl'></i>
                             <span class="text-sm font-medium">Pilih Foto Utama</span>
                             <span class="text-[10px] text-center text-gray-400 px-4">Format JPG, PNG atau
-                                WEBP.<br>Rekomendasi 1200×1600px (Maks. 5MB).</span>
+                                WEBP.<br>Rekomendasi 1200×1600px (Maks. 2MB).</span>
                         </div>
-                        <img id="mainImagePreviewImg" src="{{ $imgUrl }}" alt="{{ $product->name }}"
+                        <img id="mainImagePreviewImg" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
                             class="{{ $hasImage ? '' : 'hidden' }} absolute inset-0 w-full h-full object-cover">
                         <input type="file" id="mainImageInput" name="image" accept="image/*" class="hidden"
                             onchange="previewMainImage(event)">
@@ -77,7 +75,7 @@
                 <div class="flex-1 space-y-4">
                     {{-- Nama Produk --}}
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Nama Produk</label>
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Nama Produk <span class="text-red-500">*</span></label>
                         <input type="text" name="name" placeholder="Contoh: Kripik Pisang Madu Organik"
                             class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a5c2a]/20 placeholder-gray-300"
                             value="{{ old('name', $product->name) }}" required>
@@ -87,14 +85,14 @@
                     {{-- Harga & Kategori --}}
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Harga (RP)</label>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Harga (RP) <span class="text-red-500">*</span></label>
                             <input type="number" name="price" placeholder="0" min="0"
                                 class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a5c2a]/20"
                                 value="{{ old('price', $product->price) }}" required>
                             @error('price')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Kategori</label>
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Kategori <span class="text-red-500">*</span></label>
                             <select name="category_id"
                                 class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a5c2a]/20"
                                 required>
@@ -111,7 +109,7 @@
 
                     {{-- Deskripsi --}}
                     <div>
-                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Deskripsi Produk</label>
+                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Deskripsi Produk <span class="text-red-500">*</span></label>
                         <textarea name="description" rows="4"
                             placeholder="Jelaskan detail produk, bahan, dan keunggulan..."
                             class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1a5c2a]/20 placeholder-gray-300 resize-none"
@@ -228,6 +226,11 @@
         function previewMainImage(event) {
             const file = event.target.files[0];
             if (!file) return;
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Ukuran foto produk maksimal 2MB (batasan server). Silakan pilih foto lain.');
+                event.target.value = '';
+                return;
+            }
             const reader = new FileReader();
             reader.onload = function (e) {
                 const img = document.getElementById('mainImagePreviewImg');

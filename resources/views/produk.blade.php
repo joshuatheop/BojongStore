@@ -62,7 +62,7 @@
                     @forelse($featuredProducts as $product)
                     <div class="product-card">
                         <div class="product-image-container">
-                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="product-image">
+                            <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}" alt="{{ $product->name }}" class="product-image">
                             <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
                             {{-- Badge "Unggulan" --}}
                             <span class="featured-badge">
@@ -112,7 +112,7 @@
                     @foreach($regularProducts as $product)
                         <div class="product-card">
                             <div class="product-image-container">
-                                <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="product-image">
+                                <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}" alt="{{ $product->name }}" class="product-image">
                                 <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
                             </div>
                             <div class="product-title">{{ $product->name }}</div>

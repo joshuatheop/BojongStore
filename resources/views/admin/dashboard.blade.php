@@ -24,7 +24,9 @@
                 <div class="w-10 h-10 bg-[#e8f5ec] rounded-lg flex items-center justify-center">
                     <i class='bx bx-package text-xl text-[#1a5c2a]'></i>
                 </div>
-                <span class="text-xs font-semibold text-[#1a5c2a] bg-[#e8f5ec] px-2.5 py-1 rounded-full">+12% Bulan Ini</span>
+                <span class="text-xs font-semibold {{ $productGrowth >= 0 ? 'text-[#1a5c2a] bg-[#e8f5ec]' : 'text-red-600 bg-red-50' }} px-2.5 py-1 rounded-full">
+                    {{ $productGrowth > 0 ? '+' : '' }}{{ $productGrowth }}% Bulan Ini
+                </span>
             </div>
             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Produk</p>
             <p class="text-3xl font-bold text-gray-800">{{ $total_products }}</p>

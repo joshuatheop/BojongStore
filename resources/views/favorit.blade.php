@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produk Favorit Saya - BojongStore</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -65,7 +67,15 @@
     </main>
 
     <script>
-        const allProducts = @json($products);
+        @php
+            $mappedProducts = $products->map(function($product) {
+                $product->image = $product->image
+                    ? asset('storage/products/' . basename($product->image))
+                    : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name);
+                return $product;
+            });
+        @endphp
+        const allProducts = @json($mappedProducts);
 
         function renderFavorites() {
             const grid = document.getElementById('favoritesGrid');

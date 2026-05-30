@@ -16,14 +16,15 @@
         <div class="container">
             <div class="breadcrumb">
                 <a href="/">Beranda</a> <span style="margin: 0 4px;">&rsaquo;</span>
-                <a href="/">Produk</a> <span style="margin: 0 4px;">&rsaquo;</span>
+                <a href="{{ route('produk') }}">Produk</a> <span style="margin: 0 4px;">&rsaquo;</span>
                 <span style="color: #1a1a1a;">{{ $product->name }}</span>
             </div>
 
             <div class="product-detail-grid">
                 <div class="product-gallery">
                     <div class="product-main-image">
-                        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}">
+                        <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}"
+                            alt="{{ $product->name }}">
                     </div>
                     <button class="btn-fav-circle">
                         <i data-lucide="bookmark" width="24" height="24"></i>
@@ -72,7 +73,7 @@
                     <div class="purchase-actions">
                         <p style="font-weight: 400; margin-bottom: 12px; font-size: 14px; color: #71717a;">Pilih Metode
                             Pembelian</p>
-                        
+
                         @php
                             $whatsappUrl = '#';
                             if (!empty($product->whatsapp)) {
@@ -91,15 +92,13 @@
                         @endphp
 
                         @if($product->shoppee)
-                        <a href="{{ $product->shoppee }}" target="_blank"
-                            class="btn-shopee">
-                            <img src="https://api.iconify.design/simple-icons:shopee.svg?color=white" width="28" height="28"
-                                alt="Shopee">
-                            Beli Di Shopee
-                        </a>
+                            <a href="{{ $product->shoppee }}" target="_blank" class="btn-shopee">
+                                <img src="https://api.iconify.design/simple-icons:shopee.svg?color=white" width="28" height="28"
+                                    alt="Shopee">
+                                Beli Di Shopee
+                            </a>
                         @endif
-                        <a href="{{ $whatsappUrl }}"
-                            target="_blank" class="btn-whatsapp">
+                        <a href="{{ $whatsappUrl }}" target="_blank" class="btn-whatsapp">
                             <img src="https://api.iconify.design/simple-icons:whatsapp.svg?color=white" width="28"
                                 height="28" alt="WhatsApp">
                             Chat Penjual
@@ -260,27 +259,27 @@
                 const nameDisplay = isOwnReview ? `${review.user_name} ( Anda )` : review.user_name;
 
                 const card = `
-                                                    <div class="review-card">
-                                                        <div class="review-card-header">
-                                                            <div class="stars">
-                                                                ${Array(5).fill(0).map((_, i) => `<i data-lucide="star" fill="${i < review.rating ? '#fbbf24' : 'none'}" width="14" height="14" style="color: ${i < review.rating ? '#fbbf24' : '#e2e8f0'}"></i>`).join('')}
-                                                            </div>
-                                                            ${isOwnReview ? `
-                                                            <button class="btn-delete-review" data-id="${review.id}" style="background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;">
-                                                                <i data-lucide="trash-2" width="16" height="16"></i>
-                                                            </button>
-                                                            ` : ''}
-                                                        </div>
-                                                        <div class="reviewer-name" style="display: flex; align-items: center; gap: 6px;">
-                                                            ${nameDisplay} 
-                                                            <div style="background: #22c55e; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                                                <i data-lucide="check" style="color: white;" width="10" height="10" stroke-width="4"></i>
-                                                            </div>
-                                                        </div>
-                                                        <p class="review-text">"${review.comment}"</p>
-                                                        <div class="review-date">Ditulis pada ${new Date(review.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
-                                                    </div>
-                                                `;
+                                                                    <div class="review-card">
+                                                                        <div class="review-card-header">
+                                                                            <div class="stars">
+                                                                                ${Array(5).fill(0).map((_, i) => `<i data-lucide="star" fill="${i < review.rating ? '#fbbf24' : 'none'}" width="14" height="14" style="color: ${i < review.rating ? '#fbbf24' : '#e2e8f0'}"></i>`).join('')}
+                                                                            </div>
+                                                                            ${isOwnReview ? `
+                                                                            <button class="btn-delete-review" data-id="${review.id}" style="background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;">
+                                                                                <i data-lucide="trash-2" width="16" height="16"></i>
+                                                                            </button>
+                                                                            ` : ''}
+                                                                        </div>
+                                                                        <div class="reviewer-name" style="display: flex; align-items: center; gap: 6px;">
+                                                                            ${nameDisplay} 
+                                                                            <div style="background: #22c55e; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                                                <i data-lucide="check" style="color: white;" width="10" height="10" stroke-width="4"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                        <p class="review-text">"${review.comment}"</p>
+                                                                        <div class="review-date">Ditulis pada ${new Date(review.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                                                                    </div>
+                                                                `;
                 grid.insertAdjacentHTML('beforeend', card);
             });
             lucide.createIcons();
@@ -400,14 +399,14 @@
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.innerHTML = `
-                                                <div class="toast-icon">
-                                                    <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                                    </div>
-                                                </div>
-                                                <div class="toast-message">Ulasan mu berhasil terkirim !</div>
-                                                <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
-                                            `;
+                                                                <div class="toast-icon">
+                                                                    <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="toast-message">Ulasan mu berhasil terkirim !</div>
+                                                                <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
+                                                            `;
             container.appendChild(toast);
             lucide.createIcons();
 
@@ -466,17 +465,17 @@
             const toast = document.createElement('div');
             toast.className = 'toast';
             toast.innerHTML = `
-                                                <div class="toast-icon">
-                                                    <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                                    </div>
-                                                </div>
-                                                <div class="toast-message" style="display: flex; flex-direction: column; gap: 4px;">
-                                                    <span style="font-weight: 700; color: #000; font-size: 15px;">Produk berhasil ditambahkan ke favorit</span>
-                                                    <a href="/favorit" style="color: #166534; font-weight: 700; text-decoration: none; font-size: 14px;">Lihat Produk Favorit</a>
-                                                </div>
-                                                <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
-                                            `;
+                                                                <div class="toast-icon">
+                                                                    <div style="background: #166534; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="toast-message" style="display: flex; flex-direction: column; gap: 4px;">
+                                                                    <span style="font-weight: 700; color: #000; font-size: 15px;">Produk berhasil ditambahkan ke favorit</span>
+                                                                    <a href="/favorit" style="color: #166534; font-weight: 700; text-decoration: none; font-size: 14px;">Lihat Produk Favorit</a>
+                                                                </div>
+                                                                <div class="toast-close"><i data-lucide="x" width="20" height="20"></i></div>
+                                                            `;
             container.appendChild(toast);
             lucide.createIcons();
 
@@ -581,22 +580,22 @@
                 },
                 body: JSON.stringify({ name, contact, category, message })
             })
-            .then(res => {
-                if (!res.ok) throw new Error('Gagal mengirim');
-                return res.json();
-            })
-            .then(data => {
-                helpFormState.style.display = 'none';
-                helpSuccessState.style.display = 'block';
-                lucide.createIcons();
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Gagal mengirim keluhan. Silakan coba lagi.');
-                submitBtn.innerHTML = '<span>Kirim Keluhan</span><i data-lucide="send" width="18" height="18"></i>';
-                submitBtn.disabled = false;
-                lucide.createIcons();
-            });
+                .then(res => {
+                    if (!res.ok) throw new Error('Gagal mengirim');
+                    return res.json();
+                })
+                .then(data => {
+                    helpFormState.style.display = 'none';
+                    helpSuccessState.style.display = 'block';
+                    lucide.createIcons();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal mengirim keluhan. Silakan coba lagi.');
+                    submitBtn.innerHTML = '<span>Kirim Keluhan</span><i data-lucide="send" width="18" height="18"></i>';
+                    submitBtn.disabled = false;
+                    lucide.createIcons();
+                });
         });
     </script>
 
