@@ -10,6 +10,7 @@ use App\Http\Controllers\user\UserController;
 
 // Admin Controllers
 use App\Http\Controllers\admin\AdminController;
+use App\Http\Controllers\admin\ComplaintController;
 
 // ======= HALAMAN UTAMA & FRONTEND (dari main) =======
 Route::get('/', function () {
@@ -65,4 +66,8 @@ Route::middleware(['auth', 'adminMiddleware'])->group(function () {
     // Review
     Route::get('/admin/review', [\App\Http\Controllers\admin\ReviewController::class, 'index'])->name('admin.review.index');
     Route::delete('/admin/review/{review}', [\App\Http\Controllers\admin\ReviewController::class, 'destroy'])->name('admin.review.destroy');
+
+    // Complaints
+    Route::get('/admin/complaints', [ComplaintController::class, 'index'])->name('admin.complaints.index');
+    Route::delete('/admin/complaints/{id}', [ComplaintController::class, 'destroy'])->name('admin.complaints.destroy');
 });

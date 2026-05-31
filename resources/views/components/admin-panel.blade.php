@@ -55,6 +55,7 @@
                     ['route' => 'admin.dashboard', 'icon' => 'bxs-grid-alt', 'label' => 'Dashboard', 'pattern' => 'admin.dashboard'],
                     ['route' => 'admin.products.index', 'icon' => 'bx-package', 'label' => 'Produk', 'pattern' => 'admin.products.*'],
                     ['route' => 'admin.review.index', 'icon' => 'bx-star', 'label' => 'Review', 'pattern' => 'admin.review*'],
+                    ['route' => 'admin.complaints.index', 'icon' => 'bx-message-error', 'label' => 'Keluhan', 'pattern' => 'admin.complaints.*'],
                 ];
             @endphp
 

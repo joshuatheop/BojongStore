@@ -134,7 +134,7 @@
                                 @if($product->category)
                                     <span
                                         class="text-xs font-semibold px-2.5 py-1 rounded-full
-                                                            {{ in_array($product->category->name, ['Makanan', 'Minuman', 'Makanan & Minuman']) ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600' }}">
+                                                                    {{ in_array($product->category->name, ['Makanan', 'Minuman', 'Makanan & Minuman']) ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600' }}">
                                         {{ $product->category->name }}
                                     </span>
                                 @else
@@ -148,11 +148,12 @@
                                     class="inline">
                                     @csrf
                                     <button type="submit"
-                                        title="{{ $product->is_featured ? 'Nonaktifkan' : 'Jadikan Unggulan' }}" class="relative inline-flex items-center w-11 h-6 rounded-full transition-colors focus:outline-none
-                                                           {{ $product->is_featured ? 'bg-[#1a5c2a]' : 'bg-gray-200' }}">
+                                        title="{{ $product->is_featured ? 'Nonaktifkan' : 'Jadikan Unggulan' }}"
+                                        class="relative inline-flex items-center w-11 h-6 rounded-full transition-colors focus:outline-none
+                                                               {{ $product->is_featured ? 'bg-[#1a5c2a]' : 'bg-gray-200' }}">
                                         <span
                                             class="inline-block w-5 h-5 bg-white rounded-full shadow transform transition-transform
-                                                             {{ $product->is_featured ? 'translate-x-5' : 'translate-x-0.5' }}"></span>
+                                                                 {{ $product->is_featured ? 'translate-x-5' : 'translate-x-0.5' }}"></span>
                                     </button>
                                 </form>
                             </td>
@@ -243,16 +244,6 @@
                                 <input type="file" id="mainImageInput" name="image" accept="image/*" class="hidden"
                                     onchange="previewMainImage(event)">
                             </label>
-
-                            {{-- Extra slots --}}
-                            <div class="grid grid-cols-3 gap-2 mt-3">
-                                @for($i = 0; $i < 3; $i++)
-                                    <label
-                                        class="aspect-square border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 cursor-pointer flex items-center justify-center transition-colors">
-                                        <i class='bx bx-plus text-gray-300 text-2xl'></i>
-                                    </label>
-                                @endfor
-                            </div>
                         </div>
 
                         {{-- RIGHT: Form Fields --}}

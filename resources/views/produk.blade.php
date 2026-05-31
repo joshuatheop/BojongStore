@@ -59,11 +59,12 @@
                 <p>Pilihan terbaik yang paling diminati pelanggan kami.</p>
             </div>
             <div class="products-grid">
-                    @forelse($featuredProducts as $product)
+                @forelse($featuredProducts as $product)
                     <div class="product-card">
                         <div class="product-image-container">
-                            <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}" alt="{{ $product->name }}" class="product-image">
-                            <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
+                            <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}"
+                                alt="{{ $product->name }}" class="product-image">
+                            <button class="wishlist-btn" data-slug="{{ $product->slug }}"><i data-lucide="bookmark" width="18" height="18"></i></button>
                             {{-- Badge "Unggulan" --}}
                             <span class="featured-badge">
                                 <i data-lucide="star" width="12" height="12" fill="currentColor"></i>
@@ -74,15 +75,15 @@
                         <div class="product-weight">{{ $product->weight }}</div>
                         <div class="product-rating-card"
                             style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 8px;">
-                            <div class="stars" style="display: flex; gap: 2px; color: #fbbf24;">
+                            <div class="stars" id="productAverageStars">
                                 @php
-                                    $averageRating = $product->reviews_avg_rating ?? 0;
-                                    $reviewCount = $product->reviews_count ?? 0;
+                                    $averageRating = \App\Models\Review::where('product_id', $product->slug)->avg('rating') ?? 0;
+                                    $reviewCount = \App\Models\Review::where('product_id', $product->slug)->count();
                                     $roundedRating = round($averageRating);
                                 @endphp
                                 @for ($i = 1; $i <= 5; $i++)
-                                    <i data-lucide="star" fill="{{ $i <= $roundedRating ? '#fbbf24' : 'none' }}" width="14"
-                                        height="14" style="color: {{ $i <= $roundedRating ? '#fbbf24' : '#e2e8f0' }}"></i>
+                                    <i data-lucide="star" fill="{{ $i <= $roundedRating ? '#fbbf24' : 'none' }}" width="16"
+                                        height="16" style="color: {{ $i <= $roundedRating ? '#fbbf24' : '#e2e8f0' }}"></i>
                                 @endfor
                             </div>
                             <span style="font-size: 12px; color: #71717a;">({{ $reviewCount }})</span>
@@ -91,11 +92,11 @@
                         <a href="{{ route('product-detail', $product->slug) }}" class="btn-secondary"
                             style="text-decoration: none; text-align: center; display: block;">Lihat Detail</a>
                     </div>
-                    @empty
-                        <p style="color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 40px 0;">
-                            Belum ada produk unggulan saat ini.
-                        </p>
-                    @endforelse
+                @empty
+                    <p style="color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 40px 0;">
+                        Belum ada produk unggulan saat ini.
+                    </p>
+                @endforelse
             </div>
         </div>
     </section>
@@ -112,8 +113,9 @@
                     @foreach($regularProducts as $product)
                         <div class="product-card">
                             <div class="product-image-container">
-                                <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}" alt="{{ $product->name }}" class="product-image">
-                                <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
+                                <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}"
+                                    alt="{{ $product->name }}" class="product-image">
+                                <button class="wishlist-btn" data-slug="{{ $product->slug }}"><i data-lucide="bookmark" width="18" height="18"></i></button>
                             </div>
                             <div class="product-title">{{ $product->name }}</div>
                             <div class="product-weight">{{ $product->weight }}</div>
@@ -236,11 +238,29 @@
     <script>
         // Wishlist Toggle
         document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            const slug = btn.getAttribute('data-slug');
+            
+            // Initial state
+            if (slug && localStorage.getItem(`fav_product_${slug}`) === 'true') {
+                btn.classList.add('active');
+                const icon = btn.querySelector('svg') || btn.querySelector('i');
+                if (icon) icon.setAttribute('fill', 'currentColor');
+            }
+
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 btn.classList.toggle('active');
-                const icon = btn.querySelector('i');
-                icon.setAttribute('fill', btn.classList.contains('active') ? 'currentColor' : 'none');
+                const isActive = btn.classList.contains('active');
+                const icon = btn.querySelector('svg') || btn.querySelector('i');
+                if (icon) icon.setAttribute('fill', isActive ? 'currentColor' : 'none');
+                
+                if (slug) {
+                    if (isActive) {
+                        localStorage.setItem(`fav_product_${slug}`, 'true');
+                    } else {
+                        localStorage.removeItem(`fav_product_${slug}`);
+                    }
+                }
             });
         });
 
@@ -294,22 +314,22 @@
                 },
                 body: JSON.stringify({ name, contact, category, message })
             })
-            .then(res => {
-                if (!res.ok) throw new Error('Gagal mengirim');
-                return res.json();
-            })
-            .then(data => {
-                helpFormState.style.display = 'none';
-                helpSuccessState.style.display = 'block';
-                lucide.createIcons();
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Gagal mengirim keluhan. Silakan coba lagi.');
-                submitBtn.innerHTML = '<span>Kirim Keluhan</span><i data-lucide="send" width="18" height="18"></i>';
-                submitBtn.disabled = false;
-                lucide.createIcons();
-            });
+                .then(res => {
+                    if (!res.ok) throw new Error('Gagal mengirim');
+                    return res.json();
+                })
+                .then(data => {
+                    helpFormState.style.display = 'none';
+                    helpSuccessState.style.display = 'block';
+                    lucide.createIcons();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal mengirim keluhan. Silakan coba lagi.');
+                    submitBtn.innerHTML = '<span>Kirim Keluhan</span><i data-lucide="send" width="18" height="18"></i>';
+                    submitBtn.disabled = false;
+                    lucide.createIcons();
+                });
         });
     </script>
 

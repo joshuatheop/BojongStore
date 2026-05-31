@@ -271,11 +271,27 @@
   <script>
     // Wishlist Toggle
     document.querySelectorAll('.wishlist-btn').forEach(btn => {
+      const slug = btn.getAttribute('data-slug');
+      if (slug && localStorage.getItem(`fav_product_${slug}`) === 'true') {
+        btn.classList.add('active');
+        const icon = btn.querySelector('svg') || btn.querySelector('i');
+        if (icon) icon.setAttribute('fill', 'currentColor');
+      }
+
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         btn.classList.toggle('active');
-        const icon = btn.querySelector('i');
-        icon.setAttribute('fill', btn.classList.contains('active') ? 'currentColor' : 'none');
+        const isActive = btn.classList.contains('active');
+        const icon = btn.querySelector('svg') || btn.querySelector('i');
+        if (icon) icon.setAttribute('fill', isActive ? 'currentColor' : 'none');
+        
+        if (slug) {
+            if (isActive) {
+                localStorage.setItem(`fav_product_${slug}`, 'true');
+            } else {
+                localStorage.removeItem(`fav_product_${slug}`);
+            }
+        }
       });
     });
 

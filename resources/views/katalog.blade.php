@@ -454,7 +454,7 @@
                             <div class="product-card">
                                 <div class="product-image-container">
                                     <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}" alt="{{ $product->name }}" class="product-image" loading="lazy">
-                                    <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
+                                    <button class="wishlist-btn" data-slug="{{ $product->slug }}"><i data-lucide="bookmark" width="18" height="18"></i></button>
                                 </div>
                                 <div class="product-title">{{ $product->name }}</div>
                                 <div class="product-weight">{{ $product->weight ?? '300 gram' }}</div>
@@ -492,5 +492,33 @@
             </div>
         </div>
     </div>
+    <script>
+        // Wishlist Toggle
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            const slug = btn.getAttribute('data-slug');
+            
+            // Initial state
+            if (slug && localStorage.getItem(`fav_product_${slug}`) === 'true') {
+                btn.classList.add('active');
+                const icon = btn.querySelector('svg') || btn.querySelector('i');
+                if (icon) icon.setAttribute('fill', 'currentColor');
+            }
 
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                btn.classList.toggle('active');
+                const isActive = btn.classList.contains('active');
+                const icon = btn.querySelector('svg') || btn.querySelector('i');
+                if (icon) icon.setAttribute('fill', isActive ? 'currentColor' : 'none');
+                
+                if (slug) {
+                    if (isActive) {
+                        localStorage.setItem(`fav_product_${slug}`, 'true');
+                    } else {
+                        localStorage.removeItem(`fav_product_${slug}`);
+                    }
+                }
+            });
+        });
+    </script>
 @endsection

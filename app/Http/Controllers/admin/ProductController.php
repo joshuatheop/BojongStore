@@ -8,6 +8,8 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Activity;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
@@ -101,6 +103,12 @@ class ProductController extends Controller
 
         Product::create($validatedData);
 
+        Activity::create([
+            'user_id' => Auth::id(),
+            'action' => 'menambah produk',
+            'description' => $validatedData['name']
+        ]);
+
         // Arahkan kembali ke route admin.products.index
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
@@ -168,6 +176,12 @@ class ProductController extends Controller
         $validatedData['slug'] = Str::slug($request->name);
         $product->update($validatedData);
 
+        Activity::create([
+            'user_id' => Auth::id(),
+            'action' => 'mengedit produk',
+            'description' => $validatedData['name']
+        ]);
+
         // Arahkan kembali ke route admin.products.index
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
     }
@@ -180,7 +194,16 @@ class ProductController extends Controller
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }
+        
+        $productName = $product->name;
         $product->delete();
+        
+        Activity::create([
+            'user_id' => Auth::id(),
+            'action' => 'menghapus produk',
+            'description' => $productName
+        ]);
+        
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus.');
     }
 
