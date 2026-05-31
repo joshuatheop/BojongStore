@@ -194,7 +194,10 @@
         lucide.createIcons();
 
         const product_id = '{{ $product->slug }}';
+        const product_db_id = {{ $product->id }};
         const current_user_id = @json(auth()->id());
+        const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         let currentRating = 0;
 
         // Fetch Reviews on load
@@ -491,37 +494,47 @@
             }, 5000);
         }
 
-        // Handle Initial Favorite State
+        // Initialize favorite state from DB
         const mainFavBtn = document.querySelector('.btn-fav-circle');
-        if (mainFavBtn) {
-            const isFavorited = localStorage.getItem(`fav_product_${product_id}`);
-            if (isFavorited === 'true') {
-                mainFavBtn.classList.add('active');
-                const icon = mainFavBtn.querySelector('svg') || mainFavBtn.querySelector('i');
-                if (icon) icon.setAttribute('fill', 'currentColor');
-            }
+        async function initFavoriteState() {
+            if (!isLoggedIn || !mainFavBtn) return;
+            try {
+                const res = await fetch('/api/favorites', { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+                const ids = new Set(data.favorites.map(String));
+                if (ids.has(String(product_db_id))) {
+                    mainFavBtn.classList.add('active');
+                    const icon = mainFavBtn.querySelector('svg') || mainFavBtn.querySelector('i');
+                    if (icon) icon.setAttribute('fill', 'currentColor');
+                }
+            } catch(e) { console.error(e); }
         }
 
-        // Favorite Toggle Logic
-        document.addEventListener('click', function (e) {
+        // Favorite Toggle via API
+        document.addEventListener('click', async function (e) {
             const btn = e.target.closest('.btn-fav-circle');
             if (!btn) return;
 
-            btn.classList.toggle('active');
-            const icon = btn.querySelector('svg') || btn.querySelector('i');
-            const isActive = btn.classList.contains('active');
-
-            if (icon) {
-                if (isActive) {
-                    icon.setAttribute('fill', 'currentColor');
-                    showFavNotification(); // Show notification when favorited
-                    localStorage.setItem(`fav_product_${product_id}`, 'true');
-                } else {
-                    icon.setAttribute('fill', 'none');
-                    localStorage.removeItem(`fav_product_${product_id}`);
-                }
+            if (!isLoggedIn) {
+                window.location.href = '{{ route('login') }}';
+                return;
             }
+
+            try {
+                const res = await fetch(`/api/favorites/${product_db_id}`, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+                const isActive = data.status === 'added';
+                btn.classList.toggle('active', isActive);
+                const icon = btn.querySelector('svg') || btn.querySelector('i');
+                if (icon) icon.setAttribute('fill', isActive ? 'currentColor' : 'none');
+                if (isActive) showFavNotification();
+            } catch(err) { console.error(err); }
         });
+
+        document.addEventListener('DOMContentLoaded', initFavoriteState);
         // Help Modal Logic
         const helpModal = document.getElementById('helpModal');
         const helpBtn = document.querySelector('.btn-footer');

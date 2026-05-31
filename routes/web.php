@@ -7,6 +7,7 @@ use App\Http\Controllers\UlasanController;
 
 // User Controllers
 use App\Http\Controllers\user\UserController;
+use App\Http\Controllers\user\FavoriteController;
 
 // Admin Controllers
 use App\Http\Controllers\admin\AdminController;
@@ -30,8 +31,12 @@ Route::get('/katalog', [ProductController::class, 'katalog'])->name('katalog');
 Route::get('/produk', [ProductController::class, 'produkPage'])->name('produk');
 
 // ======= FAVORIT =======
+// Guest: tampilkan halaman (produk dimuat dari DB jika login, kosong jika tidak)
 Route::get('/favorit', function () {
-    $products = \App\Models\Product::withAvg('reviews', 'rating')->withCount('reviews')->get();
+    if (auth()->check()) {
+        return app(FavoriteController::class)->index();
+    }
+    $products = collect();
     return view('favorit', compact('products'));
 })->name('favorit');
 
@@ -49,6 +54,12 @@ require __DIR__.'/auth.php';
 // ======= USER DASHBOARD =======
 Route::middleware(['auth', 'userMiddleware'])->group(function () {
     Route::get('/user/dashboard', [UserController::class, 'index'])->name('user.dashboard');
+});
+
+// ======= FAVORITES API (auth required) =======
+Route::middleware('auth')->group(function () {
+    Route::get('/api/favorites', [FavoriteController::class, 'list'])->name('favorites.list');
+    Route::post('/api/favorites/{product}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 });
 
 // ======= PROFILE (AUTH REQUIRED) =======

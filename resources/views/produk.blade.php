@@ -64,7 +64,7 @@
                         <div class="product-image-container">
                             <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}"
                                 alt="{{ $product->name }}" class="product-image">
-                            <button class="wishlist-btn" data-slug="{{ $product->slug }}"><i data-lucide="bookmark" width="18" height="18"></i></button>
+                            <button class="wishlist-btn" data-slug="{{ $product->slug }}" data-product-id="{{ $product->id }}"><i data-lucide="bookmark" width="18" height="18"></i></button>
                             {{-- Badge "Unggulan" --}}
                             <span class="featured-badge">
                                 <i data-lucide="star" width="12" height="12" fill="currentColor"></i>
@@ -115,7 +115,7 @@
                             <div class="product-image-container">
                                 <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}"
                                     alt="{{ $product->name }}" class="product-image">
-                                <button class="wishlist-btn" data-slug="{{ $product->slug }}"><i data-lucide="bookmark" width="18" height="18"></i></button>
+                                <button class="wishlist-btn" data-slug="{{ $product->slug }}" data-product-id="{{ $product->id }}"><i data-lucide="bookmark" width="18" height="18"></i></button>
                             </div>
                             <div class="product-title">{{ $product->name }}</div>
                             <div class="product-weight">{{ $product->weight }}</div>
@@ -236,33 +236,51 @@
     </div>
 
     <script>
-        // Wishlist Toggle
-        document.querySelectorAll('.wishlist-btn').forEach(btn => {
-            const slug = btn.getAttribute('data-slug');
-            
-            // Initial state
-            if (slug && localStorage.getItem(`fav_product_${slug}`) === 'true') {
-                btn.classList.add('active');
-                const icon = btn.querySelector('svg') || btn.querySelector('i');
-                if (icon) icon.setAttribute('fill', 'currentColor');
-            }
+        const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
+        const csrfToken = '{{ csrf_token() }}';
 
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                btn.classList.toggle('active');
-                const isActive = btn.classList.contains('active');
-                const icon = btn.querySelector('svg') || btn.querySelector('i');
-                if (icon) icon.setAttribute('fill', isActive ? 'currentColor' : 'none');
-                
-                if (slug) {
-                    if (isActive) {
-                        localStorage.setItem(`fav_product_${slug}`, 'true');
-                    } else {
-                        localStorage.removeItem(`fav_product_${slug}`);
+        // Initialize state from DB if logged in
+        async function initWishlist() {
+            if (!isLoggedIn) return;
+            try {
+                const res = await fetch('/api/favorites', { headers: { 'Accept': 'application/json' } });
+                const data = await res.json();
+                const favoriteIds = new Set(data.favorites.map(String));
+                document.querySelectorAll('.wishlist-btn').forEach(btn => {
+                    const pid = btn.getAttribute('data-product-id');
+                    if (pid && favoriteIds.has(pid)) {
+                        btn.classList.add('active');
+                        const icon = btn.querySelector('svg') || btn.querySelector('i');
+                        if (icon) icon.setAttribute('fill', 'currentColor');
                     }
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        // Wishlist Toggle via API
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (!isLoggedIn) {
+                    window.location.href = '{{ route('login') }}';
+                    return;
                 }
+                const productId = btn.getAttribute('data-product-id');
+                if (!productId) return;
+                try {
+                    const res = await fetch(`/api/favorites/${productId}`, {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
+                    });
+                    const data = await res.json();
+                    btn.classList.toggle('active', data.status === 'added');
+                    const icon = btn.querySelector('svg') || btn.querySelector('i');
+                    if (icon) icon.setAttribute('fill', data.status === 'added' ? 'currentColor' : 'none');
+                } catch(err) { console.error(err); }
             });
         });
+
+        document.addEventListener('DOMContentLoaded', initWishlist);
 
         // Help Modal
         const helpModal = document.getElementById('helpModal');

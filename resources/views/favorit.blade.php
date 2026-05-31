@@ -207,89 +207,134 @@
 
             <div class="favorites-grid" id="favoritesGrid"
                 style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; margin-bottom: 80px;">
-                <!-- Dynamically rendered via JS -->
+
+                @auth
+                    @forelse($products as $product)
+                        @php
+                            $imageUrl = $product->image
+                                ? asset('storage/products/' . basename($product->image))
+                                : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name);
+                            $avgRating = $product->reviews_avg_rating ? round($product->reviews_avg_rating) : 0;
+                        @endphp
+                        <div class="product-card-fav fav-item-animate" id="fav-card-{{ $product->id }}" style="animation-delay: {{ $loop->index * 0.1 }}s;">
+                            <div class="product-image-container-fav">
+                                <img src="{{ $imageUrl }}" alt="{{ $product->name }}">
+                                <button class="btn-remove-fav" title="Hapus dari Favorit"
+                                    onclick="toggleFav({{ $product->id }}, this)"
+                                    data-product-id="{{ $product->id }}">
+                                    <i data-lucide="bookmark-minus" width="20" height="20"></i>
+                                </button>
+                            </div>
+                            <div class="product-info-fav" style="text-align: center; display: flex; flex-direction: column; flex: 1;">
+                                <h3>{{ $product->name }}</h3>
+                                <p style="color: #64748b; font-size: 14px; margin-bottom: 12px;">{{ $product->weight }}</p>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 16px; background: #f8fafc; padding: 6px 12px; border-radius: 20px; width: fit-content; margin-left: auto; margin-right: auto;">
+                                    <div style="display: flex; gap: 2px; color: #fbbf24;">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <i data-lucide="star" fill="{{ $i <= $avgRating ? '#fbbf24' : 'none' }}" width="14" height="14" style="color: {{ $i <= $avgRating ? '#fbbf24' : '#e2e8f0' }}"></i>
+                                        @endfor
+                                    </div>
+                                    <span style="font-size: 12px; color: #64748b; font-weight: 600; margin-left: 4px;">({{ $product->reviews_count ?? 0 }})</span>
+                                </div>
+                                <div class="price-fav">
+                                    <span class="price-currency">Rp</span>
+                                    {{ number_format($product->price, 0, ',', '.') }}
+                                </div>
+                                <a href="{{ route('product-detail', $product->slug) }}" class="btn-detail-fav">
+                                    Lihat Detail
+                                </a>
+                            </div>
+                        </div>
+                    @empty
+                        <div style="grid-column: 1 / -1;" id="emptyState">
+                            <div class="empty-state-fav">
+                                <div class="empty-icon-wrap">
+                                    <i data-lucide="heart-crack" width="48" height="48"></i>
+                                </div>
+                                <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; color: #0f172a;">Belum Ada Produk Favorit</h3>
+                                <p style="color: #64748b; margin-bottom: 32px; font-size: 16px; max-width: 400px; margin-left: auto; margin-right: auto;">Anda belum menandai produk apapun sebagai favorit. Mulai jelajahi produk kami dan temukan yang Anda suka!</p>
+                                <a href="{{ route('produk') }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 36px; background: #0a4d2e; color: #fff; text-decoration: none; border-radius: 50px; font-weight: 700; transition: all 0.3s; box-shadow: 0 8px 20px -6px rgba(10, 77, 46, 0.4);">
+                                    <i data-lucide="shopping-bag" width="18" height="18"></i>
+                                    Jelajahi Produk
+                                </a>
+                            </div>
+                        </div>
+                    @endforelse
+                @else
+                    {{-- Not logged in --}}
+                    <div style="grid-column: 1 / -1;">
+                        <div class="empty-state-fav">
+                            <div class="empty-icon-wrap">
+                                <i data-lucide="log-in" width="48" height="48"></i>
+                            </div>
+                            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; color: #0f172a;">Silakan Login Terlebih Dahulu</h3>
+                            <p style="color: #64748b; margin-bottom: 32px; font-size: 16px; max-width: 400px; margin-left: auto; margin-right: auto;">Login untuk menyimpan dan melihat produk favorit Anda secara permanen di semua perangkat.</p>
+                            <a href="{{ route('login') }}" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 36px; background: #0a4d2e; color: #fff; text-decoration: none; border-radius: 50px; font-weight: 700; transition: all 0.3s; box-shadow: 0 8px 20px -6px rgba(10, 77, 46, 0.4);">
+                                <i data-lucide="log-in" width="18" height="18"></i>
+                                Masuk ke Akun
+                            </a>
+                        </div>
+                    </div>
+                @endauth
             </div>
         </div>
     </main>
 
     <script>
-        @php
-            $mappedProducts = $products->map(function ($product) {
-                $product->image = $product->image
-                    ? asset('storage/products/' . basename($product->image))
-                    : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name);
-                return $product;
-            });
-        @endphp
-        const allProducts = @json($mappedProducts);
+        const csrfToken = '{{ csrf_token() }}';
+        const isLoggedIn = {{ auth()->check() ? 'true' : 'false' }};
 
-        function renderFavorites() {
-            const grid = document.getElementById('favoritesGrid');
-const favoriteProducts = allProducts.filter(p => localStorage.getItem(`fav_product_${p.slug}`) === 'true');
-            
-            if (favoriteProducts.length === 0) {
-                grid.innerHTML = `
-                    <div style="grid-column: 1 / -1;">
-                        <div class="empty-state-fav">
-                            <div class="empty-icon-wrap">
-                                <i data-lucide="heart-crack" width="48" height="48"></i>
-                            </div>
-                            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; color: #0f172a;">Belum Ada Produk Favorit</h3>
-                            <p style="color: #64748b; margin-bottom: 32px; font-size: 16px; max-width: 400px; margin-left: auto; margin-right: auto;">Anda belum menandai produk apapun sebagai favorit. Mulai jelajahi produk kami dan temukan yang Anda suka!</p>
-                            <a href="/produk" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 36px; background: #0a4d2e; color: #fff; text-decoration: none; border-radius: 50px; font-weight: 700; transition: all 0.3s; box-shadow: 0 8px 20px -6px rgba(10, 77, 46, 0.4);">
-                                <i data-lucide="shopping-bag" width="18" height="18"></i>
-                                Jelajahi Produk
-                            </a>
-                        </div>
-                    </div>
-                `;
-            } else {
-                grid.innerHTML = favoriteProducts.map((product, index) => {
-                    const averageRating = product.reviews_avg_rating ? parseFloat(product.reviews_avg_rating) : 0;
-                    const reviewCount = product.reviews_count || 0;
-                    const roundedRating = Math.round(averageRating);
-                    const starsHTML = Array(5).fill(0).map((_, i) => `<i data-lucide="star" fill="${i < roundedRating ? '#fbbf24' : 'none'}" width="14" height="14" style="color: ${i < roundedRating ? '#fbbf24' : '#e2e8f0'}"></i>`).join('');
-                    
-                    const animationDelay = index * 0.1;
-
-                    return `
-                        <div class="product-card-fav fav-item-animate" style="animation-delay: ${animationDelay}s;">
-                            <div class="product-image-container-fav">
-                                <img src="${product.image}" alt="${product.name}">
-                                <div class="btn-remove-fav" title="Hapus dari Favorit" onclick="toggleFav('${product.slug}')">
-                                    <i data-lucide="bookmark-minus" width="20" height="20"></i>
-                                </div>
-                            </div>
-                            <div class="product-info-fav" style="text-align: center; display: flex; flex-direction: column; flex: 1;">
-                                <h3>${product.name}</h3>
-                                <p style="color: #64748b; font-size: 14px; margin-bottom: 12px;">${product.weight}</p>
-                                <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 16px; background: #f8fafc; padding: 6px 12px; border-radius: 20px; width: fit-content; margin-left: auto; margin-right: auto;">
-                                    <div style="display: flex; gap: 2px; color: #fbbf24;">
-                                        ${starsHTML}
-                                    </div>
-                                    <span style="font-size: 12px; color: #64748b; font-weight: 600; margin-left: 4px;">(${reviewCount})</span>
-                                </div>
-                                <div class="price-fav">
-                                    <span class="price-currency">Rp</span>
-                                    ${new Intl.NumberFormat('id-ID').format(product.price)}
-                                </div>
-                                <a href="/produk/${product.slug}" class="btn-detail-fav">
-                                    Lihat Detail
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+        async function toggleFav(productId, btn) {
+            if (!isLoggedIn) {
+                window.location.href = '{{ route('login') }}';
+                return;
             }
-            lucide.createIcons();
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`/api/favorites/${productId}`, {
+                    method: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' }
+                });
+                const data = await res.json();
+
+                if (data.status === 'removed') {
+                    // Animate card out then remove from DOM
+                    const card = document.getElementById(`fav-card-${productId}`);
+                    if (card) {
+                        card.style.transition = 'all 0.4s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.85)';
+                        setTimeout(() => {
+                            card.remove();
+                            // Show empty state if no cards left
+                            const grid = document.getElementById('favoritesGrid');
+                            if (grid && grid.querySelectorAll('.product-card-fav').length === 0) {
+                                grid.innerHTML = `
+                                    <div style="grid-column: 1 / -1;">
+                                        <div class="empty-state-fav">
+                                            <div class="empty-icon-wrap">
+                                                <i data-lucide="heart-crack" width="48" height="48"></i>
+                                            </div>
+                                            <h3 style="font-size: 24px; font-weight: 800; margin-bottom: 12px; color: #0f172a;">Belum Ada Produk Favorit</h3>
+                                            <p style="color: #64748b; margin-bottom: 32px; font-size: 16px; max-width: 400px; margin-left: auto; margin-right: auto;">Tambahkan produk ke favorit dari halaman katalog.</p>
+                                            <a href="/produk" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 36px; background: #0a4d2e; color: #fff; text-decoration: none; border-radius: 50px; font-weight: 700;">
+                                                Jelajahi Produk
+                                            </a>
+                                        </div>
+                                    </div>`;
+                                lucide.createIcons();
+                            }
+                        }, 400);
+                    }
+                }
+            } catch (e) {
+                console.error('Toggle favorite failed:', e);
+                btn.disabled = false;
+            }
         }
 
-        function toggleFav(slug) {
-            localStorage.removeItem(`fav_product_${slug}`);
-            renderFavorites();
-        }
-
-        document.addEventListener('DOMContentLoaded', renderFavorites);
+        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
     </script>
 
     <footer style="background: #f0f4f1; padding: 80px 0 40px; border-top: 1px solid #e2e8f0;">
