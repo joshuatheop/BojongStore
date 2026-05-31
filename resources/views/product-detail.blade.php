@@ -23,7 +23,7 @@
             <div class="product-detail-grid">
                 <div class="product-gallery">
                     <div class="product-main-image">
-                        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}">
+                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
                     </div>
                     <button class="btn-fav-circle">
                         <i data-lucide="bookmark" width="24" height="24"></i>

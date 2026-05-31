@@ -95,7 +95,7 @@
                             <div class="flex items-center gap-3">
                                 <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
                                     @if($product->image)
-                                        <img src="{{ asset('storage/' . str_replace('public/', '', $product->image)) }}"
+                                        <img src="{{ $product->image_url }}"
                                              alt="{{ $product->name }}" class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">

@@ -29,10 +29,10 @@ Route::get('/katalog', [ProductController::class, 'katalog'])->name('katalog');
 Route::get('/produk', [ProductController::class, 'produkPage'])->name('produk');
 
 // ======= FAVORIT =======
-Route::get('/favorit', function () {
-    $products = \App\Models\Product::withAvg('reviews', 'rating')->withCount('reviews')->get();
-    return view('favorit', compact('products'));
-})->name('favorit');
+Route::middleware('auth')->group(function () {
+    Route::get('/favorit', [\App\Http\Controllers\user\FavoriteController::class, 'index'])->name('favorit');
+    Route::post('/favorit/{product}/toggle', [\App\Http\Controllers\user\FavoriteController::class, 'toggle'])->name('favorit.toggle');
+});
 
 // ======= ULASAN / REVIEWS (dari main) =======
 Route::post('/reviews', [UlasanController::class, 'store'])->name('reviews.store');

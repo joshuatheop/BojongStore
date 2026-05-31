@@ -16,6 +16,8 @@ class Product extends Model
         'tags', 'seller',
     ];
 
+    protected $appends = ['image_url', 'shop_name'];
+
     protected $casts = [
         'tags' => 'array',
         'is_featured' => 'boolean',
@@ -58,5 +60,32 @@ class Product extends Model
     public function getShopNameAttribute(): string
     {
         return $this->umkm?->name ?? $this->seller ?? 'UMKM Bojongsoang';
+    }
+
+    /**
+     * Get the correct image URL regardless of how the path was stored.
+     * Handles 3 formats:
+     *   - '/images/foo.png'     → asset('/images/foo.png')
+     *   - 'public/products/...' → asset('storage/products/...')
+     *   - 'images/foo.png'      → asset('images/foo.png')
+     */
+    public function getImageUrlAttribute(): string
+    {
+        if (!$this->image) {
+            return 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($this->name ?? 'Produk');
+        }
+
+        // Already an absolute URL (e.g. http://...)
+        if (str_starts_with($this->image, 'http')) {
+            return $this->image;
+        }
+
+        // Stored as 'public/...' (Laravel storage disk path)
+        if (str_starts_with($this->image, 'public/')) {
+            return asset('storage/' . substr($this->image, 7));
+        }
+
+        // Stored as '/images/...' or 'images/...' (public folder path)
+        return asset(ltrim($this->image, '/'));
     }
 }

@@ -92,7 +92,7 @@
                     return `
                         <div class="product-card-fav" style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 20px; position: relative; display: flex; flex-direction: column;">
                             <div class="product-image-container" style="position: relative; background: #f8fafc; border-radius: 8px; margin-bottom: 20px; padding: 20px; text-align: center;">
-                                <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 180px; object-fit: contain;">
+                                <img src="${product.image_url}" alt="${product.name}" style="width: 100%; height: 180px; object-fit: contain;">
                                 <div class="btn-fav-circle active" style="cursor: pointer;" onclick="toggleFav('${product.slug}')">
                                     <i data-lucide="bookmark" fill="currentColor" width="28" height="28"></i>
                                 </div>
@@ -112,6 +112,7 @@
                         </div>
                     `;
                 }).join('');
+
             }
             lucide.createIcons();
         }

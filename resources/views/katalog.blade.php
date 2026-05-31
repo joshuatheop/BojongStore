@@ -453,7 +453,7 @@
                         @foreach($products as $product)
                             <div class="product-card">
                                 <div class="product-image-container">
-                                    <img src="{{ $product->image ? asset($product->image) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}" alt="{{ $product->name }}" class="product-image" loading="lazy">
+                                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="product-image" loading="lazy">
                                     <button class="wishlist-btn"><i data-lucide="bookmark" width="18" height="18"></i></button>
                                 </div>
                                 <div class="product-title">{{ $product->name }}</div>
