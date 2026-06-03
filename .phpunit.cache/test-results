@@ -1,0 +1,1 @@
+{"version":1,"defects":{"Tests\\Browser\\ExampleTest::test_basic_example":7,"Tests\\Browser\\ProductTest::test_admin_can_create_product":8},"times":{"Tests\\Browser\\ExampleTest::test_basic_example":4.156,"Tests\\Browser\\ProductTest::test_admin_can_create_product":0.928}}
