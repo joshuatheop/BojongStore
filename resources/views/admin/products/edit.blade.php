@@ -40,7 +40,7 @@
                         $hasImage = !empty($product->image);
                         $imgUrl = '';
                         if ($hasImage) {
-                            $imgUrl = asset('storage/products/' . basename($product->image));
+                            $imgUrl = $product->image_url;
                         }
                     @endphp
 
@@ -54,7 +54,7 @@
                             <span class="text-[10px] text-center text-gray-400 px-4">Format JPG, PNG atau
                                 WEBP.<br>Rekomendasi 1200×1600px (Maks. 2MB).</span>
                         </div>
-                        <img id="mainImagePreviewImg" src="{{ asset('storage/' . $product->image) }}"
+                        <img id="mainImagePreviewImg" src="{{ $product->image_url }}"
                             alt="{{ $product->name }}"
                             class="{{ $hasImage ? '' : 'hidden' }} absolute inset-0 w-full h-full object-cover">
                         <input type="file" id="mainImageInput" name="image" accept="image/*" class="hidden"

@@ -105,7 +105,7 @@
                                     <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
                                         @if($product->image)
                                             @php
-                                                $imgUrl = asset('storage/products/' . basename($product->image));
+                                                $imgUrl = $product->image_url;
                                             @endphp
                                             <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
                                                 class="w-full h-full object-cover">

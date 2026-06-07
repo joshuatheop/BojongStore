@@ -95,7 +95,7 @@ class ProductController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
+            $path = $request->file('image')->store('products', config('filesystems.default'));
             $validatedData['image'] = $path;
         }
 
@@ -166,10 +166,10 @@ class ProductController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
+            if ($product->image && !\Illuminate\Support\Str::startsWith($product->image, '/images/')) {
+                Storage::disk(config('filesystems.default'))->delete($product->image);
             }
-            $path = $request->file('image')->store('products', 'public');
+            $path = $request->file('image')->store('products', config('filesystems.default'));
             $validatedData['image'] = $path;
         }
 
@@ -191,8 +191,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        if ($product->image) {
-            Storage::disk('public')->delete($product->image);
+        if ($product->image && !\Illuminate\Support\Str::startsWith($product->image, '/images/')) {
+            Storage::disk(config('filesystems.default'))->delete($product->image);
         }
         
         $productName = $product->name;

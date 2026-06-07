@@ -51,4 +51,21 @@ class Product extends Model
     {
         return $this->seller ?? 'UMKM Bojongsoang';
     }
+
+    public function getImageUrlAttribute(): string
+    {
+        if (empty($this->image)) {
+            return 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($this->name);
+        }
+
+        if (\Illuminate\Support\Str::startsWith($this->image, ['http://', 'https://'])) {
+            return $this->image;
+        }
+
+        if (\Illuminate\Support\Str::startsWith($this->image, '/images/')) {
+            return asset($this->image);
+        }
+
+        return \Illuminate\Support\Facades\Storage::url($this->image);
+    }
 }

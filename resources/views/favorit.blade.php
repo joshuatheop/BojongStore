@@ -211,14 +211,11 @@
                 @auth
                     @forelse($products as $product)
                         @php
-                            $imageUrl = $product->image
-                                ? asset('storage/products/' . basename($product->image))
-                                : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name);
                             $avgRating = $product->reviews_avg_rating ? round($product->reviews_avg_rating) : 0;
                         @endphp
                         <div class="product-card-fav fav-item-animate" id="fav-card-{{ $product->id }}" style="animation-delay: {{ $loop->index * 0.1 }}s;">
                             <div class="product-image-container-fav">
-                                <img src="{{ $imageUrl }}" alt="{{ $product->name }}">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}">
                                 <button class="btn-remove-fav" title="Hapus dari Favorit"
                                     onclick="toggleFav({{ $product->id }}, this)"
                                     data-product-id="{{ $product->id }}">

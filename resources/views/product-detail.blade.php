@@ -23,7 +23,7 @@
             <div class="product-detail-grid">
                 <div class="product-gallery">
                     <div class="product-main-image">
-                        <img src="{{ $product->image ? asset('storage/products/' . basename($product->image)) : 'https://placehold.co/400x400/e8f5ee/00923F?text=' . urlencode($product->name) }}"
+                        <img src="{{ $product->image_url }}"
                             alt="{{ $product->name }}">
                     </div>
                     <button class="btn-fav-circle">
