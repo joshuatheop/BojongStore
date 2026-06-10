@@ -64,7 +64,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255|unique:products',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'shoppee' => 'nullable|string',
             'whatsapp' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
@@ -83,7 +83,7 @@ class ProductController extends Controller
             'category_id.required' => 'Kategori produk wajib dipilih.',
             'image.required' => 'Foto produk wajib diunggah.',
             'image.image' => 'File yang diunggah harus berupa gambar.',
-            'image.max' => 'Ukuran foto produk terlalu besar (Maksimal 2MB).'
+            'image.max' => 'Ukuran foto produk terlalu besar (Maksimal 5MB).'
         ]);
         
         $validatedData['is_featured'] = $request->boolean('is_featured');
@@ -95,7 +95,7 @@ class ProductController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', config('filesystems.default'));
+            $path = $request->file('image')->store('products', 's3');
             $validatedData['image'] = $path;
         }
 
@@ -136,7 +136,7 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255', Rule::unique('products')->ignore($product->id)],
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'shoppee' => 'nullable|string',
             'whatsapp' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
@@ -154,7 +154,7 @@ class ProductController extends Controller
             'price.required' => 'Harga produk tidak boleh kosong.',
             'category_id.required' => 'Kategori produk wajib dipilih.',
             'image.image' => 'File yang diunggah harus berupa gambar.',
-            'image.max' => 'Ukuran foto produk terlalu besar (Maksimal 2MB).'
+            'image.max' => 'Ukuran foto produk terlalu besar (Maksimal 5MB).'
         ]);
         
         $validatedData['is_featured'] = $request->boolean('is_featured');
@@ -167,9 +167,9 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             if ($product->image && !\Illuminate\Support\Str::startsWith($product->image, '/images/')) {
-                Storage::disk(config('filesystems.default'))->delete($product->image);
+                Storage::disk('s3')->delete($product->image);
             }
-            $path = $request->file('image')->store('products', config('filesystems.default'));
+            $path = $request->file('image')->store('products', 's3');
             $validatedData['image'] = $path;
         }
 
@@ -192,7 +192,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         if ($product->image && !\Illuminate\Support\Str::startsWith($product->image, '/images/')) {
-            Storage::disk(config('filesystems.default'))->delete($product->image);
+            Storage::disk('s3')->delete($product->image);
         }
         
         $productName = $product->name;

@@ -52,7 +52,7 @@
                             <i class='bx bx-upload text-4xl'></i>
                             <span class="text-sm font-medium">Pilih Foto Utama</span>
                             <span class="text-[10px] text-center text-gray-400 px-4">Format JPG, PNG atau
-                                WEBP.<br>Rekomendasi 1200×1600px (Maks. 2MB).</span>
+                                WEBP.<br>Rekomendasi 1200×1600px (Maks. 5MB).</span>
                         </div>
                         <img id="mainImagePreviewImg" src="{{ $product->image_url }}"
                             alt="{{ $product->name }}"
@@ -236,8 +236,8 @@
         function previewMainImage(event) {
             const file = event.target.files[0];
             if (!file) return;
-            if (file.size > 2 * 1024 * 1024) {
-                alert('Ukuran foto produk maksimal 2MB (batasan server). Silakan pilih foto lain.');
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Ukuran foto produk maksimal 5MB. Silakan pilih foto lain.');
                 event.target.value = '';
                 return;
             }

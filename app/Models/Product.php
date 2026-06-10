@@ -66,6 +66,6 @@ class Product extends Model
             return asset($this->image);
         }
 
-        return \Illuminate\Support\Facades\Storage::url($this->image);
+        return \Illuminate\Support\Facades\Storage::disk('s3')->url($this->image);
     }
 }

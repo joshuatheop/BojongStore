@@ -73,7 +73,7 @@
                 @php
                     $product = \App\Models\Product::where('slug', $review->product_id)->first();
                     $prodName = $review->product_name ?: ($product ? $product->name : ucfirst(str_replace('-', ' ', $review->product_id)));
-                    $prodImage = $product ? $product->image_url : ($review->product_image ? asset('storage/products/' . basename($review->product_image)) : null);
+                    $prodImage = $product ? $product->image_url : ($review->product_image ? \Illuminate\Support\Facades\Storage::disk('s3')->url('products/' . basename($review->product_image)) : null);
                     $prodUmkm = $review->umkm_name ?: ($product ? ($product->seller ?: 'UMKM Admin BojongStore') : '—');
                     $revName = $review->reviewer_name ?: $review->user_name;
                     
