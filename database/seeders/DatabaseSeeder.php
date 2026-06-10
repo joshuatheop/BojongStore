@@ -20,7 +20,26 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
+        User::updateOrCreate(
+            ['email' => 'admin@banjarsari.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('admin12345'),
+                'role' => 'admin',
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'admin@bojongstore.com'],
+            [
+                'name' => 'Admin BojongStore',
+                'password' => bcrypt('pplsi4702'),
+                'role' => 'admin',
+            ]
+        );
+
         $this->call([
+            CategorySeeder::class,
             ProductSeeder::class,
             ReviewSeeder::class,
         ]);
