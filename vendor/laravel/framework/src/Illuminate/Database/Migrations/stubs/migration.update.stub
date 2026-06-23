@@ -21,8 +21,14 @@ return new class extends Migration
      */
     public function down(): void
     {
+<<<<<<< Updated upstream:vendor/laravel/framework/src/Illuminate/Database/Migrations/stubs/migration.update.stub
         Schema::table('{{ table }}', function (Blueprint $table) {
             //
+=======
+        Schema::table('products', function (Blueprint $table) {
+            // (Opsional) Untuk jaga-jaga jika migrasi dibatalkan
+            $table->string('category')->nullable();
+>>>>>>> Stashed changes:database/migrations/2025_08_06_101357_remove_category_from_products_table.php
         });
     }
 };
